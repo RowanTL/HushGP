@@ -1,0 +1,7 @@
+-- https://stackoverflow.com/questions/8867350/how-to-set-a-programs-command-line-arguments-for-ghci
+-- :set args is a GHCI thing:
+-- https://downloads.haskell.org/ghc/latest/docs/users_guide/ghci.html#ghci-commands
+:set stop :list
+:load ../../src/main.hs ../../src/BinaryConversions.hs
+:set args "argfile.in" "argfile.out"
+:step main
