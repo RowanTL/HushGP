@@ -12,7 +12,7 @@ main = do
             float = [FloatGene 1.2, FloatGene 1.7],
             bool = [BoolGene True, BoolGene False],
             string = [StringGene "Hello", StringGene "Push"],
-            input = [IntGene 1, StringGene "Hi", BoolGene True, FloatGene 1.3]
+            input = [Input $ IntGene 1, Input $ StringGene "Hi", Input $ BoolGene True, Input $ FloatGene 1.3]
           }
   -- This is an example of applynig one function (head exampleGenome) to the exampleState:
   assert ([3, 3] == map unpackIntGene (int (head exampleGenome exampleState))) pure ()

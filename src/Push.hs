@@ -25,6 +25,7 @@ data Gene
   | StringGene String
   | StateFunc (State -> State -> State)
   | Close
+  | Input Gene
 
 --  | Group [Gene]
 -- If we do plushy,
@@ -57,25 +58,25 @@ stackUpdate newstack@(IntGene _ : _) (State e _ f b s p) = State e newstack f b 
 stackUpdate newstack@(FloatGene _ : _) (State e i _ b s p) = State e i newstack b s p
 stackUpdate newstack@(BoolGene _ : _) (State e i f _ s p) = State e i f newstack s p
 stackUpdate newstack@(StringGene _ : _) (State e i f b _ p) = State e i f b newstack p
+stackUpdate newstack@(Input _ : _) (State e i f b s _) = State e i f b s newstack
 stackUpdate _ state = state
-
--- stackUpdate stackFunc (Input? _ : xs) (State e i f b s _)  = State e i f b s newstack
 
 unpackIntGene :: Gene -> Int
 unpackIntGene (IntGene item) = item
 
--- Start with monolithic add function this:
+-- Start with monolithic intAdd function:
 intAdd :: State -> State
 intAdd state =
   let result = sum (map unpackIntGene (take 2 (int state)))
       dropped = drop 2 (int state)
    in stackUpdate (IntGene result : dropped) state
 
--- Later, generalize an applyFuncToState which applies simplifications of each simpler, modular atomic function:
-
+-- Later, generalize a function called applyFuncToState,
+-- which takes each simpler atomic function, and the state,
+-- and applies the function to the state, for example:
 -- intAdd :: (Int, Int) -> Int
-
--- applyFuncState :: State -> AtomicFuncTypes -> State
+-- applyFuncState :: AtomicFuncTypes -> State -> State
+-- this would change Gene to something like GeneModular above.
 
 interpretGenome :: State -> [(State -> State)] -> State
 interpretGenome state = foldl (\acc f -> f acc) state
