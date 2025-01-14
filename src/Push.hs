@@ -1,5 +1,7 @@
 module Push where
 
+import Data.List (foldl')
+
 -- import Debug.Trace (trace, traceStack)
 
 -- GeneModular or Gene?
@@ -79,6 +81,8 @@ intAdd state =
 -- this would change Gene to something like GeneModular above.
 
 -- Wow, a one-liner for interpreting a paretheses-free genome...
+-- Does not handle any data elements in genome yet,
+-- but condition could be added to the lambda.
 -- Need to update this when adding parethetical blocks too.
 interpretGenome :: State -> [(State -> State)] -> State
-interpretGenome state = foldl (\acc f -> f acc) state
+interpretGenome state = foldl' (\acc f -> f acc) state
