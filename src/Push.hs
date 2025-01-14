@@ -78,5 +78,7 @@ intAdd state =
 -- applyFuncState :: AtomicFuncTypes -> State -> State
 -- this would change Gene to something like GeneModular above.
 
+-- Wow, a one-liner for interpreting a paretheses-free genome...
+-- Need to update this when adding parethetical blocks too.
 interpretGenome :: State -> [(State -> State)] -> State
 interpretGenome state = foldl (\acc f -> f acc) state

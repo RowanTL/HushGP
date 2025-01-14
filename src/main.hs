@@ -14,7 +14,7 @@ main = do
             string = [StringGene "Hello", StringGene "Push"],
             input = [Input $ IntGene 1, Input $ StringGene "Hi", Input $ BoolGene True, Input $ FloatGene 1.3]
           }
-  -- This is an example of applynig one function (head exampleGenome) to the exampleState:
+  -- This is an example of applying one function (head exampleGenome produces intAdd) to the exampleState:
   assert ([3, 3] == map unpackIntGene (int (head exampleGenome exampleState))) pure ()
-  -- This one-liner applies an entire genome to the starting state, and produces the final state:
+  -- This function applies an entire genome to the starting state, and produces the final state:
   assert ([6] == (map unpackIntGene (int (interpretGenome exampleState exampleGenome)))) pure ()
