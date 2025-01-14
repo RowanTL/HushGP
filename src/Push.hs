@@ -26,8 +26,8 @@ data Gene
   | StateFunc (State -> State -> State)
   | Close
 
---  | Group [Gene] 
--- If we do plushy, 
+--  | Group [Gene]
+-- If we do plushy,
 -- then we may need to make a structually recursive data structure for the "program" data structure
 -- exampleGenome = [Program] rather than [Gene], or just include the Group above?
 
