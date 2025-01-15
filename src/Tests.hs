@@ -5,22 +5,25 @@ import Push
 exampleState =
   State
     { exec = [IntGene 5, StateFunc instructionParameterLoad, StateFunc instructionIntAdd],
-      int = [1, 2, 3],
+      int = [2, 6, 3],
       float = [1.2, 1.7],
       bool = [True, False],
       string = ["Hello", "Push"],
       parameter = [IntGene 1, StringGene "Hi", BoolGene True, FloatGene 1.3]
     }
 
--- intAdd
-testResult1 = [3, 3] == int (instructionIntAdd exampleState)
+testResult1 = [8, 3] == int (instructionIntAdd exampleState)
 
--- interpretExec
-testResult2 = [6,1,2,3] == int (interpretExec exampleState)
+testResult2 = [4, 3] == int (instructionIntSubtract exampleState)
 
--- This nukes the exec stack, just as an example of how to load at the start.
-loadedState = loadProgarm [IntGene 6, IntGene 6, StateFunc instructionParameterLoad, StateFunc instructionIntAdd] emptyState
+testResult3 = [12, 3] == int (instructionIntMultiply exampleState)
 
--- interpretExec
-testResult3 = [12] == int (interpretExec loadedState)
+testResult4 = [3, 3] == int (instructionIntDivide exampleState)
 
+testResult5 = [6, 2, 6, 3] == int (interpretExec exampleState)
+
+loadedState = loadProgarm [IntGene 6, IntGene 6, StateFunc instructionIntAdd] emptyState
+
+testResult6 = [12] == int (interpretExec loadedState)
+
+allTests = and [testResult1, testResult2, testResult3, testResult4, testResult5, testResult6]

@@ -13,11 +13,7 @@ data Gene
   | StringGene String
   | StateFunc (State -> State)
   | Close
-
---  | Block [Gene]
--- If we do plushy (as opposed to just detecting the Close itself,
--- then we may need to make a structually recursive data structure for the "program" data structure
--- exampleGenome = [Program] rather than [Gene], or just include the Block above?
+  | Block [Gene]
 
 data State = State
   { exec :: [Gene],
@@ -46,7 +42,19 @@ emptyState =
 -- which should take the number and type of parameter they have.
 instructionIntAdd :: State -> State
 instructionIntAdd (State es [] fs bs ss ps) = State es [] fs bs ss ps
-instructionIntAdd (State es (i : is) fs bs ss ps) = State es ((i + head is) : drop 1 is) fs bs ss ps
+instructionIntAdd (State es (i : is) fs bs ss ps) = State es ((head is + i) : drop 1 is) fs bs ss ps
+
+instructionIntSubtract :: State -> State
+instructionIntSubtract (State es [] fs bs ss ps) = State es [] fs bs ss ps
+instructionIntSubtract (State es (i : is) fs bs ss ps) = State es ((head is - i) : drop 1 is) fs bs ss ps
+
+instructionIntMultiply :: State -> State
+instructionIntMultiply (State es [] fs bs ss ps) = State es [] fs bs ss ps
+instructionIntMultiply (State es (i : is) fs bs ss ps) = State es ((head is * i) : drop 1 is) fs bs ss ps
+
+instructionIntDivide :: State -> State
+instructionIntDivide (State es [] fs bs ss ps) = State es [] fs bs ss ps
+instructionIntDivide (State es (i : is) fs bs ss ps) = State es (div (head is) i : drop 1 is) fs bs ss ps
 
 -- This is one of the push genome functions itself, not infrastructure.
 -- Optionally, split this off into independent functions
@@ -84,13 +92,13 @@ loadProgarm newstack (State _ i f b s p) = State newstack i f b s p
 interpretExec :: State -> State
 interpretExec (State [] is fs bs ss ps) = State [] is fs bs ss ps
 interpretExec (State (e : es) is fs bs ss ps) =
-   case e of
-        (IntGene val) -> interpretExec (State es (val : is) fs bs ss ps)
-        (FloatGene val) -> interpretExec (State es is (val : fs) bs ss ps)
-        (BoolGene val) -> interpretExec (State es is fs (val : bs) ss ps)
-        (StringGene val) -> interpretExec (State es is fs bs (val : ss) ps)
-        (StateFunc func) -> interpretExec (func (State es is fs bs ss ps))
-        -- (Block block) -> interpretExec (State ((reverse block) ++ es) is fs bs ss ps)
+  case e of
+    (IntGene val) -> interpretExec (State es (val : is) fs bs ss ps)
+    (FloatGene val) -> interpretExec (State es is (val : fs) bs ss ps)
+    (BoolGene val) -> interpretExec (State es is fs (val : bs) ss ps)
+    (StringGene val) -> interpretExec (State es is fs bs (val : ss) ps)
+    (StateFunc func) -> interpretExec (func (State es is fs bs ss ps))
+    (Block block) -> interpretExec (State (reverse block ++ es) is fs bs ss ps)
 
 -- The safety of interpretExec on empty stacks depends on the functions it calls.
 -- Need to make interpretExec strict, right?
