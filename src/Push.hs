@@ -41,19 +41,19 @@ emptyState =
 -- Everntually, this can be part of the apply func to state helpers,
 -- which should take the number and type of parameter they have.
 instructionIntAdd :: State -> State
-instructionIntAdd (State es (i : is) fs bs ss ps) = State es ((head is + i) : drop 1 is) fs bs ss ps
+instructionIntAdd (State es (i1 : i2 : is) fs bs ss ps) = State es (i2 + i1 : is) fs bs ss ps
 instructionIntAdd state = state
 
 instructionIntSub :: State -> State
-instructionIntSub (State es (i : is) fs bs ss ps) = State es ((head is - i) : drop 1 is) fs bs ss ps
+instructionIntSub (State es (i1 : i2 : is) fs bs ss ps) = State es (i2 - i1 : is) fs bs ss ps
 instructionIntSub state = state
 
 instructionIntMul :: State -> State
-instructionIntMul (State es (i : is) fs bs ss ps) = State es ((head is * i) : drop 1 is) fs bs ss ps
+instructionIntMul (State es (i1 : i2 : is) fs bs ss ps) = State es (i2 * i1 : is) fs bs ss ps
 instructionIntMul state = state
 
 instructionIntDiv :: State -> State
-instructionIntDiv (State es (i : is) fs bs ss ps) = State es (div (head is) i : drop 1 is) fs bs ss ps
+instructionIntDiv (State es (i1 : i2 : is) fs bs ss ps) = State es (i2 `div` i1 : is) fs bs ss ps
 instructionIntDiv state = state
 
 instructionExecIf :: State -> State
