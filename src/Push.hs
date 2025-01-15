@@ -41,20 +41,28 @@ emptyState =
 -- Everntually, this can be part of the apply func to state helpers,
 -- which should take the number and type of parameter they have.
 instructionIntAdd :: State -> State
-instructionIntAdd (State es [] fs bs ss ps) = State es [] fs bs ss ps
 instructionIntAdd (State es (i : is) fs bs ss ps) = State es ((head is + i) : drop 1 is) fs bs ss ps
+instructionIntAdd state = state
 
-instructionIntSubtract :: State -> State
-instructionIntSubtract (State es [] fs bs ss ps) = State es [] fs bs ss ps
-instructionIntSubtract (State es (i : is) fs bs ss ps) = State es ((head is - i) : drop 1 is) fs bs ss ps
+instructionIntSub :: State -> State
+instructionIntSub (State es (i : is) fs bs ss ps) = State es ((head is - i) : drop 1 is) fs bs ss ps
+instructionIntSub state = state
 
-instructionIntMultiply :: State -> State
-instructionIntMultiply (State es [] fs bs ss ps) = State es [] fs bs ss ps
-instructionIntMultiply (State es (i : is) fs bs ss ps) = State es ((head is * i) : drop 1 is) fs bs ss ps
+instructionIntMul :: State -> State
+instructionIntMul (State es (i : is) fs bs ss ps) = State es ((head is * i) : drop 1 is) fs bs ss ps
+instructionIntMul state = state
 
-instructionIntDivide :: State -> State
-instructionIntDivide (State es [] fs bs ss ps) = State es [] fs bs ss ps
-instructionIntDivide (State es (i : is) fs bs ss ps) = State es (div (head is) i : drop 1 is) fs bs ss ps
+instructionIntDiv :: State -> State
+instructionIntDiv (State es (i : is) fs bs ss ps) = State es (div (head is) i : drop 1 is) fs bs ss ps
+instructionIntDiv state = state
+
+instructionExecIf :: State -> State
+instructionExecIf (State es is fs [] ss ps) = (State es is fs [] ss ps)
+instructionExecIf (State (e : es) is fs bs ss ps) =
+  case head bs of
+    True -> State (e : drop 1 es) is fs bs ss ps
+    False -> State (es) is fs bs ss ps
+instructionExecIf state = state
 
 -- This is one of the push genome functions itself, not infrastructure.
 -- Optionally, split this off into independent functions
@@ -98,7 +106,7 @@ interpretExec (State (e : es) is fs bs ss ps) =
     (BoolGene val) -> interpretExec (State es is fs (val : bs) ss ps)
     (StringGene val) -> interpretExec (State es is fs bs (val : ss) ps)
     (StateFunc func) -> interpretExec (func (State es is fs bs ss ps))
-    (Block block) -> interpretExec (State (reverse block ++ es) is fs bs ss ps)
+    (Block block) -> interpretExec (State (block ++ es) is fs bs ss ps)
 
 -- The safety of interpretExec on empty stacks depends on the functions it calls.
 -- Need to make interpretExec strict, right?
