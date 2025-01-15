@@ -46,13 +46,7 @@ emptyState =
 -- which should take the number and type of parameter they have.
 instructionIntAdd :: State -> State
 instructionIntAdd (State es [] fs bs ss ps) = State es [] fs bs ss ps
-instructionIntAdd (State es [i] fs bs ss ps) = State es [i] fs bs ss ps
 instructionIntAdd (State es (i : is) fs bs ss ps) = State es ((i + head is) : drop 1 is) fs bs ss ps
-
---  let result = sum (take 2 (int state))
---      dropped = drop 2 (int state)
---   in updateIntStack (result : dropped) state
--- For safety, pattern match on [] and i:is or check for <2 long list after take 2?
 
 -- This is one of the push genome functions itself, not infrastructure.
 -- Optionally, split this off into independent functions
@@ -90,13 +84,13 @@ loadProgarm newstack (State _ i f b s p) = State newstack i f b s p
 interpretExec :: State -> State
 interpretExec (State [] is fs bs ss ps) = State [] is fs bs ss ps
 interpretExec (State (e : es) is fs bs ss ps) =
-  let poppedState = State es is fs bs ss ps
-   in case e of
+   case e of
         (IntGene val) -> interpretExec (State es (val : is) fs bs ss ps)
         (FloatGene val) -> interpretExec (State es is (val : fs) bs ss ps)
         (BoolGene val) -> interpretExec (State es is fs (val : bs) ss ps)
         (StringGene val) -> interpretExec (State es is fs bs (val : ss) ps)
-        (StateFunc func) -> interpretExec (func poppedState)
+        (StateFunc func) -> interpretExec (func (State es is fs bs ss ps))
+        -- (Block block) -> interpretExec (State ((reverse block) ++ es) is fs bs ss ps)
 
 -- The safety of interpretExec on empty stacks depends on the functions it calls.
 -- Need to make interpretExec strict, right?
