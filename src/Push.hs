@@ -66,22 +66,12 @@ instructionExecIf state = state
 -- This is one of the push genome functions itself, not infrastructure.
 -- Optionally, split this off into independent functions
 instructionParameterLoad :: State -> State
-instructionParameterLoad (State es is fs bs ss []) = State es is fs bs ss []
 instructionParameterLoad (State es is fs bs ss (p : ps)) = case p of
   (IntGene val) -> State es (val : is) fs bs ss ps
   (FloatGene val) -> State es is (val : fs) bs ss ps
   (BoolGene val) -> State es is fs (val : bs) ss ps
   (StringGene val) -> State es is fs bs (val : ss) ps
-
--- Wow, a one-liner for interpreting a paretheses-free genome...
--- Does not handle any data elements in genome yet,
--- but condition could be added to the lambda.
--- Need to update this when adding parethetical blocks too.
--- interpretFuncOnlyGenome :: State -> [State -> State] -> State
--- interpretFuncOnlyGenome = foldl' (\acc f -> f acc)
--- While this is not usable, it illustrates we want this pattern:
--- foldl (strict, cumulative accumulator), and not this pattern:
--- foldr (greedy/lazy incremental or quit early)
+instructionParameterLoad state = state
 
 -- Loads a genome into the exec stack
 loadProgarm :: [Gene] -> State -> State
@@ -96,6 +86,7 @@ loadProgarm newstack (State _ i f b s p) = State newstack i f b s p
 --     items that it contains back onto the EXEC stack individually,
 --     in reverse order (so that the item that was first in the list
 --     ends up on top).
+-- The empty-stack safety of interpretExec on empty stacks depends on the functions it calls.
 interpretExec :: State -> State
 interpretExec (State [] is fs bs ss ps) = State [] is fs bs ss ps
 interpretExec (State (e : es) is fs bs ss ps) =
@@ -107,5 +98,4 @@ interpretExec (State (e : es) is fs bs ss ps) =
     (StateFunc func) -> interpretExec (func (State es is fs bs ss ps))
     (Block block) -> interpretExec (State (block ++ es) is fs bs ss ps)
 
--- The safety of interpretExec on empty stacks depends on the functions it calls.
 -- Need to make interpretExec strict, right?
