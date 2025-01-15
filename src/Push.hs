@@ -57,9 +57,8 @@ instructionIntDiv (State es (i : is) fs bs ss ps) = State es (div (head is) i : 
 instructionIntDiv state = state
 
 instructionExecIf :: State -> State
-instructionExecIf (State es is fs [] ss ps) = (State es is fs [] ss ps)
-instructionExecIf (State (e : es) is fs bs ss ps) =
-  case head bs of
+instructionExecIf (State (e : es) is fs (b : bs) ss ps) =
+  case b of
     True -> State (e : drop 1 es) is fs bs ss ps
     False -> State (es) is fs bs ss ps
 instructionExecIf state = state
