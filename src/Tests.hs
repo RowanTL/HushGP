@@ -4,7 +4,7 @@ import Push
 
 exampleState =
   State
-    { exec = [IntGene 5, FloatGene 3.4, BoolGene True, StringGene "hi"],
+    { exec = [IntGene 5, StateFunc instructionParameterLoad, StateFunc instructionIntAdd],
       int = [1, 2, 3],
       float = [1.2, 1.7],
       bool = [True, False],
@@ -15,7 +15,12 @@ exampleState =
 -- intAdd
 testResult1 = [3, 3] == int (instructionIntAdd exampleState)
 
-loaded = loadProgarm [IntGene 6, IntGene 6, StateFunc instructionParameterLoad, StateFunc instructionIntAdd] exampleState
+-- interpretExec
+testResult2 = [6,1,2,3] == int (interpretExec exampleState)
+
+-- This nukes the exec stack, just as an example of how to load at the start.
+loadedState = loadProgarm [IntGene 6, IntGene 6, StateFunc instructionParameterLoad, StateFunc instructionIntAdd] emptyState
 
 -- interpretExec
-testResult2 = [7,6,1,2,3] == int (interpretExec loaded)
+testResult3 = [12] == int (interpretExec loadedState)
+
