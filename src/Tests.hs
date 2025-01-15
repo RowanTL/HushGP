@@ -13,9 +13,9 @@ exampleState =
     }
 
 -- intAdd
-testResult1 = [3, 3] == int (intAdd exampleState)
+testResult1 = [3, 3] == int (instructionIntAdd exampleState)
 
-loaded = loadProgarm [IntGene 6, IntGene 6, StateFunc intAdd] emptyState
+loaded = loadProgarm [IntGene 6, IntGene 6, StateFunc instructionParameterLoad, StateFunc instructionIntAdd] exampleState
 
 -- interpretExec
-testResult2 = [12] == int (interpretExec loaded)
+testResult2 = [7,6,1,2,3] == int (interpretExec loaded)

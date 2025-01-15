@@ -44,20 +44,21 @@ emptyState =
 -- That is more efficient than checking length.
 -- Everntually, this can be part of the apply func to state helpers,
 -- which should take the number and type of parameter they have.
-intAdd :: State -> State
-intAdd (State es [] fs bs ss ps) = State es [] fs bs ss ps
-intAdd (State es [i] fs bs ss ps) = State es [i] fs bs ss ps
-intAdd (State es (i : is) fs bs ss ps) = State es ((i + head is) : drop 1 is) fs bs ss ps
+instructionIntAdd :: State -> State
+instructionIntAdd (State es [] fs bs ss ps) = State es [] fs bs ss ps
+instructionIntAdd (State es [i] fs bs ss ps) = State es [i] fs bs ss ps
+instructionIntAdd (State es (i : is) fs bs ss ps) = State es ((i + head is) : drop 1 is) fs bs ss ps
 
 --  let result = sum (take 2 (int state))
 --      dropped = drop 2 (int state)
 --   in updateIntStack (result : dropped) state
 -- For safety, pattern match on [] and i:is or check for <2 long list after take 2?
 
+-- This is one of the push genome functions itself, not infrastructure.
 -- Optionally, split this off into independent functions
-parameterLoad :: State -> State
-parameterLoad (State es is fs bs ss []) = State es is fs bs ss []
-parameterLoad (State es is fs bs ss (p : ps)) = case p of
+instructionParameterLoad :: State -> State
+instructionParameterLoad (State es is fs bs ss []) = State es is fs bs ss []
+instructionParameterLoad (State es is fs bs ss (p : ps)) = case p of
   (IntGene val) -> State es (val : is) fs bs ss ps
   (FloatGene val) -> State es is (val : fs) bs ss ps
   (BoolGene val) -> State es is fs (val : bs) ss ps
