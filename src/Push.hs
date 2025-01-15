@@ -52,7 +52,6 @@ intAdd (State es (i : is) fs bs ss ps) = State es ((i + head is) : drop 1 is) fs
 --  let result = sum (take 2 (int state))
 --      dropped = drop 2 (int state)
 --   in updateIntStack (result : dropped) state
-
 -- For safety, pattern match on [] and i:is or check for <2 long list after take 2?
 
 -- Optionally, split this off into independent functions
