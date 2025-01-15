@@ -57,10 +57,10 @@ instructionIntDiv (State es (i1 : i2 : is) fs bs ss ps) = State es (i2 `div` i1 
 instructionIntDiv state = state
 
 instructionExecIf :: State -> State
-instructionExecIf (State (e : es) is fs (b : bs) ss ps) =
+instructionExecIf (State (e1 : e2 : es) is fs (b : bs) ss ps) =
   case b of
-    True -> State (e : drop 1 es) is fs bs ss ps
-    False -> State (es) is fs bs ss ps
+    True -> State (e1 : es) is fs bs ss ps
+    False -> State (e2 : es) is fs bs ss ps
 instructionExecIf state = state
 
 -- This is one of the push genome functions itself, not infrastructure.
