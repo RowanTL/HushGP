@@ -4,7 +4,7 @@ module Push where
 
 import qualified Data.Map as Map
 
--- import Debug.Trace (trace, traceStack)
+import Debug.Trace (trace, traceStack)
 
 -- The exec stack must store heterogenous types,
 -- and we must be able to detect that type at runtime.
@@ -70,23 +70,23 @@ emptyState =
 -- Everntually, this can be part of the apply func to state helpers,
 -- which should take the number and type of parameter they have.
 instructionIntAdd :: State -> State
-instructionIntAdd state@(State {int = (i1 : i2 : is), ..}) = state {int = i1 + i2 : is}
+instructionIntAdd state@(State {int = (i1 : i2 : is), ..}) = state {int = i2 + i1 : is}
 instructionIntAdd state = state
 
 instructionIntSub :: State -> State
-instructionIntSub state@(State {int = (i1 : i2 : is), ..}) = state {int = i1 - i2 : is}
+instructionIntSub state@(State {int = (i1 : i2 : is), ..}) = state {int = i2 - i1 : is}
 instructionIntSub state = state
 
 instructionIntMul :: State -> State
-instructionIntMul state@(State {int = (i1 : i2 : is), ..}) = state {int = i1 * i2 : is}
+instructionIntMul state@(State {int = (i1 : i2 : is), ..}) = state {int = i2 * i1 : is}
 instructionIntMul state = state
 
 instructionIntDiv :: State -> State
-instructionIntDiv state@(State {int = (i1 : i2 : is), ..}) = state {int = i1 `div` i2 : is}
+instructionIntDiv state@(State {int = (i1 : i2 : is), ..}) = state {int = i2 `div` i1 : is}
 instructionIntDiv state = state
 
 instructionIntMod :: State -> State
-instructionIntMod state@(State {int = (i1 : i2 : is), ..}) = state {int = i1 `mod` i2 : is}
+instructionIntMod state@(State {int = (i1 : i2 : is), ..}) = state {int = i2 `mod` i1 : is}
 instructionIntMod state = state
 
 instructionIntMin :: State -> State
@@ -214,11 +214,11 @@ interpretExec :: State -> State
 interpretExec state@(State {exec = [], ..}) = state {exec = []}
 interpretExec state@(State {exec = (e : es), ..}) =
   case e of
-    (IntGene val) -> interpretExec state {int = val : int}
-    (FloatGene val) -> interpretExec (state {float = val : float})
-    (BoolGene val) -> interpretExec (state {bool = val : bool})
-    (StringGene val) -> interpretExec (state {string = val : string})
-    (StateFunc func) -> interpretExec $ func state
+    (IntGene val) -> interpretExec state {exec = es, int = val : int}
+    (FloatGene val) -> interpretExec (state {exec = es, float = val : float})
+    (BoolGene val) -> interpretExec (state {exec = es, bool = val : bool})
+    (StringGene val) -> interpretExec (state {exec = es, string = val : string})
+    (StateFunc func) -> interpretExec $ func state {exec = es}
     (Block block) -> interpretExec (state {exec = block ++ es})
     (PlaceInput val) -> interpretExec (state {exec = (input Map.! val) : es})
 
