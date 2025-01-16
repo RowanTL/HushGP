@@ -1,7 +1,8 @@
 module Push where
 
--- import Debug.Trace (trace, traceStack)
 import qualified Data.Map as Map
+
+-- import Debug.Trace (trace, traceStack)
 
 -- The exec stack must store heterogenous types,
 -- and we must be able to detect that type at runtime.

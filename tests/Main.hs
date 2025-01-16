@@ -1,5 +1,6 @@
 import Control.Exception (assert)
 import qualified Data.Map as Map
+import GP
 import Push
 import Test.Hspec
 import Test.Hspec.QuickCheck
