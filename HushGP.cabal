@@ -45,7 +45,7 @@ library
 
     -- Other library packages from which modules are imported.
     build-depends:
-        base ^>=4.18.2.1, containers
+        base, containers
 
     -- Directories containing source files.
     hs-source-dirs:   src
@@ -68,7 +68,7 @@ executable HushGP
 
     -- Other library packages from which modules are imported.
     build-depends:
-        base ^>=4.18.2.1,
+        base,
         HushGP
 
     -- Directories containing source files.
@@ -101,5 +101,5 @@ test-suite HushGP-test
 
     -- Test dependencies.
     build-depends:
-        base ^>=4.18.2.1,
+        base,
         HushGP
