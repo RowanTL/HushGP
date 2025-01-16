@@ -2,7 +2,7 @@
 A PushGP implementation in Haskell
 
 ## Tasks
-* [ ] refactor Gene to contain *Gene to Gene* for naming consistency.
+* [ ] Post minimal core of exec to haskell discourse for advice about speed optimization.
 * [x] Do test-driven development on this one.
     * [x] Write tests for every function.
     * [x] tests/ are just copied from make-grade, need to write for this project.

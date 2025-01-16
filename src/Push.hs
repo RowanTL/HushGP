@@ -4,27 +4,27 @@ module Push where
 
 import qualified Data.Map as Map
 
-import Debug.Trace (trace, traceStack)
+-- import Debug.Trace (trace, traceStack)
 
 -- The exec stack must store heterogenous types,
 -- and we must be able to detect that type at runtime.
 -- One solution is for the exec stack to be a list of [Gene].
 -- The parameter stack could be singular [Gene] or multiple [atomic] types.
 data Gene
-  = IntGene Int
-  | FloatGene Float
-  | BoolGene Bool
-  | StringGene String
+  = GeneInt Int
+  | GeneFloat Float
+  | GeneBool Bool
+  | GeneString String
   | StateFunc (State -> State)
   | PlaceInput String
   | Close
   | Block [Gene]
 
 instance Eq Gene where
-  IntGene x == IntGene y = x == y
-  FloatGene x == FloatGene y = x == y
-  BoolGene x == BoolGene y = x == y
-  StringGene x == StringGene y = x == y
+  GeneInt x == GeneInt y = x == y
+  GeneFloat x == GeneFloat y = x == y
+  GeneBool x == GeneBool y = x == y
+  GeneString x == GeneString y = x == y
   PlaceInput x == PlaceInput y = x == y
   Close == Close = True
   StateFunc x == StateFunc y = True -- This line is probably not the best thing to do
@@ -32,10 +32,10 @@ instance Eq Gene where
   _ == _ = False
 
 instance Show Gene where
-  show (IntGene x) = "Int: " <> show x
-  show (FloatGene x) = "Float: " <> show x
-  show (BoolGene x) = "Bool: " <> show x
-  show (StringGene x) = "String: " <> x
+  show (GeneInt x) = "Int: " <> show x
+  show (GeneFloat x) = "Float: " <> show x
+  show (GeneBool x) = "Bool: " <> show x
+  show (GeneString x) = "String: " <> x
   show (StateFunc func) = "Func: unnamed"
   show (PlaceInput x) = "In: " <> x
   show Close = "Close"
@@ -140,7 +140,7 @@ instructionExecDup state = state
 instructionExecDoRange :: State -> State
 instructionExecDoRange state@(State {exec = (e1 : es), int = (i0 : i1 : is), ..}) =
   if increment i0 i1 /= 0
-    then state {exec = e1 : Block [IntGene (i1 + increment i0 i1), IntGene i0, StateFunc instructionExecDoRange, e1] : es, int = i1 : is}
+    then state {exec = e1 : Block [GeneInt (i1 + increment i0 i1), GeneInt i0, StateFunc instructionExecDoRange, e1] : es, int = i1 : is}
     else state {exec = e1 : es, int = i1 : is}
   where
     increment :: Int -> Int -> Int
@@ -154,14 +154,14 @@ instructionExecDoCount :: State -> State
 instructionExecDoCount state@(State {exec = (e1 : es), int = (i1 : is), ..}) =
   if i1 < 1
     then state
-    else state {exec = Block [IntGene 0, IntGene $ i1 - 1, StateFunc instructionExecDoRange, e1] : es, int = is}
+    else state {exec = Block [GeneInt 0, GeneInt $ i1 - 1, StateFunc instructionExecDoRange, e1] : es, int = is}
 instructionExecDoCount state = state
 
 instructionExecDoTimes :: State -> State
 instructionExecDoTimes state@(State {exec = (e1 : es), int = (i1 : is), ..}) =
   if i1 < 1
     then state
-    else state {exec = Block [IntGene 0, IntGene $ i1 - 1, StateFunc instructionExecDoRange, Block [StateFunc instructionIntPop, e1]] : es, int = is}
+    else state {exec = Block [GeneInt 0, GeneInt $ i1 - 1, StateFunc instructionExecDoRange, Block [StateFunc instructionIntPop, e1]] : es, int = is}
 instructionExecDoTimes state = state
 
 instructionExecWhile :: State -> State
@@ -190,10 +190,10 @@ instructionExecWhen state = state
 -- Optionally, split this off into independent functions
 instructionParameterLoad :: State -> State
 instructionParameterLoad state@(State {parameter = (p : ps), ..}) = case p of
-  (IntGene val) -> state {int = val : int}
-  (FloatGene val) -> state {float = val : float}
-  (BoolGene val) -> state {bool = val : bool}
-  (StringGene val) -> state {string = val : string}
+  (GeneInt val) -> state {int = val : int}
+  (GeneFloat val) -> state {float = val : float}
+  (GeneBool val) -> state {bool = val : bool}
+  (GeneString val) -> state {string = val : string}
 instructionParameterLoad state = state
 
 -- Loads a genome into the exec stack
@@ -214,10 +214,10 @@ interpretExec :: State -> State
 interpretExec state@(State {exec = [], ..}) = state {exec = []}
 interpretExec state@(State {exec = (e : es), ..}) =
   case e of
-    (IntGene val) -> interpretExec state {exec = es, int = val : int}
-    (FloatGene val) -> interpretExec (state {exec = es, float = val : float})
-    (BoolGene val) -> interpretExec (state {exec = es, bool = val : bool})
-    (StringGene val) -> interpretExec (state {exec = es, string = val : string})
+    (GeneInt val) -> interpretExec state {exec = es, int = val : int}
+    (GeneFloat val) -> interpretExec (state {exec = es, float = val : float})
+    (GeneBool val) -> interpretExec (state {exec = es, bool = val : bool})
+    (GeneString val) -> interpretExec (state {exec = es, string = val : string})
     (StateFunc func) -> interpretExec $ func state {exec = es}
     (Block block) -> interpretExec (state {exec = block ++ es})
     (PlaceInput val) -> interpretExec (state {exec = (input Map.! val) : es})
