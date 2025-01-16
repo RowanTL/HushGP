@@ -16,7 +16,7 @@ main = do
   intTestFunc "instructionIntDiv" [3] [IntGene 6, IntGene 2, StateFunc instructionIntDiv] emptyState
   intTestFunc "instructionExecIf" [6, 5] [BoolGene True, StateFunc instructionExecIf, Block [IntGene 5, IntGene 6], Block [IntGene 7, IntGene 8]] emptyState
   intTestFunc "instructionExecDup" [8] [StateFunc instructionExecDup, IntGene 4, StateFunc instructionIntAdd] emptyState
-  intTestFunc "instructionExecDup" [12] [IntGene 2, Block [IntGene 4, IntGene 1, StateFunc instructionExecDoRange], StateFunc instructionIntAdd] emptyState
+  intTestFunc "instructionExecDoRange" [12] [IntGene 2, Block [IntGene 4, IntGene 1, StateFunc instructionExecDoRange], StateFunc instructionIntAdd] emptyState
   intTestFunc "instructionExecDoCount" [8] [IntGene 2, Block [IntGene 4, StateFunc instructionExecDoCount], StateFunc instructionIntAdd] emptyState
   intTestFunc "instructionIntAdd" [69, 69, 69, 69, 2] [IntGene 2, Block [IntGene 4, StateFunc instructionExecDoTimes], IntGene 69] emptyState
   intTestFunc "instructionExecDoTimes" [70, 70] [BoolGene False, BoolGene True, BoolGene True, StateFunc instructionExecWhile, IntGene 70] emptyState
