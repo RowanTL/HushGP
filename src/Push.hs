@@ -27,7 +27,7 @@ instance Eq Gene where
   GeneString x == GeneString y = x == y
   PlaceInput x == PlaceInput y = x == y
   Close == Close = True
-  StateFunc x == StateFunc y = True -- This line is probably not the best thing to do
+  StateFunc _ == StateFunc _ = True -- This line is probably not the best thing to do
   Block [x] == Block [y] = [x] == [y]
   _ == _ = False
 
@@ -36,7 +36,7 @@ instance Show Gene where
   show (GeneFloat x) = "Float: " <> show x
   show (GeneBool x) = "Bool: " <> show x
   show (GeneString x) = "String: " <> x
-  show (StateFunc func) = "Func: unnamed"
+  show (StateFunc _) = "Func: unnamed"
   show (PlaceInput x) = "In: " <> x
   show Close = "Close"
   show (Block xs) = "Block: " <> show xs
@@ -70,75 +70,75 @@ emptyState =
 -- Everntually, this can be part of the apply func to state helpers,
 -- which should take the number and type of parameter they have.
 instructionIntAdd :: State -> State
-instructionIntAdd state@(State {int = (i1 : i2 : is), ..}) = state {int = i2 + i1 : is}
+instructionIntAdd state@(State {int = (i1 : i2 : is)}) = state {int = i2 + i1 : is}
 instructionIntAdd state = state
 
 instructionIntSub :: State -> State
-instructionIntSub state@(State {int = (i1 : i2 : is), ..}) = state {int = i2 - i1 : is}
+instructionIntSub state@(State {int = (i1 : i2 : is)}) = state {int = i2 - i1 : is}
 instructionIntSub state = state
 
 instructionIntMul :: State -> State
-instructionIntMul state@(State {int = (i1 : i2 : is), ..}) = state {int = i2 * i1 : is}
+instructionIntMul state@(State {int = (i1 : i2 : is)}) = state {int = i2 * i1 : is}
 instructionIntMul state = state
 
 instructionIntDiv :: State -> State
-instructionIntDiv state@(State {int = (i1 : i2 : is), ..}) = state {int = i2 `div` i1 : is}
+instructionIntDiv state@(State {int = (i1 : i2 : is)}) = state {int = i2 `div` i1 : is}
 instructionIntDiv state = state
 
 instructionIntMod :: State -> State
-instructionIntMod state@(State {int = (i1 : i2 : is), ..}) = state {int = i2 `mod` i1 : is}
+instructionIntMod state@(State {int = (i1 : i2 : is)}) = state {int = i2 `mod` i1 : is}
 instructionIntMod state = state
 
 instructionIntMin :: State -> State
-instructionIntMin state@(State {int = (i1 : i2 : is), ..}) = state {int = min i1 i2 : is}
+instructionIntMin state@(State {int = (i1 : i2 : is)}) = state {int = min i1 i2 : is}
 instructionIntMin state = state
 
 instructionIntMax :: State -> State
-instructionIntMax state@(State {int = (i1 : i2 : is), ..}) = state {int = max i1 i2 : is}
+instructionIntMax state@(State {int = (i1 : i2 : is)}) = state {int = max i1 i2 : is}
 instructionIntMax state = state
 
 instructionIntInc :: State -> State
-instructionIntInc state@(State {int = (i1 : is), ..}) = state {int = i1 + 1 : is}
+instructionIntInc state@(State {int = (i1 : is)}) = state {int = i1 + 1 : is}
 instructionIntInc state = state
 
 instructionIntDec :: State -> State
-instructionIntDec state@(State {int = (i1 : is), ..}) = state {int = i1 - 1 : is}
+instructionIntDec state@(State {int = (i1 : is)}) = state {int = i1 - 1 : is}
 instructionIntDec state = state
 
 instructionIntLT :: State -> State
-instructionIntLT state@(State {int = i1 : i2 : is, bool = bs, ..}) = state {int = is, bool = (i1 < i2) : bs}
+instructionIntLT state@(State {int = i1 : i2 : is, bool = bs}) = state {int = is, bool = (i1 < i2) : bs}
 instructionIntLT state = state
 
 instructionIntGT :: State -> State
-instructionIntGT state@(State {int = i1 : i2 : is, bool = bs, ..}) = state {int = is, bool = (i1 > i2) : bs}
+instructionIntGT state@(State {int = i1 : i2 : is, bool = bs}) = state {int = is, bool = (i1 > i2) : bs}
 instructionIntGT state = state
 
 instructionIntLTE :: State -> State
-instructionIntLTE state@(State {int = i1 : i2 : is, bool = bs, ..}) = state {int = is, bool = (i1 <= i2) : bs}
+instructionIntLTE state@(State {int = i1 : i2 : is, bool = bs}) = state {int = is, bool = (i1 <= i2) : bs}
 instructionIntLTE state = state
 
 instructionIntGTE :: State -> State
-instructionIntGTE state@(State {int = i1 : i2 : is, bool = bs, ..}) = state {int = is, bool = (i1 >= i2) : bs}
+instructionIntGTE state@(State {int = i1 : i2 : is, bool = bs}) = state {int = is, bool = (i1 >= i2) : bs}
 instructionIntGTE state = state
 
 instructionIntPop :: State -> State
-instructionIntPop state@(State {int = (i1 : is), ..}) = state {int = is}
+instructionIntPop state@(State {int = (_ : is)}) = state {int = is}
 instructionIntPop state = state
 
 instructionExecIf :: State -> State
-instructionExecIf state@(State {exec = (e1 : e2 : es), bool = (b : bs), ..}) =
+instructionExecIf state@(State {exec = (e1 : e2 : es), bool = (b : _)}) =
   if b
     then state {exec = e1 : es}
     else state {exec = e2 : es}
 instructionExecIf state = state
 
 instructionExecDup :: State -> State
-instructionExecDup state@(State {exec = alles@(e0 : es), ..}) =
+instructionExecDup state@(State {exec = alles@(e0 : _)}) =
   state {exec = e0 : alles}
 instructionExecDup state = state
 
 instructionExecDoRange :: State -> State
-instructionExecDoRange state@(State {exec = (e1 : es), int = (i0 : i1 : is), ..}) =
+instructionExecDoRange state@(State {exec = (e1 : es), int = (i0 : i1 : is)}) =
   if increment i0 i1 /= 0
     then state {exec = e1 : Block [GeneInt (i1 + increment i0 i1), GeneInt i0, StateFunc instructionExecDoRange, e1] : es, int = i1 : is}
     else state {exec = e1 : es, int = i1 : is}
@@ -151,36 +151,36 @@ instructionExecDoRange state@(State {exec = (e1 : es), int = (i0 : i1 : is), ..}
 instructionExecDoRange state = state
 
 instructionExecDoCount :: State -> State
-instructionExecDoCount state@(State {exec = (e1 : es), int = (i1 : is), ..}) =
+instructionExecDoCount state@(State {exec = (e1 : es), int = (i1 : is)}) =
   if i1 < 1
     then state
     else state {exec = Block [GeneInt 0, GeneInt $ i1 - 1, StateFunc instructionExecDoRange, e1] : es, int = is}
 instructionExecDoCount state = state
 
 instructionExecDoTimes :: State -> State
-instructionExecDoTimes state@(State {exec = (e1 : es), int = (i1 : is), ..}) =
+instructionExecDoTimes state@(State {exec = (e1 : es), int = (i1 : is)}) =
   if i1 < 1
     then state
     else state {exec = Block [GeneInt 0, GeneInt $ i1 - 1, StateFunc instructionExecDoRange, Block [StateFunc instructionIntPop, e1]] : es, int = is}
 instructionExecDoTimes state = state
 
 instructionExecWhile :: State -> State
-instructionExecWhile state@(State {exec = (e1 : es), bool = [], ..}) =
+instructionExecWhile state@(State {exec = (_ : es), bool = []}) =
   state {exec = es}
-instructionExecWhile state@(State {exec = alles@(e1 : es), bool = (b1 : bs), ..}) =
+instructionExecWhile state@(State {exec = alles@(e1 : es), bool = (b1 : bs)}) =
   if b1
     then state {exec = e1 : StateFunc instructionExecWhile : alles, bool = bs}
     else state {exec = es}
 instructionExecWhile state = state
 
 instructionExecDoWhile :: State -> State
-instructionExecDoWhile state@(State {exec = alles@(e1 : es), ..}) =
+instructionExecDoWhile state@(State {exec = alles@(e1 : _)}) =
   state {exec = e1 : StateFunc instructionExecWhile : alles}
 instructionExecDoWhile state = state
 
 -- Eats the boolean no matter what
 instructionExecWhen :: State -> State
-instructionExecWhen state@(State {exec = (e1 : es), bool = (b1 : bs), ..}) =
+instructionExecWhen state@(State {exec = (_ : es), bool = (b1 : bs)}) =
   if not b1
     then state {exec = es, bool = bs}
     else state {bool = bs}
@@ -189,7 +189,7 @@ instructionExecWhen state = state
 -- This is one of the push genome functions itself, not infrastructure.
 -- Optionally, split this off into independent functions
 instructionParameterLoad :: State -> State
-instructionParameterLoad state@(State {parameter = (p : ps), ..}) = case p of
+instructionParameterLoad state@(State {parameter = (p : _), ..}) = case p of
   (GeneInt val) -> state {int = val : int}
   (GeneFloat val) -> state {float = val : float}
   (GeneBool val) -> state {bool = val : bool}
@@ -198,7 +198,7 @@ instructionParameterLoad state = state
 
 -- Loads a genome into the exec stack
 loadProgram :: [Gene] -> State -> State
-loadProgram newstack state@(State {exec = _, ..}) = state {exec = newstack}
+loadProgram newstack state@(State {exec = _}) = state {exec = newstack}
 
 -- Takes a Push state, and generates the next push state via:
 -- If the first item on the EXEC stack is a single instruction
@@ -211,7 +211,7 @@ loadProgram newstack state@(State {exec = _, ..}) = state {exec = newstack}
 --     ends up on top).
 -- The empty-stack safety of interpretExec on empty stacks depends on the functions it calls.
 interpretExec :: State -> State
-interpretExec state@(State {exec = [], ..}) = state {exec = []}
+interpretExec state@(State {exec = []}) = state {exec = []}
 interpretExec state@(State {exec = (e : es), ..}) =
   case e of
     (GeneInt val) -> interpretExec state {exec = es, int = val : int}
@@ -221,5 +221,6 @@ interpretExec state@(State {exec = (e : es), ..}) =
     (StateFunc func) -> interpretExec $ func state {exec = es}
     (Block block) -> interpretExec (state {exec = block ++ es})
     (PlaceInput val) -> interpretExec (state {exec = (input Map.! val) : es})
+    Close -> state -- remove this later?
 
 -- Need to make interpretExec strict, right?
