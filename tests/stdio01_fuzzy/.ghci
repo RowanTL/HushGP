@@ -1,3 +1,0 @@
-:set stop :list
-:load ../../src/main.hs ../../src/BinaryConversions.hs
-:step main
