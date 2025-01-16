@@ -14,17 +14,6 @@ exampleState =
       input = Map.fromList [("in0" , IntGene 1)]
     }
 
-doRangeState =
-  State
-    { exec = [Block [IntGene 1, IntGene 6, StateFunc instructionIntAdd], Block [IntGene 4, IntGene 1, StateFunc instructionExecDoRange]]
-    , int = []
-    , float = []
-    , string = ["abc"]
-    , bool = []
-    , parameter = []
-    , input = Map.empty
-  }
-
 testResult1 = [8, 3] == int (instructionIntAdd exampleState)
 
 testResult2 = [4, 3] == int (instructionIntSub exampleState)
@@ -49,10 +38,11 @@ loadedState4 = loadProgram [BoolGene False, PlaceInput "in0", StateFunc instruct
 testResult9 = [3, 6, 3] == int (interpretExec loadedState4)
 
 -- Tests execDup
-loadedState5 = instructionExecDup exampleState
-testResult10 = exec loadedState5 !! 0 == IntGene 5 && exec loadedState5 !! 1 == IntGene 5
+loadedState5 = interpretExec $ loadProgram [StateFunc instructionExecDup, IntGene 2] emptyState
+testResult10 = int loadedState5 !! 0 == 2 && int loadedState5 !! 1 == 2
 
 -- Tests execDoRange
-testResult11 = [1, 4, 7] == int (interpretExec doRangeState)
+loadedState6 = loadProgram [IntGene 2, Block [IntGene 4, IntGene 1, StateFunc instructionExecDoRange], StateFunc instructionIntAdd] emptyState
+testResult11 = [12] == int (interpretExec loadedState6)
 
 allTests = and [testResult1, testResult2, testResult3, testResult4, testResult5, testResult6, testResult7, testResult8, testResult9]

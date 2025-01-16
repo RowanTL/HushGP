@@ -18,7 +18,6 @@ data Gene
   | Close
   | Block [Gene]
 
--- Not going to have instances for Block or StateFunc
 instance Eq Gene where
   IntGene x == IntGene y = x == y
   FloatGene x == FloatGene y = x == y
@@ -28,6 +27,17 @@ instance Eq Gene where
   Close == Close = True
   StateFunc x == StateFunc y = True -- This line is probably not the best thing to do
   Block [x] == Block [y] = [x] == [y]
+  _ == _ = False
+
+instance Show Gene where
+  show (IntGene x) = "Int: " <> show x
+  show (FloatGene x) = "Float: " <> show x
+  show (BoolGene x) = "Bool: " <> show x
+  show (StringGene x) = "String: " <> x
+  show (StateFunc func) = "Func: unnamed"
+  show (PlaceInput x) = "In: " <> x
+  show Close = "Close"
+  show (Block xs) = "Block: " <> show xs
   
 data State = State
   { exec :: [Gene],
@@ -38,6 +48,7 @@ data State = State
     parameter :: [Gene],
     input :: Map.Map String Gene
   }
+  deriving Show
 
 emptyState :: State
 emptyState =
@@ -87,7 +98,7 @@ instructionExecDup state = state
 instructionExecDoRange :: State -> State
 instructionExecDoRange (State (e1 : es) (i0 : i1 : is) fs bs ss ps im) =
   if increment i0 i1 /= 0
-  then State (IntGene i1 : Block [IntGene (i1 + increment i0 i1), IntGene i0, StateFunc instructionExecDoRange] : es) (i1 : is) fs bs ss ps im
+  then State (e1 : Block [IntGene (i1 + increment i0 i1), IntGene i0, StateFunc instructionExecDoRange, e1] : es) (i1 : is) fs bs ss ps im
   else State (e1 : es) (i1 : is) fs bs ss ps im
   where
     increment :: Int -> Int -> Int
