@@ -9,20 +9,20 @@ import qualified Data.Map as Map
 -- One solution is for the exec stack to be a list of [Gene].
 -- The parameter stack could be singular [Gene] or multiple [atomic] types.
 data Gene
-  = IntGene Int
-  | FloatGene Float
-  | BoolGene Bool
-  | StringGene String
+  = GeneInt Int
+  | GeneFloat Float
+  | GeneBool Bool
+  | GeneString String
   | StateFunc (State -> State)
   | PlaceInput String
   | Close
   | Block [Gene]
 
 instance Eq Gene where
-  IntGene x == IntGene y = x == y
-  FloatGene x == FloatGene y = x == y
-  BoolGene x == BoolGene y = x == y
-  StringGene x == StringGene y = x == y
+  GeneInt x == GeneInt y = x == y
+  GeneFloat x == GeneFloat y = x == y
+  GeneBool x == GeneBool y = x == y
+  GeneString x == GeneString y = x == y
   PlaceInput x == PlaceInput y = x == y
   Close == Close = True
   StateFunc x == StateFunc y = True -- This line is probably not the best thing to do
@@ -30,10 +30,10 @@ instance Eq Gene where
   _ == _ = False
 
 instance Show Gene where
-  show (IntGene x) = "Int: " <> show x
-  show (FloatGene x) = "Float: " <> show x
-  show (BoolGene x) = "Bool: " <> show x
-  show (StringGene x) = "String: " <> x
+  show (GeneInt x) = "Int: " <> show x
+  show (GeneFloat x) = "Float: " <> show x
+  show (GeneBool x) = "Bool: " <> show x
+  show (GeneString x) = "String: " <> x
   show (StateFunc func) = "Func: unnamed"
   show (PlaceInput x) = "In: " <> x
   show Close = "Close"
@@ -138,7 +138,7 @@ instructionExecDup state = state
 instructionExecDoRange :: State -> State
 instructionExecDoRange (State (e1 : es) (i0 : i1 : is) fs bs ss ps im) =
   if increment i0 i1 /= 0
-    then State (e1 : Block [IntGene (i1 + increment i0 i1), IntGene i0, StateFunc instructionExecDoRange, e1] : es) (i1 : is) fs bs ss ps im
+    then State (e1 : Block [GeneInt (i1 + increment i0 i1), GeneInt i0, StateFunc instructionExecDoRange, e1] : es) (i1 : is) fs bs ss ps im
     else State (e1 : es) (i1 : is) fs bs ss ps im
   where
     increment :: Int -> Int -> Int
@@ -152,14 +152,14 @@ instructionExecDoCount :: State -> State
 instructionExecDoCount state@(State (e1 : es) (i1 : is) fs bs ss ps im) =
   if i1 < 1
     then state
-    else state {exec = Block [IntGene 0, IntGene $ i1 - 1, StateFunc instructionExecDoRange, e1] : es, int = is}
+    else state {exec = Block [GeneInt 0, GeneInt $ i1 - 1, StateFunc instructionExecDoRange, e1] : es, int = is}
 instructionExecDoCount state = state
 
 instructionExecDoTimes :: State -> State
 instructionExecDoTimes state@(State (e1 : es) (i1 : is) fs bs ss ps im) =
   if i1 < 1
     then state
-    else state {exec = Block [IntGene 0, IntGene $ i1 - 1, StateFunc instructionExecDoRange, Block [StateFunc instructionIntPop, e1]] : es, int = is}
+    else state {exec = Block [GeneInt 0, GeneInt $ i1 - 1, StateFunc instructionExecDoRange, Block [StateFunc instructionIntPop, e1]] : es, int = is}
 instructionExecDoTimes state = state
 
 instructionExecWhile :: State -> State
@@ -188,10 +188,10 @@ instructionExecWhen state = state
 -- Optionally, split this off into independent functions
 instructionParameterLoad :: State -> State
 instructionParameterLoad (State es is fs bs ss (p : ps) im) = case p of
-  (IntGene val) -> State es (val : is) fs bs ss ps im
-  (FloatGene val) -> State es is (val : fs) bs ss ps im
-  (BoolGene val) -> State es is fs (val : bs) ss ps im
-  (StringGene val) -> State es is fs bs (val : ss) ps im
+  (GeneInt val) -> State es (val : is) fs bs ss ps im
+  (GeneFloat val) -> State es is (val : fs) bs ss ps im
+  (GeneBool val) -> State es is fs (val : bs) ss ps im
+  (GeneString val) -> State es is fs bs (val : ss) ps im
 instructionParameterLoad state = state
 
 -- Loads a genome into the exec stack
@@ -212,10 +212,10 @@ interpretExec :: State -> State
 interpretExec (State [] is fs bs ss ps im) = State [] is fs bs ss ps im
 interpretExec (State (e : es) is fs bs ss ps im) =
   case e of
-    (IntGene val) -> interpretExec (State es (val : is) fs bs ss ps im)
-    (FloatGene val) -> interpretExec (State es is (val : fs) bs ss ps im)
-    (BoolGene val) -> interpretExec (State es is fs (val : bs) ss ps im)
-    (StringGene val) -> interpretExec (State es is fs bs (val : ss) ps im)
+    (GeneInt val) -> interpretExec (State es (val : is) fs bs ss ps im)
+    (GeneFloat val) -> interpretExec (State es is (val : fs) bs ss ps im)
+    (GeneBool val) -> interpretExec (State es is fs (val : bs) ss ps im)
+    (GeneString val) -> interpretExec (State es is fs bs (val : ss) ps im)
     (StateFunc func) -> interpretExec (func (State es is fs bs ss ps im))
     (Block block) -> interpretExec (State (block ++ es) is fs bs ss ps im)
     (PlaceInput input) -> interpretExec (State (im Map.! input : es) is fs bs ss ps im)
