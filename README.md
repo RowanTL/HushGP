@@ -2,9 +2,10 @@
 A PushGP implementation in Haskell
 
 ## Tasks
-* [ ] Do test-driven development on this one.
-    * [ ] Write tests for every function.
-    * [ ] tests/ are just copied from make-grade, need to write for this project.
+* [x] Do test-driven development on this one.
+    * [x] Write tests for every function.
+    * [x] tests/ are just copied from make-grade, need to write for this project.
+    * [ ] Included examples of basic assertions, QuickCheck, Hspec, hspec-quickcheck.
 
 ## Design considerations
 The biggest design constraint is that for the exec stack (but not data stacks)
