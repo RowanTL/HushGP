@@ -1,3 +1,4 @@
+{-# LANGUAGE DataKinds #-}
 module Push where
 
 -- import Debug.Trace (trace, traceStack)
@@ -17,6 +18,17 @@ data Gene
   | Close
   | Block [Gene]
 
+-- Not going to have instances for Block or StateFunc
+instance Eq Gene where
+  IntGene x == IntGene y = x == y
+  FloatGene x == FloatGene y = x == y
+  BoolGene x == BoolGene y = x == y
+  StringGene x == StringGene y = x == y
+  PlaceInput x == PlaceInput y = x == y
+  Close == Close = True
+  StateFunc x == StateFunc y = True -- This line is probably not the best thing to do
+  Block [x] == Block [y] = [x] == [y]
+  
 data State = State
   { exec :: [Gene],
     int :: [Int],
@@ -66,6 +78,24 @@ instructionExecIf (State (e1 : e2 : es) is fs (b : bs) ss ps im) =
     True -> State (e1 : es) is fs bs ss ps im
     False -> State (e2 : es) is fs bs ss ps im
 instructionExecIf state = state
+
+instructionExecDup :: State -> State
+instructionExecDup (State alles@(e0 : es) is fs bs ss pm im) =
+  State (e0 : alles) is fs bs ss pm im
+instructionExecDup state = state
+
+instructionExecDoRange :: State -> State
+instructionExecDoRange (State (e1 : es) (i0 : i1 : is) fs bs ss ps im) =
+  if increment i0 i1 /= 0
+  then State (IntGene i1 : Block [IntGene (i1 + increment i0 i1), IntGene i0, StateFunc instructionExecDoRange] : es) (i1 : is) fs bs ss ps im
+  else State (e1 : es) (i1 : is) fs bs ss ps im
+  where
+    increment :: Int -> Int -> Int
+    increment destIdx currentIdx
+      | currentIdx < destIdx = 1
+      | currentIdx > destIdx = -1
+      | otherwise = 0
+instructionExecDoRange state = state
 
 -- This is one of the push genome functions itself, not infrastructure.
 -- Optionally, split this off into independent functions
