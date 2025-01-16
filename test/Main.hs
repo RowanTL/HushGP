@@ -1,6 +1,8 @@
 import Control.Exception (assert)
-import GP
 import Push
+import State
+import Instructions.IntInstructions
+import Instructions.ExecInstructions
 
 intTestFunc :: String -> [Int] -> [Gene] -> State -> IO ()
 intTestFunc name goal genome startState =
