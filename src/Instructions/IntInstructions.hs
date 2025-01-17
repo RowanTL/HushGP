@@ -1,6 +1,7 @@
 module Instructions.IntInstructions where
 
 import State
+import Debug.Trace
 
 instructionIntAdd :: State -> State
 instructionIntAdd state@(State {int = (i1 : i2 : is)}) = state {int = i2 + i1 : is}
@@ -15,7 +16,7 @@ instructionIntMul state@(State {int = (i1 : i2 : is)}) = state {int = i2 * i1 : 
 instructionIntMul state = state
 
 instructionIntDiv :: State -> State
-instructionIntDiv state@(State {int = (i1 : i2 : is)}) = state {int = i2 `div` i1 : is}
+instructionIntDiv state@(State {int = (i1 : i2 : is)}) = state {int = if i1 /= 0 then (i2 `div` i1) : is else i1 : i2 : is}
 instructionIntDiv state = state
 
 instructionIntMod :: State -> State

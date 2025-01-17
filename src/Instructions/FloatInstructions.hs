@@ -1,60 +1,56 @@
-module Instruction.FloatInstructions where
+module Instructions.FloatInstructions where
 
 import State
 
-instructionIntAdd :: State -> State
-instructionIntAdd state@(State {int = (i1 : i2 : is)}) = state {int = i2 + i1 : is}
-instructionIntAdd state = state
+instructionFloatAdd :: State -> State
+instructionFloatAdd state@(State {float = (f1 : f2 : fs)}) = state {float = f2 + f1 : fs}
+instructionFloatAdd state = state
 
-instructionIntSub :: State -> State
-instructionIntSub state@(State {int = (i1 : i2 : is)}) = state {int = i2 - i1 : is}
-instructionIntSub state = state
+instructionFloatSub :: State -> State
+instructionFloatSub state@(State {float = (f1 : f2 : fs)}) = state {float = f2 - f1 : fs}
+instructionFloatSub state = state
 
-instructionIntMul :: State -> State
-instructionIntMul state@(State {int = (i1 : i2 : is)}) = state {int = i2 * i1 : is}
-instructionIntMul state = state
+instructionFloatMul :: State -> State
+instructionFloatMul state@(State {float = (f1 : f2 : fs)}) = state {float = f2 * f1 : fs}
+instructionFloatMul state = state
 
-instructionIntDiv :: State -> State
-instructionIntDiv state@(State {int = (i1 : i2 : is)}) = state {int = i2 `div` i1 : is}
-instructionIntDiv state = state
+instructionFloatDiv :: State -> State
+instructionFloatDiv state@(State {float = (f1 : f2 : fs)}) = state {float = if f1 /= 0 then f2 / f1 : fs else f1 : f2 : fs}
+instructionFloatDiv state = state
 
-instructionIntMod :: State -> State
-instructionIntMod state@(State {int = (i1 : i2 : is)}) = state {int = i2 `mod` i1 : is}
-instructionIntMod state = state
+instructionFloatMin :: State -> State
+instructionFloatMin state@(State {float = (f1 : f2 : fs)}) = state {float = min f1 f2 : fs}
+instructionFloatMin state = state
 
-instructionIntMin :: State -> State
-instructionIntMin state@(State {int = (i1 : i2 : is)}) = state {int = min i1 i2 : is}
-instructionIntMin state = state
+instructionFloatMax :: State -> State
+instructionFloatMax state@(State {float = (f1 : f2 : fs)}) = state {float = max f1 f2 : fs}
+instructionFloatMax state = state
 
-instructionIntMax :: State -> State
-instructionIntMax state@(State {int = (i1 : i2 : is)}) = state {int = max i1 i2 : is}
-instructionIntMax state = state
+instructionFloatInc :: State -> State
+instructionFloatInc state@(State {float = (f1 : fs)}) = state {float = f1 + 1 : fs}
+instructionFloatInc state = state
 
-instructionIntInc :: State -> State
-instructionIntInc state@(State {int = (i1 : is)}) = state {int = i1 + 1 : is}
-instructionIntInc state = state
+instructionFloatDec :: State -> State
+instructionFloatDec state@(State {float = (f1 : fs)}) = state {float = f1 - 1 : fs}
+instructionFloatDec state = state
 
-instructionIntDec :: State -> State
-instructionIntDec state@(State {int = (i1 : is)}) = state {int = i1 - 1 : is}
-instructionIntDec state = state
+instructionFloatLT :: State -> State
+instructionFloatLT state@(State {float = f1 : f2 : fs, bool = bs}) = state {float = fs, bool = (f1 < f2) : bs}
+instructionFloatLT state = state
 
-instructionIntLT :: State -> State
-instructionIntLT state@(State {int = i1 : i2 : is, bool = bs}) = state {int = is, bool = (i1 < i2) : bs}
-instructionIntLT state = state
+instructionFloatGT :: State -> State
+instructionFloatGT state@(State {float = f1 : f2 : fs, bool = bs}) = state {float = fs, bool = (f1 > f2) : bs}
+instructionFloatGT state = state
 
-instructionIntGT :: State -> State
-instructionIntGT state@(State {int = i1 : i2 : is, bool = bs}) = state {int = is, bool = (i1 > i2) : bs}
-instructionIntGT state = state
+instructionFloatLTE :: State -> State
+instructionFloatLTE state@(State {float = f1 : f2 : fs, bool = bs}) = state {float = fs, bool = (f1 <= f2) : bs}
+instructionFloatLTE state = state
 
-instructionIntLTE :: State -> State
-instructionIntLTE state@(State {int = i1 : i2 : is, bool = bs}) = state {int = is, bool = (i1 <= i2) : bs}
-instructionIntLTE state = state
+instructionFloatGTE :: State -> State
+instructionFloatGTE state@(State {float = f1 : f2 : fs, bool = bs}) = state {float = fs, bool = (f1 >= f2) : bs}
+instructionFloatGTE state = state
 
-instructionIntGTE :: State -> State
-instructionIntGTE state@(State {int = i1 : i2 : is, bool = bs}) = state {int = is, bool = (i1 >= i2) : bs}
-instructionIntGTE state = state
-
-instructionIntPop :: State -> State
-instructionIntPop state@(State {int = (_ : is)}) = state {int = is}
-instructionIntPop state = state
+instructionFloatPop :: State -> State
+instructionFloatPop state@(State {float = (_ : fs)}) = state {float = fs}
+instructionFloatPop state = state
 
