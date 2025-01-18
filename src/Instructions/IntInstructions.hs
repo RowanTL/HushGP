@@ -1,7 +1,7 @@
 module Instructions.IntInstructions where
 
 import State
-import Debug.Trace
+-- import Debug.Trace
 
 instructionIntAdd :: State -> State
 instructionIntAdd state@(State {int = (i1 : i2 : is)}) = state {int = i2 + i1 : is}
