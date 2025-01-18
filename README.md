@@ -1,6 +1,9 @@
 # HushGP
 A PushGP implementation in Haskell
 
+This branch is meant to overhaul the system with the lens
+library for more abstraction.
+
 ## Tasks
 * [ ] Post minimal core of exec to haskell discourse for advice about speed optimization.
 * [x] Do test-driven development on this one.
