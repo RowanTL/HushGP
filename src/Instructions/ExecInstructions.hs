@@ -4,22 +4,22 @@ import State
 import Instructions.IntInstructions
 
 instructionExecIf :: State -> State
-instructionExecIf state@(State {exec = (e1 : e2 : es), bool = (b : _)}) =
+instructionExecIf state@(State {_exec = (e1 : e2 : es), _bool = (b : _)}) =
   if b
-    then state {exec = e1 : es}
-    else state {exec = e2 : es}
+    then state {_exec = e1 : es}
+    else state {_exec = e2 : es}
 instructionExecIf state = state
 
 instructionExecDup :: State -> State
-instructionExecDup state@(State {exec = alles@(e0 : _)}) =
-  state {exec = e0 : alles}
+instructionExecDup state@(State {_exec = alles@(e : _)}) =
+  state {_exec = e : alles}
 instructionExecDup state = state
 
 instructionExecDoRange :: State -> State
-instructionExecDoRange state@(State {exec = (e1 : es), int = (i0 : i1 : is)}) =
+instructionExecDoRange state@(State {_exec = (e1 : es), _int = (i0 : i1 : is)}) =
   if increment i0 i1 /= 0
-    then state {exec = e1 : Block [GeneInt (i1 + increment i0 i1), GeneInt i0, StateFunc instructionExecDoRange, e1] : es, int = i1 : is}
-    else state {exec = e1 : es, int = i1 : is}
+    then state {_exec = e1 : Block [GeneInt (i1 + increment i0 i1), GeneInt i0, StateFunc instructionExecDoRange, e1] : es, _int = i1 : is}
+    else state {_exec = e1 : es, _int = i1 : is}
   where
     increment :: Int -> Int -> Int
     increment destIdx currentIdx
@@ -29,37 +29,37 @@ instructionExecDoRange state@(State {exec = (e1 : es), int = (i0 : i1 : is)}) =
 instructionExecDoRange state = state
 
 instructionExecDoCount :: State -> State
-instructionExecDoCount state@(State {exec = (e1 : es), int = (i1 : is)}) =
-  if i1 < 1
+instructionExecDoCount state@(State {_exec = (e : es), _int = (i : is)}) =
+  if i < 1
     then state
-    else state {exec = Block [GeneInt 0, GeneInt $ i1 - 1, StateFunc instructionExecDoRange, e1] : es, int = is}
+    else state {_exec = Block [GeneInt 0, GeneInt $ i - 1, StateFunc instructionExecDoRange, e] : es, _int = is}
 instructionExecDoCount state = state
 
 instructionExecDoTimes :: State -> State
-instructionExecDoTimes state@(State {exec = (e1 : es), int = (i1 : is)}) =
-  if i1 < 1
+instructionExecDoTimes state@(State {_exec = (e : es), _int = (i : is)}) =
+  if i < 1
     then state
-    else state {exec = Block [GeneInt 0, GeneInt $ i1 - 1, StateFunc instructionExecDoRange, Block [StateFunc instructionIntPop, e1]] : es, int = is}
+    else state {_exec = Block [GeneInt 0, GeneInt $ i - 1, StateFunc instructionExecDoRange, Block [StateFunc instructionIntPop, e]] : es, _int = is}
 instructionExecDoTimes state = state
 
 instructionExecWhile :: State -> State
-instructionExecWhile state@(State {exec = (_ : es), bool = []}) =
-  state {exec = es}
-instructionExecWhile state@(State {exec = alles@(e1 : es), bool = (b1 : bs)}) =
-  if b1
-    then state {exec = e1 : StateFunc instructionExecWhile : alles, bool = bs}
-    else state {exec = es}
+instructionExecWhile state@(State {_exec = (_ : es), _bool = []}) =
+  state {_exec = es}
+instructionExecWhile state@(State {_exec = alles@(e : es), _bool = (b : bs)}) =
+  if b
+    then state {_exec = e : StateFunc instructionExecWhile : alles, _bool = bs}
+    else state {_exec = es}
 instructionExecWhile state = state
 
 instructionExecDoWhile :: State -> State
-instructionExecDoWhile state@(State {exec = alles@(e1 : _)}) =
-  state {exec = e1 : StateFunc instructionExecWhile : alles}
+instructionExecDoWhile state@(State {_exec = alles@(e : _)}) =
+  state {_exec = e : StateFunc instructionExecWhile : alles}
 instructionExecDoWhile state = state
 
--- Eats the boolean no matter what
+-- Eats the _boolean no matter what
 instructionExecWhen :: State -> State
-instructionExecWhen state@(State {exec = (_ : es), bool = (b1 : bs)}) =
-  if not b1
-    then state {exec = es, bool = bs}
-    else state {bool = bs}
+instructionExecWhen state@(State {_exec = (_ : es), _bool = (b : bs)}) =
+  if not b
+    then state {_exec = es, _bool = bs}
+    else state {_bool = bs}
 instructionExecWhen state = state
