@@ -66,3 +66,31 @@ instructionEq state accessor =
 
 instructionStackDepth :: State -> Lens' State [a] -> State
 instructionStackDepth state accessor = state & int .~ (length (view accessor state) : view int state)
+
+-- Will have a non-generic definition for the int stack
+instructionYankDup :: State -> Lens' State [a] -> State
+instructionYankDup state@(State {_int = i : is}) accessor = 
+  if notEmptyStack state accessor
+  then (state & accessor .~ (view accessor state !! max 0 (min i (length (view accessor state) - 1))) : view accessor state) {_int = is}
+  else state
+instructionYankDup state@(State {_int = []}) _ = state
+
+-- Is this optimal? Running instrucitonYankDup twice?????
+-- int non generic too
+instructionYank :: State -> Lens' State [a] -> State
+instructionYank state accessor = instructionYankDup state accessor & accessor .~ init (view accessor (instructionYankDup state accessor))
+
+combineTuple :: a -> ([a], [a]) -> [a]
+combineTuple val tup = fst tup <> [val] <> snd tup
+
+-- int non generic :(
+instructionShoveDup :: State -> Lens' State [a] -> State
+instructionShoveDup state@(State {_int = i : is}) accessor =
+  if notEmptyStack state accessor
+  then (state & accessor .~ combineTuple (head $ view accessor state) (splitAt (max 0 (min i (length (view accessor state) - 1))) (view accessor state))) {_int = is}
+  else state
+instructionShoveDup state@(State {_int = []}) _ = state
+
+-- also also not int generic
+instructionShove :: State -> Lens' State [a] -> State
+instructionShove state accessor = instructionShoveDup state accessor & accessor .~ drop 1 (view accessor (instructionShoveDup state accessor))

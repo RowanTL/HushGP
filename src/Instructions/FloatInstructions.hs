@@ -55,7 +55,7 @@ instructionFloatPop :: State -> State
 instructionFloatPop state = instructionPop state float
 
 instructionFloatDup :: State -> State
-instructionFloatDup state = instructionPop state float
+instructionFloatDup state = instructionDup state float
 
 instructionFloatDupN :: State -> State
 instructionFloatDupN state = instructionDupN state float
@@ -74,3 +74,15 @@ instructionFloatEq state = instructionEq state float
 
 instructionFloatStackDepth :: State -> State
 instructionFloatStackDepth state = instructionStackDepth state float
+
+instructionFloatYankDup :: State -> State
+instructionFloatYankDup state = instructionYankDup state float
+
+instructionFloatYank :: State -> State
+instructionFloatYank state = instructionYank state float
+
+instructionFloatShoveDup :: State -> State
+instructionFloatShoveDup state = instructionShoveDup state float
+
+instructionFloatShove :: State -> State
+instructionFloatShove state = instructionShove state float
