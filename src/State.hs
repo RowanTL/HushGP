@@ -84,3 +84,18 @@ emptyState =
       _input = Map.empty
     }
 
+exampleState :: State
+exampleState = 
+  State
+    { _exec = [],
+      _int = [32, 56],
+      _float = [3.23, 9.235],
+      _bool = [True, False],
+      _string = ["abc", "123"],
+      _parameter = [],
+      _intVector = [[1,2], [5,6,8]],
+      _floatVector = [[1.234, 9.21], [5.42, 6.221, 8.5493]],
+      _boolVector = [[True, False], [False, False, True]],
+      _stringVector = [["def", "567"], ["gamer", "fellah", "live action how to train your dragon"]],
+      _input = Map.empty
+    }
