@@ -7,6 +7,8 @@ import Instructions.FloatInstructions
 
 -- @TODO: Finish int and float tests
 
+-- TODO: Need a function that can compare states.
+
 intTestFunc :: String -> [Int] -> [Gene] -> State -> IO ()
 intTestFunc name goal genome startState =
   let state = loadProgram genome startState
@@ -31,13 +33,15 @@ main = do
   intTestFunc "instructionIntDiv" [3] [GeneInt 6, GeneInt 2, StateFunc instructionIntDiv] emptyState
   intTestFunc "instructionIntDiv0" [0, 2] [GeneInt 2, GeneInt 0, StateFunc instructionIntDiv] emptyState
   intTestFunc "instructionIntMod" [3] [GeneInt 13, GeneInt 5, StateFunc instructionIntMod] emptyState
+  intTestFunc "instructionIntPop" [2] [GeneInt 2, GeneInt 0, StateFunc instructionIntPop] emptyState
   intTestFunc "instrucitonIntDup" [3, 3, 2] [GeneInt 2, GeneInt 3, StateFunc instructionIntDup] emptyState
-  intTestFunc "instructionIntDupN" [2, 2, 2] [GeneInt 2, GeneInt 3, StateFunc instructionIntDup] emptyState
+  intTestFunc "instructionIntDupN" [2, 2, 2] [GeneInt 2, GeneInt 3, StateFunc instructionIntDupN] emptyState
   intTestFunc "instructionIntSwap" [2, 0, 3] [GeneInt 3, GeneInt 2, GeneInt 0, StateFunc instructionIntSwap] emptyState
   intTestFunc "instructionIntSwapFail" [1] [GeneInt 1, StateFunc instructionIntSwap] emptyState
   intTestFunc "instructionIntRot" [1, 3, 2] [GeneInt 1, GeneInt 2, GeneInt 3, StateFunc instructionIntRot] emptyState
   intTestFunc "instructionIntRotFail" [7, 8] [GeneInt 8, GeneInt 7, StateFunc instructionIntRot] emptyState
-  intTestFunc "instructionIntFlush" [] [GeneInt 9696, GeneInt 92, GeneInt 420] emptyState -- I think I'm funny
+  intTestFunc "instructionIntFlush" [] [GeneInt 9696, GeneInt 92, GeneInt 420, StateFunc instructionIntFlush] emptyState -- I think I'm funny
+  intTestFunc "instructionIntStackDepth" [2, 51, 52] [GeneInt 52, GeneInt 51, StateFunc instructionIntStackDepth] emptyState
 
   -- Exec tests
   intTestFunc "instructionExecIf" [6, 5] [GeneBool True, StateFunc instructionExecIf, Block [GeneInt 5, GeneInt 6], Block [GeneInt 7, GeneInt 8]] emptyState
