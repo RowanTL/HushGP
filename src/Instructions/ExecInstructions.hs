@@ -32,6 +32,9 @@ instructionExecFlush state = instructionFlush state exec
 instructionExecEq :: State -> State
 instructionExecEq state = instructionEq state exec
 
+instructionExecStackDepth :: State -> State
+instructionExecStackDepth state = instructionStackDepth state exec
+
 instructionExecDoRange :: State -> State
 instructionExecDoRange state@(State {_exec = (e1 : es), _int = (i0 : i1 : is)}) =
   if increment i0 i1 /= 0

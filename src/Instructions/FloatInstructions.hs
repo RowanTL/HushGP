@@ -71,3 +71,6 @@ instructionFloatFlush state = instructionFlush state float
 
 instructionFloatEq :: State -> State
 instructionFloatEq state = instructionEq state float
+
+instructionFloatStackDepth :: State -> State
+instructionFloatStackDepth state = instructionStackDepth state float

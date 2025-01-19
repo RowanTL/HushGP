@@ -76,3 +76,6 @@ instructionIntFlush state = instructionFlush state int
 
 instructionIntEq :: State -> State
 instructionIntEq state = instructionEq state int
+
+instructionIntStackDepth :: State -> State
+instructionIntStackDepth state = instructionStackDepth state int

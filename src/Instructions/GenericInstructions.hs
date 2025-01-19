@@ -63,3 +63,6 @@ instructionEq state accessor =
   where
     stackTop :: [a]
     stackTop = take 2 $ view accessor state
+
+instructionStackDepth :: State -> Lens' State [a] -> State
+instructionStackDepth state accessor = state & int .~ (length (view accessor state) : view int state)
