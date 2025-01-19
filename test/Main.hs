@@ -10,12 +10,12 @@ import Instructions.FloatInstructions
 intTestFunc :: String -> [Int] -> [Gene] -> State -> IO ()
 intTestFunc name goal genome startState =
   let state = loadProgram genome startState
-   in assert (goal == int (interpretExec state)) putStrLn (name ++ " passed test.")
+   in assert (goal == _int (interpretExec state)) putStrLn (name ++ " passed test.")
 
 floatTestFunc :: String -> [Float] -> [Gene] -> State -> IO ()
 floatTestFunc name goal genome startState =
   let state = loadProgram genome startState
-   in assert (goal == float (interpretExec state)) putStrLn (name ++ " passed test.")
+   in assert (goal == _float (interpretExec state)) putStrLn (name ++ " passed test.")
 
 main :: IO ()
 main = do

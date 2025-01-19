@@ -1,6 +1,8 @@
+{-# LANGUAGE TemplateHaskell #-}
 module State where
 
 import qualified Data.Map as Map
+import Control.Lens
 
 -- The exec stack must store heterogenous types,
 -- and we must be able to detect that type at runtime.
@@ -50,33 +52,35 @@ instance Show Gene where
   show (Block xs) = "Block: " <> show xs
 
 data State = State
-  { exec :: [Gene],
-    int :: [Int],
-    float :: [Float],
-    bool :: [Bool],
-    string :: [String],
-    vectorInt :: [[Int]],
-    vectorFloat :: [[Float]],
-    vectorBool :: [[Bool]],
-    vectorString :: [[String]],
-    parameter :: [Gene],
-    input :: Map.Map String Gene
+  { _exec :: [Gene],
+    _int :: [Int],
+    _float :: [Float],
+    _bool :: [Bool],
+    _string :: [String],
+    _intVector :: [[Int]],
+    _floatVector :: [[Float]],
+    _boolVector :: [[Bool]],
+    _stringVector :: [[String]],
+    _parameter :: [Gene],
+    _input :: Map.Map String Gene
   }
   deriving (Show, Eq)
+
+$(makeLenses ''State)
 
 emptyState :: State
 emptyState =
   State
-    { exec = [],
-      int = [],
-      float = [],
-      bool = [],
-      string = [],
-      parameter = [],
-      vectorInt = [],
-      vectorFloat = [],
-      vectorBool = [],
-      vectorString = [],
-      input = Map.empty
+    { _exec = [],
+      _int = [],
+      _float = [],
+      _bool = [],
+      _string = [],
+      _parameter = [],
+      _intVector = [],
+      _floatVector = [],
+      _boolVector = [],
+      _stringVector = [],
+      _input = Map.empty
     }
 
