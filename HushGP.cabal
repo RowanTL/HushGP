@@ -50,7 +50,7 @@ library
 
     -- Other library packages from which modules are imported.
     build-depends:
-        base, containers
+        base, containers, lens
 
     -- Directories containing source files.
     hs-source-dirs:   src
