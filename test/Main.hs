@@ -62,6 +62,10 @@ main = do
   floatTestFunc "instructionFloatMul" [1.38] [GeneFloat 0.12, GeneFloat 11.5, StateFunc instructionFloatMul] emptyState
   floatTestFunc "instructionFloatDiv" [57.5] [GeneFloat 11.5, GeneFloat 0.2, StateFunc instructionFloatDiv] emptyState
   floatTestFunc "instructionFloatDiv0" [0, 69.69] [GeneFloat 69.69, GeneFloat 0.0, StateFunc instructionFloatDiv] emptyState
+  floatTestFunc "instructionFloatYank" [1.1, 3.3, 2.2] [GeneInt 3, GeneFloat 1.1, GeneFloat 2.2, GeneFloat 3.3, StateFunc instructionFloatYank] emptyState
+  floatTestFunc "instructionFloatYankDup" [1.1, 3.3, 2.2, 1.1] [GeneInt 3, GeneFloat 1.1, GeneFloat 2.2, GeneFloat 3.3, StateFunc instructionFloatYankDup] emptyState
+  floatTestFunc "instructionFloatShove" [3.3,2.2,4.4,1.1] [GeneInt 3, GeneFloat 1.1, GeneFloat 2.2, GeneFloat 3.3, GeneFloat 4.4, StateFunc instructionFloatShove] emptyState
+  floatTestFunc "instructionFloatShoveDup" [4.4,3.3,2.2,4.4,1.1] [GeneInt 3, GeneFloat 1.1, GeneFloat 2.2, GeneFloat 3.3, GeneFloat 4.4, StateFunc instructionFloatShoveDup] emptyState
 
   -- Bool tests
   boolTestFunc "instructionIntEqTrue" [True] [GeneInt 3, GeneInt 3, StateFunc instructionIntEq] emptyState
