@@ -3,6 +3,7 @@
 module Push where
 
 import qualified Data.Map as Map
+import Control.Lens
 -- import Instructions.IntInstructions
 -- import Instructions.ExecInstructions
 import State
@@ -18,20 +19,24 @@ import State
 -- This is one of the push genome functions itself, not infrastructure.
 -- Optionally, split this off into independent functions
 instructionParameterLoad :: State -> State
-instructionParameterLoad state@(State {parameter = (p : _), ..}) = case p of
-  (GeneInt val) -> state {int = val : int}
-  (GeneFloat val) -> state {float = val : float}
-  (GeneBool val) -> state {bool = val : bool}
-  (GeneString val) -> state {string = val : string}
+instructionParameterLoad state@(State {_parameter = (p : _)}) = case p of
+  (GeneInt val) -> state & int .~ val : view int state
+  (GeneFloat val) -> state & float .~ val : view float state
+  (GeneBool val) -> state & bool .~ val : view bool state
+  (GeneString val) -> state & string .~ val : view string state
+  (GeneIntVector val) -> state & intVector .~ val : view intVector state
+  (GeneFloatVector val) -> state & floatVector .~ val : view floatVector state
+  (GeneBoolVector val) -> state & boolVector .~ val : view boolVector state
+  (GeneStringVector val) -> state & stringVector .~ val : view stringVector state
   (StateFunc _) -> undefined
   (PlaceInput _) -> undefined
   Close -> undefined
-  (Block xs) -> state {exec = xs <> exec}
+  (Block xs) -> state & exec .~ xs <> view exec state
 instructionParameterLoad state = state
 
 -- Loads a genome into the exec stack
 loadProgram :: [Gene] -> State -> State
-loadProgram newstack state@(State {exec = _}) = state {exec = newstack}
+loadProgram newstack state = state & exec .~ newstack
 
 -- Takes a Push state, and generates the next push state via:
 -- If the first item on the EXEC stack is a single instruction
@@ -44,16 +49,20 @@ loadProgram newstack state@(State {exec = _}) = state {exec = newstack}
 --     ends up on top).
 -- The empty-stack safety of interpretExec on empty stacks depends on the functions it calls.
 interpretExec :: State -> State
-interpretExec state@(State {exec = []}) = state {exec = []}
-interpretExec state@(State {exec = (e : es), ..}) =
+interpretExec state@(State {_exec = []}) = state & exec .~ []
+interpretExec state@(State {_exec = (e : es)}) =
   case e of
-    (GeneInt val) -> interpretExec state {exec = es, int = val : int}
-    (GeneFloat val) -> interpretExec (state {exec = es, float = val : float})
-    (GeneBool val) -> interpretExec (state {exec = es, bool = val : bool})
-    (GeneString val) -> interpretExec (state {exec = es, string = val : string})
-    (StateFunc func) -> interpretExec $ func state {exec = es}
-    (Block block) -> interpretExec (state {exec = block ++ es})
-    (PlaceInput val) -> interpretExec (state {exec = (input Map.! val) : es})
+    (GeneInt val) -> interpretExec state & exec .~ es & int .~ val : view int state
+    (GeneFloat val) -> interpretExec state & exec .~ es & float .~  val : view float state
+    (GeneBool val) -> interpretExec state & exec .~ es & bool .~ val : view bool state
+    (GeneString val) -> interpretExec state & exec .~ es & string .~ val : view string state
+    (GeneIntVector val) -> interpretExec state & exec .~ es & intVector .~ val : view intVector state
+    (GeneFloatVector val) -> interpretExec state & exec .~ es & floatVector .~ val : view floatVector state
+    (GeneBoolVector val) -> interpretExec state & exec .~ es & boolVector .~ val : view boolVector state
+    (GeneStringVector val) -> interpretExec state & exec .~ es & stringVector .~ val : view stringVector state
+    (StateFunc func) -> interpretExec $ func state {_exec = es}
+    (Block block) -> interpretExec (state {_exec = block ++ es})
+    (PlaceInput val) -> interpretExec (state {_exec = (view input state Map.! val) : es})
     Close -> undefined -- remove Close constructor later?
 
 -- Need to make interpretExec strict, right?
