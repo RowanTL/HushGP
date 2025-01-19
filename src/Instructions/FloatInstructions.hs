@@ -1,5 +1,6 @@
 module Instructions.FloatInstructions where
 
+import Instructions.GenericInstructions
 import State
 
 instructionFloatAdd :: State -> State
@@ -51,6 +52,22 @@ instructionFloatGTE state@(State {_float = f1 : f2 : fs, _bool = bs}) = state {_
 instructionFloatGTE state = state
 
 instructionFloatPop :: State -> State
-instructionFloatPop state@(State {_float = (_ : fs)}) = state {_float = fs}
-instructionFloatPop state = state
+instructionFloatPop state = instructionPop state float
 
+instructionFloatDup :: State -> State
+instructionFloatDup state = instructionPop state float
+
+instructionFloatDupN :: State -> State
+instructionFloatDupN state = instructionDupN state float
+
+instructionFloatSwap :: State -> State
+instructionFloatSwap state = instructionSwap state float
+
+instructionFloatRot :: State -> State
+instructionFloatRot state = instructionRot state float
+
+instructionFloatFlush :: State -> State
+instructionFloatFlush state = instructionFlush state float
+
+instructionFloatEq :: State -> State
+instructionFloatEq state = instructionEq state float

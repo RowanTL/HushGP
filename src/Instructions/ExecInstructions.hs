@@ -2,6 +2,7 @@ module Instructions.ExecInstructions where
 
 import State
 import Instructions.IntInstructions
+import Instructions.GenericInstructions
 
 instructionExecIf :: State -> State
 instructionExecIf state@(State {_exec = (e1 : e2 : es), _bool = (b : _)}) =
@@ -11,9 +12,25 @@ instructionExecIf state@(State {_exec = (e1 : e2 : es), _bool = (b : _)}) =
 instructionExecIf state = state
 
 instructionExecDup :: State -> State
-instructionExecDup state@(State {_exec = alles@(e : _)}) =
-  state {_exec = e : alles}
-instructionExecDup state = state
+instructionExecDup state = instructionDup state exec
+
+instructionExecDupN :: State -> State
+instructionExecDupN state = instructionDupN state exec
+
+instructionExecPop :: State -> State
+instructionExecPop state = instructionPop state exec
+
+instructionExecSwap :: State -> State
+instructionExecSwap state = instructionSwap state exec
+
+instructionExecRot :: State -> State
+instructionExecRot state = instructionRot state exec
+
+instructionExecFlush :: State -> State
+instructionExecFlush state = instructionFlush state exec
+
+instructionExecEq :: State -> State
+instructionExecEq state = instructionEq state exec
 
 instructionExecDoRange :: State -> State
 instructionExecDoRange state@(State {_exec = (e1 : es), _int = (i0 : i1 : is)}) =

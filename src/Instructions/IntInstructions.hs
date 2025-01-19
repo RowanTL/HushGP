@@ -1,6 +1,7 @@
 module Instructions.IntInstructions where
 
 import State
+import Instructions.GenericInstructions
 -- import Debug.Trace
 
 instructionIntAdd :: State -> State
@@ -55,6 +56,23 @@ instructionIntGTE :: State -> State
 instructionIntGTE state@(State {_int = i1 : i2 : is, _bool = bs}) = state {_int = is, _bool = (i1 >= i2) : bs}
 instructionIntGTE state = state
 
+instructionIntDup :: State -> State
+instructionIntDup state = instructionDup state int
+
 instructionIntPop :: State -> State
-instructionIntPop state@(State {_int = (_ : is)}) = state {_int = is}
-instructionIntPop state = state
+instructionIntPop state = instructionPop state int
+
+instructionIntDupN :: State -> State
+instructionIntDupN state = instructionDupN state int
+
+instructionIntSwap :: State -> State
+instructionIntSwap state = instructionSwap state int
+
+instructionIntRot :: State -> State
+instructionIntRot state = instructionRot state int
+
+instructionIntFlush :: State -> State
+instructionIntFlush state = instructionFlush state int
+
+instructionIntEq :: State -> State
+instructionIntEq state = instructionEq state int
