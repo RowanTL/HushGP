@@ -42,6 +42,7 @@ library
                     , Instructions.ExecInstructions
                     , Instructions.FloatInstructions
                     , Instructions.GenericInstructions
+                    , Instructions.LogicalInstructions
 
     -- Modules included in this library but not exported.
     -- other-modules:
