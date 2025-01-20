@@ -75,10 +75,24 @@ instructionYankDup state@(State {_int = i : is}) accessor =
   else state
 instructionYankDup state@(State {_int = []}) _ = state
 
+deleteAt :: Int -> [a] -> [a]
+deleteAt idx xs = take idx xs <> drop 1 (drop idx xs)
+
 -- Is this optimal? Running instrucitonYankDup twice?????
 -- int non generic too
-instructionYank :: State -> Lens' State [a] -> State
-instructionYank state accessor = instructionYankDup state accessor & accessor .~ init (view accessor (instructionYankDup state accessor))
+instructionYank :: forall a. State -> Lens' State [a] -> State
+-- instructionYank state accessor = instructionYankDup state accessor & accessor .~ init (view accessor (instructionYankDup state accessor))
+instructionYank state@(State {_int = rawIndex : _}) accessor =
+  let
+    myIndex :: Int
+    myIndex = max 0 (min rawIndex (length (view accessor state) - 1))
+    item :: a
+    item = view accessor state !! myIndex
+    deletedState :: State
+    deletedState = state & accessor .~ deleteAt myIndex (view accessor state)
+  in
+  if notEmptyStack state accessor then deletedState & accessor .~ item : view accessor deletedState else state
+instructionYank state _ = state
 
 combineTuple :: a -> ([a], [a]) -> [a]
 combineTuple val tup = fst tup <> [val] <> snd tup
