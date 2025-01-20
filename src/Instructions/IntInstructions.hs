@@ -4,6 +4,14 @@ import State
 import Instructions.GenericInstructions
 -- import Debug.Trace
 
+instructionIntFromFloat :: State -> State
+instructionIntFromFloat state@(State {_float = (f : fs), _int = is}) = state {_float = fs, _int = floor f : is}
+instructionIntFromFloat state = state
+
+instructionIntFromBool :: State -> State
+instructionIntFromBool state@(State {_bool = (b : bs), _int = is}) = state {_bool = bs, _int = (if b then 1 else 0) : is}
+instructionIntFromBool state = state
+
 instructionIntAdd :: State -> State
 instructionIntAdd state@(State {_int = (i1 : i2 : is)}) = state {_int = i2 + i1 : is}
 instructionIntAdd state = state
