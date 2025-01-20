@@ -86,3 +86,15 @@ instructionFloatShoveDup state = instructionShoveDup state float
 
 instructionFloatShove :: State -> State
 instructionFloatShove state = instructionShove state float
+
+instructionFloatSin :: State -> State
+instructionFloatSin state@(State {_float = f1 : fs}) = state {_float = sin f1 : fs}
+instructionFloatSin state = state
+
+instructionFloatCos :: State -> State
+instructionFloatCos state@(State {_float = f1 : fs}) = state {_float = cos f1 : fs}
+instructionFloatCos state = state
+
+instructionFloatTan :: State -> State
+instructionFloatTan state@(State {_float = f1 : fs}) = state {_float = tan f1 : fs}
+instructionFloatTan state = state
