@@ -10,7 +10,7 @@ library for more abstraction.
     * [x] Write tests for every function.
     * [x] tests/ are just copied from make-grade, need to write for this project.
     * [ ] Included examples of basic assertions, QuickCheck, Hspec, hspec-quickcheck.
-* [ ] Look at Lenses library for abstraction
+* [x] Look at Lenses library for abstraction
 
 ## Design considerations
 The biggest design constraint is that for the exec stack (but not data stacks)
