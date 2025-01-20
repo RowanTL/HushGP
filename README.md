@@ -1,8 +1,10 @@
 # HushGP
 A PushGP implementation in Haskell
 
-This branch is meant to overhaul the system with the lens
-library for more abstraction.
+This branch is meant to to go one by one and finish implementing all of
+the functions in the pyshgp list.
+
+https://erp12.github.io/pyshgp/html/core_instructions.html
 
 ## Tasks
 * [ ] Post minimal core of exec to haskell discourse for advice about speed optimization.
