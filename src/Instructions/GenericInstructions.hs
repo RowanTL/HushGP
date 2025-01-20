@@ -81,7 +81,6 @@ deleteAt idx xs = take idx xs <> drop 1 (drop idx xs)
 -- Is this optimal? Running instrucitonYankDup twice?????
 -- int non generic too
 instructionYank :: forall a. State -> Lens' State [a] -> State
--- instructionYank state accessor = instructionYankDup state accessor & accessor .~ init (view accessor (instructionYankDup state accessor))
 instructionYank state@(State {_int = rawIndex : _}) accessor =
   let
     myIndex :: Int
@@ -98,6 +97,7 @@ combineTuple :: a -> ([a], [a]) -> [a]
 combineTuple val tup = fst tup <> [val] <> snd tup
 
 -- int non generic :(
+-- Rewrite this eventually?
 instructionShoveDup :: State -> Lens' State [a] -> State
 instructionShoveDup state@(State {_int = i : is}) accessor =
   if notEmptyStack state accessor
