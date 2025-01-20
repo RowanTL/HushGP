@@ -42,6 +42,10 @@ main = do
   intTestFunc "instructionIntRotFail" [7, 8] [GeneInt 8, GeneInt 7, StateFunc instructionIntRot] emptyState
   intTestFunc "instructionIntFlush" [] [GeneInt 9696, GeneInt 92, GeneInt 420, StateFunc instructionIntFlush] emptyState -- I think I'm funny
   intTestFunc "instructionIntStackDepth" [2, 51, 52] [GeneInt 52, GeneInt 51, StateFunc instructionIntStackDepth] emptyState
+  intTestFunc "instructionIntYank" [3,3,2,1] [GeneInt 3, GeneInt 1, GeneInt 2, GeneInt 3, GeneInt 4, StateFunc instructionIntYank] emptyState
+  intTestFunc "instructionIntYankDup" [3,3,2,1,3] [GeneInt 3, GeneInt 1, GeneInt 2, GeneInt 3, GeneInt 4, StateFunc instructionIntYankDup] emptyState
+  intTestFunc "instructionIntShove" [2,1,3,1] [GeneInt 1, GeneInt 1, GeneInt 2, GeneInt 3, GeneInt 2, StateFunc instructionIntShove] emptyState
+  intTestFunc "instructionIntShoveDup" [3,2,1,3,1] [GeneInt 1, GeneInt 1, GeneInt 2, GeneInt 3, GeneInt 2, StateFunc instructionIntShoveDup] emptyState
 
   -- Exec tests
   intTestFunc "instructionExecIf" [6, 5] [GeneBool True, StateFunc instructionExecIf, Block [GeneInt 5, GeneInt 6], Block [GeneInt 7, GeneInt 8]] emptyState
