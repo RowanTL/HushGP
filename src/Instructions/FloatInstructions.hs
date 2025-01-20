@@ -1,7 +1,18 @@
 module Instructions.FloatInstructions where
 
+import Data.Fixed (mod')
 import Instructions.GenericInstructions
 import State
+
+-- stopped here for now: https://erp12.github.io/pyshgp/html/core_instructions.html#bool-invert-first-then-and
+
+instructionFloatFromInt :: State -> State
+instructionFloatFromInt state@(State {_float = fs, _int = (i : is)}) = state {_float = (fromIntegral i :: Float) : fs, _int = is}
+instructionFloatFromInt state = state
+
+instructionFloatFromBool :: State -> State
+instructionFloatFromBool state@(State {_bool = (b : bs), _float = fs}) = state {_bool = bs, _float = (if b then 1.0 else 0.0) : fs}
+instructionFloatFromBool state = state
 
 instructionFloatAdd :: State -> State
 instructionFloatAdd state@(State {_float = (f1 : f2 : fs)}) = state {_float = f2 + f1 : fs}
@@ -18,6 +29,10 @@ instructionFloatMul state = state
 instructionFloatDiv :: State -> State
 instructionFloatDiv state@(State {_float = (f1 : f2 : fs)}) = state {_float = if f1 /= 0 then f2 / f1 : fs else f1 : f2 : fs}
 instructionFloatDiv state = state
+
+instructionFloatMod :: State -> State
+instructionFloatMod state@(State {_float = (f1 : f2 : fs)}) = state {_float = f2 `mod'` f1 : fs}
+instructionFloatMod state = state
 
 instructionFloatMin :: State -> State
 instructionFloatMin state@(State {_float = (f1 : f2 : fs)}) = state {_float = min f1 f2 : fs}
