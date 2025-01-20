@@ -82,5 +82,5 @@ instructionIntStackDepth state = instructionStackDepth state int
 
 -- int specific
 instructionIntYank :: State -> State
-instructionIntYank state@(State {_int = index : i2 : is}) = 
+instructionIntYank state@(State {_int = index : i2 : is}) = undefined
 instructionIntYank state = state
