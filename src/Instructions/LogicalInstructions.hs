@@ -17,6 +17,14 @@ boolTemplate _ state = state
 instructionBoolAnd :: State -> State
 instructionBoolAnd = boolTemplate (&&)
 
+instructionBoolInvertFirstThenAnd :: State -> State
+instructionBoolInvertFirstThenAnd state@(State {_bool = (b1 : bs)}) = boolTemplate (&&) state {_bool = not b1 : bs}
+instructionBoolInvertFirstThenAnd state = state
+
+instructionBoolInvertSecondThenAnd :: State -> State
+instructionBoolInvertSecondThenAnd state@(State {_bool = (b1 : b2 : bs)}) = boolTemplate (&&) state {_bool = b1 : not b2 : bs}
+instructionBoolInvertSecondThenAnd state = state
+
 instructionBoolOr :: State -> State
 instructionBoolOr = boolTemplate (||)
 

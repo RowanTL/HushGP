@@ -4,8 +4,6 @@ import Data.Fixed (mod')
 import Instructions.GenericInstructions
 import State
 
--- stopped here for now: https://erp12.github.io/pyshgp/html/core_instructions.html#bool-invert-first-then-and
-
 instructionFloatFromInt :: State -> State
 instructionFloatFromInt state@(State {_float = fs, _int = (i : is)}) = state {_float = (fromIntegral i :: Float) : fs, _int = is}
 instructionFloatFromInt state = state
