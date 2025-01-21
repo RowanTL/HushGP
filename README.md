@@ -6,7 +6,7 @@ the functions in the pyshgp list.
 
 https://erp12.github.io/pyshgp/html/core_instructions.html
 
-I'm not going to include no-ops
+I'm not going to include no-ops.
 
 ## Tasks
 * [ ] Post minimal core of exec to haskell discourse for advice about speed optimization.
