@@ -2,13 +2,13 @@
 
 module Push where
 
-import qualified Data.Map as Map
 import Control.Lens
+import Data.Map qualified as Map
 -- import Instructions.IntInstructions
 -- import Instructions.ExecInstructions
 import State
 
-import Debug.Trace (trace, traceStack)
+-- import Debug.Trace (trace, traceStack)
 
 -- Each core func should be: (State -> State -> State)
 -- but each core function can use abstract helper functions.
@@ -23,11 +23,9 @@ instructionParameterLoad state@(State {_parameter = (p : _)}) = case p of
   (GeneInt val) -> state & int .~ val : view int state
   (GeneFloat val) -> state & float .~ val : view float state
   (GeneBool val) -> state & bool .~ val : view bool state
-  (GeneString val) -> state & string .~ val : view string state
   (GeneIntVector val) -> state & intVector .~ val : view intVector state
   (GeneFloatVector val) -> state & floatVector .~ val : view floatVector state
   (GeneBoolVector val) -> state & boolVector .~ val : view boolVector state
-  (GeneStringVector val) -> state & stringVector .~ val : view stringVector state
   (StateFunc _) -> undefined
   (PlaceInput _) -> undefined
   Close -> undefined
@@ -55,11 +53,9 @@ interpretExec state@(State {_exec = (e : es)}) =
     (GeneInt val) -> interpretExec (state & exec .~ es & int .~ val : view int state)
     (GeneFloat val) -> interpretExec (state & exec .~ es & float .~ val : view float state)
     (GeneBool val) -> interpretExec (state & exec .~ es & bool .~ val : view bool state)
-    (GeneString val) -> interpretExec (state & exec .~ es & string .~ val : view string state)
     (GeneIntVector val) -> interpretExec (state & exec .~ es & intVector .~ val : view intVector state)
     (GeneFloatVector val) -> interpretExec (state & exec .~ es & floatVector .~ val : view floatVector state)
     (GeneBoolVector val) -> interpretExec (state & exec .~ es & boolVector .~ val : view boolVector state)
-    (GeneStringVector val) -> interpretExec (state & exec .~ es & stringVector .~ val : view stringVector state)
     (StateFunc func) -> interpretExec $ func state {_exec = es}
     (Block block) -> interpretExec (state {_exec = block ++ es})
     (PlaceInput val) -> interpretExec (state {_exec = (view input state Map.! val) : es})
