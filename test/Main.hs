@@ -1,9 +1,9 @@
 import Control.Exception (assert)
-import Push
-import State
-import Instructions.IntInstructions
 import Instructions.ExecInstructions
 import Instructions.FloatInstructions
+import Instructions.IntInstructions
+import Push
+import State
 
 -- @TODO: Finish int and float tests
 
@@ -42,10 +42,10 @@ main = do
   intTestFunc "instructionIntRotFail" [7, 8] [GeneInt 8, GeneInt 7, StateFunc instructionIntRot] emptyState
   intTestFunc "instructionIntFlush" [] [GeneInt 9696, GeneInt 92, GeneInt 420, StateFunc instructionIntFlush] emptyState -- I think I'm funny
   intTestFunc "instructionIntStackDepth" [2, 51, 52] [GeneInt 52, GeneInt 51, StateFunc instructionIntStackDepth] emptyState
-  intTestFunc "instructionIntYank" [3,3,2,1] [GeneInt 3, GeneInt 1, GeneInt 2, GeneInt 3, GeneInt 4, StateFunc instructionIntYank] emptyState
-  intTestFunc "instructionIntYankDup" [3,3,2,1,3] [GeneInt 3, GeneInt 1, GeneInt 2, GeneInt 3, GeneInt 4, StateFunc instructionIntYankDup] emptyState
-  intTestFunc "instructionIntShove" [2,1,3,1] [GeneInt 1, GeneInt 1, GeneInt 2, GeneInt 3, GeneInt 2, StateFunc instructionIntShove] emptyState
-  intTestFunc "instructionIntShoveDup" [3,2,1,3,1] [GeneInt 1, GeneInt 1, GeneInt 2, GeneInt 3, GeneInt 2, StateFunc instructionIntShoveDup] emptyState
+  intTestFunc "instructionIntYank" [3, 3, 2, 1] [GeneInt 3, GeneInt 1, GeneInt 2, GeneInt 3, GeneInt 4, StateFunc instructionIntYank] emptyState
+  intTestFunc "instructionIntYankDup" [3, 3, 2, 1, 3] [GeneInt 3, GeneInt 1, GeneInt 2, GeneInt 3, GeneInt 4, StateFunc instructionIntYankDup] emptyState
+  intTestFunc "instructionIntShove" [2, 1, 3, 1] [GeneInt 1, GeneInt 1, GeneInt 2, GeneInt 3, GeneInt 2, StateFunc instructionIntShove] emptyState
+  intTestFunc "instructionIntShoveDup" [3, 2, 1, 3, 1] [GeneInt 1, GeneInt 1, GeneInt 2, GeneInt 3, GeneInt 2, StateFunc instructionIntShoveDup] emptyState
 
   -- Exec tests
   intTestFunc "instructionExecIf" [6, 5] [GeneBool True, StateFunc instructionExecIf, Block [GeneInt 5, GeneInt 6], Block [GeneInt 7, GeneInt 8]] emptyState
@@ -61,15 +61,15 @@ main = do
   assert (emptyState == interpretExec loadedState) putStrLn "instructionExecWhenFalse passed test."
 
   -- Float tests
-  floatTestFunc "instructionFloatAdd" [4.32] [GeneFloat 4.01, GeneFloat 0.31, StateFunc instructionFloatAdd] emptyState 
+  floatTestFunc "instructionFloatAdd" [4.32] [GeneFloat 4.01, GeneFloat 0.31, StateFunc instructionFloatAdd] emptyState
   floatTestFunc "instructionFloatSub" [3.6900003] [GeneFloat 4.01, GeneFloat 0.32, StateFunc instructionFloatSub] emptyState
   floatTestFunc "instructionFloatMul" [1.38] [GeneFloat 0.12, GeneFloat 11.5, StateFunc instructionFloatMul] emptyState
   floatTestFunc "instructionFloatDiv" [57.5] [GeneFloat 11.5, GeneFloat 0.2, StateFunc instructionFloatDiv] emptyState
   floatTestFunc "instructionFloatDiv0" [0, 69.69] [GeneFloat 69.69, GeneFloat 0.0, StateFunc instructionFloatDiv] emptyState
   floatTestFunc "instructionFloatYank" [1.1, 4.4, 3.3, 2.2] [GeneInt 3, GeneFloat 1.1, GeneFloat 2.2, GeneFloat 3.3, GeneFloat 4.4, StateFunc instructionFloatYank] emptyState
   floatTestFunc "instructionFloatYankDup" [1.1, 4.4, 3.3, 2.2, 1.1] [GeneInt 3, GeneFloat 1.1, GeneFloat 2.2, GeneFloat 3.3, GeneFloat 4.4, StateFunc instructionFloatYankDup] emptyState
-  floatTestFunc "instructionFloatShove" [3.3,2.2,4.4,1.1] [GeneInt 3, GeneFloat 1.1, GeneFloat 2.2, GeneFloat 3.3, GeneFloat 4.4, StateFunc instructionFloatShove] emptyState
-  floatTestFunc "instructionFloatShoveDup" [4.4,3.3,2.2,4.4,1.1] [GeneInt 3, GeneFloat 1.1, GeneFloat 2.2, GeneFloat 3.3, GeneFloat 4.4, StateFunc instructionFloatShoveDup] emptyState
+  floatTestFunc "instructionFloatShove" [3.3, 2.2, 4.4, 1.1] [GeneInt 3, GeneFloat 1.1, GeneFloat 2.2, GeneFloat 3.3, GeneFloat 4.4, StateFunc instructionFloatShove] emptyState
+  floatTestFunc "instructionFloatShoveDup" [4.4, 3.3, 2.2, 4.4, 1.1] [GeneInt 3, GeneFloat 1.1, GeneFloat 2.2, GeneFloat 3.3, GeneFloat 4.4, StateFunc instructionFloatShoveDup] emptyState
 
   -- Bool tests
   boolTestFunc "instructionIntEqTrue" [True] [GeneInt 3, GeneInt 3, StateFunc instructionIntEq] emptyState
