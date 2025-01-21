@@ -43,6 +43,7 @@ library
                     , Instructions.FloatInstructions
                     , Instructions.GenericInstructions
                     , Instructions.LogicalInstructions
+                    , Instructions.CodeInstructions
 
     -- Modules included in this library but not exported.
     -- other-modules:
