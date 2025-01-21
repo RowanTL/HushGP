@@ -1,8 +1,9 @@
 {-# LANGUAGE TemplateHaskell #-}
+
 module State where
 
-import qualified Data.Map as Map
 import Control.Lens
+import Data.Map qualified as Map
 
 -- The exec stack must store heterogenous types,
 -- and we must be able to detect that type at runtime.
@@ -26,7 +27,7 @@ instance Eq Gene where
   GeneBool x == GeneBool y = x == y
   PlaceInput x == PlaceInput y = x == y
   GeneIntVector xs == GeneIntVector ys = xs == ys
-  GeneFloatVector xs == GeneFloatVector ys = xs == ys 
+  GeneFloatVector xs == GeneFloatVector ys = xs == ys
   GeneBoolVector xs == GeneBoolVector ys = xs == ys
   Close == Close = True
   StateFunc _ == StateFunc _ = True -- This line is probably not the best thing to do
@@ -47,6 +48,7 @@ instance Show Gene where
 
 data State = State
   { _exec :: [Gene],
+    _code :: [Gene],
     _int :: [Int],
     _float :: [Float],
     _bool :: [Bool],
@@ -64,6 +66,7 @@ emptyState :: State
 emptyState =
   State
     { _exec = [],
+      _code = [],
       _int = [],
       _float = [],
       _bool = [],
@@ -75,14 +78,15 @@ emptyState =
     }
 
 exampleState :: State
-exampleState = 
+exampleState =
   State
     { _exec = [],
+      _code = [],
       _int = [32, 56],
       _float = [3.23, 9.235],
       _bool = [True, False],
       _parameter = [],
-      _intVector = [[1,2], [5,6,8]],
+      _intVector = [[1, 2], [5, 6, 8]],
       _floatVector = [[1.234, 9.21], [5.42, 6.221, 8.5493]],
       _boolVector = [[True, False], [False, False, True]],
       _input = Map.empty
