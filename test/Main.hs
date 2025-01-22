@@ -2,6 +2,7 @@ import Control.Exception (assert)
 import Instructions.ExecInstructions
 import Instructions.FloatInstructions
 import Instructions.IntInstructions
+import Instructions.CodeInstructions
 import Push
 import State
 
@@ -23,6 +24,11 @@ boolTestFunc :: String -> [Bool] -> [Gene] -> State -> IO ()
 boolTestFunc name goal genome startState =
   let state = loadProgram genome startState
    in assert (goal == _bool (interpretExec state)) putStrLn (name ++ " passed test.")
+
+codeTestFunc :: String -> [Gene] -> [Gene] -> State -> IO ()
+codeTestFunc name goal genome startState =
+  let state = loadProgram genome startState
+    in assert (goal == _code (interpretExec state)) putStrLn (name <> " passed test.")
 
 main :: IO ()
 main = do
@@ -75,3 +81,25 @@ main = do
   boolTestFunc "instructionIntEqTrue" [True] [GeneInt 3, GeneInt 3, StateFunc instructionIntEq] emptyState
   boolTestFunc "instructionIntEqFalse" [False] [GeneInt 3, GeneInt 5, StateFunc instructionIntEq] emptyState
   boolTestFunc "instructionIntEqFail" [] [GeneInt 3, StateFunc instructionIntEq] emptyState
+
+  -- Code tests
+  codeTestFunc "instructionCodeFromExec" [] [StateFunc instructionCodeFromExec, StateFunc instructionFloatFromInt, StateFunc instructionCodePop] emptyState
+  intTestFunc "instructionCodeDoRange" [18] [GeneInt 3, GeneInt 6, StateFunc instructionCodeFromExec, StateFunc instructionIntAdd, StateFunc instructionCodeDoRange] emptyState
+  -- How to test instructionCodeDoThenPop?????
+  codeTestFunc "instructionCodeFirst" [GeneInt 5] [StateFunc instructionCodeFromExec, Block [GeneInt 5, StateFunc instructionIntSub], StateFunc instructionCodeFirst] emptyState
+  codeTestFunc "instructionCodeLast" [GeneBool True] [StateFunc instructionCodeFromExec, Block [GeneInt 5, StateFunc instructionIntSub, GeneBool True], StateFunc instructionCodeLast] emptyState
+  codeTestFunc "instructionCodeTail" [Block [GeneFloat 3.2, GeneBool True, GeneInt 3]] [StateFunc instructionCodeFromExec, Block [StateFunc instructionFloatAdd, GeneFloat 3.2, GeneBool True, GeneInt 3], StateFunc instructionCodeTail] emptyState
+  codeTestFunc "instructionCodeInit" [Block [GeneIntVector [1], GeneFloat 3.2, GeneBool True]] [StateFunc instructionCodeFromExec, Block [GeneIntVector [1], GeneFloat 3.2, GeneBool True, GeneInt 3], StateFunc instructionCodeInit] emptyState
+  codeTestFunc "instructionCodeWrap" [Block [GeneInt 3]] [StateFunc instructionCodeFromExec, GeneInt 3, StateFunc instructionCodeWrap] emptyState
+  codeTestFunc "instructionCodeList" [Block [GeneFloat 5.43, GeneInt 3]] [StateFunc instructionCodeFromExec, GeneInt 3, StateFunc instructionCodeFromExec, GeneFloat 5.43, StateFunc instructionCodeList] emptyState
+  codeTestFunc "instructionCodeCombine2Blocks" [Block [GeneInt 3, GeneInt 4, GeneInt 1, GeneInt 2]] [StateFunc instructionCodeFromExec, Block [GeneInt 1, GeneInt 2], StateFunc instructionCodeFromExec, Block [GeneInt 3, GeneInt 4], StateFunc instructionCodeCombine] emptyState
+  codeTestFunc "instructionCodeCombine1Block1Single" [Block [GeneInt 3, GeneInt 4, GeneInt 1]] [StateFunc instructionCodeFromExec, GeneInt 1, StateFunc instructionCodeFromExec, Block [GeneInt 3, GeneInt 4], StateFunc instructionCodeCombine] emptyState
+  codeTestFunc "instructionCodeCombine1Single1Block" [Block [GeneInt 3, GeneInt 1, GeneInt 2]] [StateFunc instructionCodeFromExec, Block [GeneInt 1, GeneInt 2], StateFunc instructionCodeFromExec, GeneInt 3, StateFunc instructionCodeCombine] emptyState
+  codeTestFunc "instrucitonCodeCombine2Single" [Block [GeneInt 2, GeneInt 1]] [StateFunc instructionCodeFromExec, GeneInt 1, StateFunc instructionCodeFromExec, GeneInt 2, StateFunc instructionCodeCombine] emptyState
+  intTestFunc "instructionCodeDo" [3] [StateFunc instructionCodeFromExec, GeneInt 3, StateFunc instructionCodeDo] emptyState
+  -- How to test instructionCodeDoDup??? We would would need a multi stack testing function
+  boolTestFunc "instructionCodeIsCodeBlockTrue" [True] [StateFunc instructionCodeFromExec, Block [GeneInt 0], StateFunc instructionCodeIsCodeBlock] emptyState
+  boolTestFunc "instructionCodeIsCodeBlockFalse" [False] [StateFunc instructionCodeFromExec, GeneInt 0, StateFunc instructionCodeIsCodeBlock] emptyState
+  boolTestFunc "instructionCodeIsSingularTrue" [True] [StateFunc instructionCodeFromExec, GeneInt 0, StateFunc instructionCodeIsSingular] emptyState
+  boolTestFunc "instructionCodeIsSingularFalse" [False] [StateFunc instructionCodeFromExec, Block [GeneInt 0], StateFunc instructionCodeIsSingular] emptyState
+  
