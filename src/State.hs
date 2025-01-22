@@ -31,7 +31,7 @@ instance Eq Gene where
   GeneBoolVector xs == GeneBoolVector ys = xs == ys
   Close == Close = True
   StateFunc _ == StateFunc _ = True -- This line is probably not the best thing to do
-  Block [x] == Block [y] = [x] == [y]
+  Block x == Block y = x == y
   _ == _ = False
 
 instance Show Gene where
