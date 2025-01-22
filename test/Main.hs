@@ -102,4 +102,9 @@ main = do
   boolTestFunc "instructionCodeIsCodeBlockFalse" [False] [StateFunc instructionCodeFromExec, GeneInt 0, StateFunc instructionCodeIsCodeBlock] emptyState
   boolTestFunc "instructionCodeIsSingularTrue" [True] [StateFunc instructionCodeFromExec, GeneInt 0, StateFunc instructionCodeIsSingular] emptyState
   boolTestFunc "instructionCodeIsSingularFalse" [False] [StateFunc instructionCodeFromExec, Block [GeneInt 0], StateFunc instructionCodeIsSingular] emptyState
-  
+  intTestFunc "instructionCodeDoCount" [15] [GeneInt 6, StateFunc instructionCodeFromExec, StateFunc instructionIntAdd, StateFunc instructionCodeDoCount] emptyState
+  intTestFunc "instructionCodeDoTimes" [13] [GeneInt 6, GeneInt 3, GeneInt 4, GeneInt 2, StateFunc instructionCodeFromExec, StateFunc instructionIntAdd, StateFunc instructionCodeDoTimes] emptyState
+  intTestFunc "instructionCodeIfTrue" [6] [GeneBool True, StateFunc instructionCodeFromExec, GeneInt 3, StateFunc instructionCodeFromExec, GeneInt 6, StateFunc instructionCodeIf] emptyState
+  intTestFunc "instructionCodeIfFalse" [3] [GeneBool False, StateFunc instructionCodeFromExec, GeneInt 3, StateFunc instructionCodeFromExec, GeneInt 6, StateFunc instructionCodeIf] emptyState
+  intTestFunc "instructionCodeWhen" [6, 3, 6] [GeneInt 6, GeneInt 3, GeneInt 4, GeneInt 2, GeneBool True, StateFunc instructionCodeFromExec, StateFunc instructionIntAdd, StateFunc instructionCodeWhen] emptyState
+  -- stopped for the night at https://erp12.github.io/pyshgp/html/core_instructions.html#code-member
