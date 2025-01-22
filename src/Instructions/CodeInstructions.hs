@@ -2,6 +2,7 @@ module Instructions.CodeInstructions where
 
 import State
 import Instructions.GenericInstructions
+import Instructions.IntInstructions
 
 isBlock :: Gene -> Bool
 isBlock (Block _) = True
@@ -113,3 +114,25 @@ instructionCodeDoRange state@(State {_code = (c1 : cs), _int = (i0 : i1 : is), _
       | currentIdx > destIdx = -1
       | otherwise = 0
 instructionCodeDoRange state = state
+
+instructionCodeDoCount :: State -> State
+instructionCodeDoCount state@(State {_code = (c : cs), _int = (i : is), _exec = es}) =
+  if i < 1
+    then state
+    else state {_code = cs, _int = is, _exec = Block [GeneInt 0, GeneInt $ i - 1, StateFunc instructionCodeFromExec, c, StateFunc instructionCodeDoRange] : es}
+instructionCodeDoCount state = state
+
+instructionCodeDoTimes :: State -> State
+instructionCodeDoTimes state@(State {_code = (c : cs), _int = (i : is), _exec = es}) =
+  if i < 1
+    then state
+    else state {_code = cs, _int = is, _exec = Block [GeneInt 0, GeneInt $ i - 1, StateFunc instructionCodeFromExec, Block [StateFunc instructionIntPop, c], StateFunc instructionCodeDoRange] : es}
+instructionCodeDoTimes state = state
+
+instructionCodeIf :: State -> State
+instructionCodeIf state@(State {_code = (c1 : c2 : cs), _bool = (b1 : bs), _exec = es}) = state{_code = cs, _bool = bs, _exec = (if b1 then c1 else c2) : es}
+instructionCodeIf state = state
+
+instructionCodeWhen :: State -> State
+instructionCodeWhen state@(State {_code = (c1 : cs), _bool = (b1 : bs), _exec = es}) = state{_code = cs, _bool = bs, _exec = if b1 then c1 : es else es}
+instructionCodeWhen state = state
