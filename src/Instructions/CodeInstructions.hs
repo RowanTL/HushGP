@@ -12,6 +12,10 @@ blockLength :: Gene -> Int
 blockLength (Block xs) = length xs
 blockLength _ = 1
 
+blockIsNull :: Gene -> Bool
+blockIsNull (Block xs) = null xs
+blockIsNull _ = False
+
 -- I think I can abstract the boilerplate base case check for a lot of these
 -- with a different function
 
@@ -39,6 +43,11 @@ codeCombine (Block xs) (Block ys) = Block (xs <> ys)
 codeCombine (Block xs) ygene = Block (xs <> [ygene])
 codeCombine xgene (Block ys) = Block (xgene : ys)
 codeCombine xgene ygene = Block [xgene, ygene]
+
+codeMember :: Gene -> Gene -> Bool
+codeMember (Block _) (Block _) = False -- Can't compare two lists with `elem`
+codeMember (Block xs) ygene = ygene `elem` xs
+codeMember _ _ = False
 
 instructionCodePop :: State -> State
 instructionCodePop state = instructionPop state code
@@ -136,3 +145,18 @@ instructionCodeIf state = state
 instructionCodeWhen :: State -> State
 instructionCodeWhen state@(State {_code = (c1 : cs), _bool = (b1 : bs), _exec = es}) = state{_code = cs, _bool = bs, _exec = if b1 then c1 : es else es}
 instructionCodeWhen state = state
+
+instructionCodeMember :: State -> State
+instructionCodeMember state@(State {_code = (c1 : c2 : cs), _bool = bs}) = state{_code = cs, _bool = codeMember c1 c2 : bs}
+instructionCodeMember state = state
+
+-- https://erp12.github.io/pyshgp/html/core_instructions.html#code-nth
+instructionCodeN :: State -> State
+instructionCodeN state@(State {_code = (c1 : cs), _int = (_ : is)}) =
+  if not $ blockIsNull c1Block
+    then state {_code = c1Block : cs, _int = is}
+    else state
+  where
+    c1Block :: Gene
+    c1Block = if not $ isBlock c1 then Block [c1] else c1
+instructionCodeN state = state

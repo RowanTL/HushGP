@@ -107,4 +107,7 @@ main = do
   intTestFunc "instructionCodeIfTrue" [6] [GeneBool True, StateFunc instructionCodeFromExec, GeneInt 3, StateFunc instructionCodeFromExec, GeneInt 6, StateFunc instructionCodeIf] emptyState
   intTestFunc "instructionCodeIfFalse" [3] [GeneBool False, StateFunc instructionCodeFromExec, GeneInt 3, StateFunc instructionCodeFromExec, GeneInt 6, StateFunc instructionCodeIf] emptyState
   intTestFunc "instructionCodeWhen" [6, 3, 6] [GeneInt 6, GeneInt 3, GeneInt 4, GeneInt 2, GeneBool True, StateFunc instructionCodeFromExec, StateFunc instructionIntAdd, StateFunc instructionCodeWhen] emptyState
-  -- stopped for the night at https://erp12.github.io/pyshgp/html/core_instructions.html#code-member
+  boolTestFunc "instructionCodeMemberTrue" [True] [StateFunc instructionCodeFromExec, GeneInt 2, StateFunc instructionCodeFromExec, Block [GeneFloat 3.6, GeneInt 2, GeneIntVector [8, 9]], StateFunc instructionCodeMember] emptyState 
+  boolTestFunc "instructionCodeMemberFalse" [False] [StateFunc instructionCodeFromExec, GeneInt 7, StateFunc instructionCodeFromExec, Block [GeneFloat 3.6, GeneInt 2, GeneIntVector [8, 9]], StateFunc instructionCodeMember] emptyState 
+  boolTestFunc "instructionCodeMember2Blocks" [False] [StateFunc instructionCodeFromExec, Block [GeneInt 7, GeneInt 0], StateFunc instructionCodeFromExec, Block [GeneFloat 3.6, GeneInt 2, GeneIntVector [8, 9]], StateFunc instructionCodeMember] emptyState
+  
