@@ -20,6 +20,7 @@ extractFirstFromBlock (Block (x : _)) = x
 extractFirstFromBlock gene = gene
 
 extractLastFromBlock :: Gene -> Gene
+extractLastFromBlock (Block []) = Block []
 extractLastFromBlock (Block xs) = last xs
 extractLastFromBlock gene = gene
 
