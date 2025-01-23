@@ -121,4 +121,6 @@ main = do
   codeTestFunc "instructionCodeExtractLastEmptyBlock" [Block []] [StateFunc instructionCodeFromExec, Block [GeneInt 1, Block [GeneInt 2, GeneInt 3], Block [GeneInt 4, GeneInt 5], Block []], GeneInt 7, StateFunc instructionCodeExtract] emptyState
   codeTestFunc "instructionCodeExtractBlock" [Block [GeneInt 2, GeneInt 3]] [StateFunc instructionCodeFromExec, Block [GeneInt 1, Block [GeneInt 2, GeneInt 3], Block [GeneInt 4, GeneInt 5], Block []], GeneInt 1, StateFunc instructionCodeExtract] emptyState
   codeTestFunc "instructionCodeExtractEdgeCase" [Block []] [StateFunc instructionCodeFromExec, Block [GeneInt 1, Block [GeneInt 2, GeneInt 3], Block [GeneInt 4, GeneInt 5], Block []], GeneInt 7, StateFunc instructionCodeExtract] emptyState
+  -- Need a function to test extracting a non-code-block item
+  -- Need functions to test inserting items. Block and NonBlock
   
