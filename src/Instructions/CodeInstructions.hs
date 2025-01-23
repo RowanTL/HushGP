@@ -4,6 +4,8 @@ import State
 import Instructions.GenericInstructions
 import Instructions.IntInstructions
 
+-- import Debug.Trace
+
 isBlock :: Gene -> Bool
 isBlock (Block _) = True
 isBlock _ = False
@@ -38,6 +40,15 @@ extractTailFromBlock :: Gene -> Gene
 extractTailFromBlock (Block xs) = Block (drop 1 xs)
 extractTailFromBlock gene = gene
 
+-- This function took at least 3 hours to program.
+codeAtPoint :: [Gene] -> Int -> Gene
+codeAtPoint (gene : _) 0 = gene
+codeAtPoint [] _ = Block [] -- Should only happen if an empty block is last Gene in the list of Genes
+codeAtPoint ((Block nestedGenes) : genes) index = codeAtPoint (nestedGenes <> genes) (index - 1)
+codeAtPoint (_ : genes) index = codeAtPoint genes (index - 1)
+
+-- This one functions differently than pysh.
+-- I like this one because it preserves ordering
 codeCombine :: Gene -> Gene -> Gene
 codeCombine (Block xs) (Block ys) = Block (xs <> ys)
 codeCombine (Block xs) ygene = Block (xs <> [ygene])
@@ -48,6 +59,11 @@ codeMember :: Gene -> Gene -> Bool
 codeMember (Block _) (Block _) = False -- Can't compare two lists with `elem`
 codeMember (Block xs) ygene = ygene `elem` xs
 codeMember _ _ = False
+
+-- I love list comprehensions
+codeRecursiveSize :: Gene -> Int
+codeRecursiveSize (Block xs) = sum [codeRecursiveSize x + if isBlock x then 1 else 0 | x <- xs]
+codeRecursiveSize _ = 1
 
 instructionCodePop :: State -> State
 instructionCodePop state = instructionPop state code
@@ -150,13 +166,40 @@ instructionCodeMember :: State -> State
 instructionCodeMember state@(State {_code = (c1 : c2 : cs), _bool = bs}) = state{_code = cs, _bool = codeMember c1 c2 : bs}
 instructionCodeMember state = state
 
+-- This one doesn't count the recursive Blocks while instructionCodeExtract does
 -- https://erp12.github.io/pyshgp/html/core_instructions.html#code-nth
 instructionCodeN :: State -> State
-instructionCodeN state@(State {_code = (c1 : cs), _int = (_ : is)}) =
-  if not $ blockIsNull c1Block
-    then state {_code = c1Block : cs, _int = is}
+instructionCodeN state@(State {_code = ((Block c1) : cs), _int = (i1 : is)}) =
+  if not $ null c1
+    then state {_code = c1 !! index : cs, _int = is}
     else state
   where
-    c1Block :: Gene
-    c1Block = if not $ isBlock c1 then Block [c1] else c1
+    index :: Int
+    index = abs i1 `mod` length c1
+instructionCodeN state@(State {_code = (c1 : cs), _int = _ : is}) = state {_code = c1 : cs, _int = is}
 instructionCodeN state = state
+
+instructionMakeEmptyCodeBlock :: State -> State
+instructionMakeEmptyCodeBlock state@(State {_code = cs}) = state {_code = Block [] : cs}
+
+instructionIsEmptyCodeBlock :: State -> State
+instructionIsEmptyCodeBlock state@(State {_code = Block c1 : cs, _bool = bs}) = state{_code = cs, _bool = null c1 : bs}
+instructionIsEmptyCodeBlock state@(State {_bool = bs}) = state{_bool = False : bs}
+
+instructionCodeSize :: State -> State
+instructionCodeSize state@(State {_code = c1 : cs, _int = is}) = state{_code = cs, _int = codeRecursiveSize c1 : is}
+instructionCodeSize state = state
+
+-- There's a bug for this instruction in pysh where the last item in the
+-- top level Block isn't counted, and if passed 0, then the entire codeblock is returned.
+-- I designed this function differently so 0 returns the 0th element, and the last item
+-- in the codeblock can be returned.
+instructionCodeExtract :: State -> State
+instructionCodeExtract state@(State {_code = (block@(Block c1) : cs), _int = i1 : is}) =
+  let
+    index = abs i1 `mod` codeRecursiveSize block
+  in
+  state{_code = codeAtPoint c1 index : cs, _int = is}
+
+instructionCodeExtract state@(State {_code = cs, _int = _ : is}) = state{_code = cs, _int = is}
+instructionCodeExtract state = state

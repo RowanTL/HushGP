@@ -1,8 +1,8 @@
 import Control.Exception (assert)
+import Instructions.CodeInstructions
 import Instructions.ExecInstructions
 import Instructions.FloatInstructions
 import Instructions.IntInstructions
-import Instructions.CodeInstructions
 import Push
 import State
 
@@ -28,7 +28,7 @@ boolTestFunc name goal genome startState =
 codeTestFunc :: String -> [Gene] -> [Gene] -> State -> IO ()
 codeTestFunc name goal genome startState =
   let state = loadProgram genome startState
-    in assert (goal == _code (interpretExec state)) putStrLn (name <> " passed test.")
+   in assert (goal == _code (interpretExec state)) putStrLn (name <> " passed test.")
 
 main :: IO ()
 main = do
@@ -107,7 +107,16 @@ main = do
   intTestFunc "instructionCodeIfTrue" [6] [GeneBool True, StateFunc instructionCodeFromExec, GeneInt 3, StateFunc instructionCodeFromExec, GeneInt 6, StateFunc instructionCodeIf] emptyState
   intTestFunc "instructionCodeIfFalse" [3] [GeneBool False, StateFunc instructionCodeFromExec, GeneInt 3, StateFunc instructionCodeFromExec, GeneInt 6, StateFunc instructionCodeIf] emptyState
   intTestFunc "instructionCodeWhen" [6, 3, 6] [GeneInt 6, GeneInt 3, GeneInt 4, GeneInt 2, GeneBool True, StateFunc instructionCodeFromExec, StateFunc instructionIntAdd, StateFunc instructionCodeWhen] emptyState
-  boolTestFunc "instructionCodeMemberTrue" [True] [StateFunc instructionCodeFromExec, GeneInt 2, StateFunc instructionCodeFromExec, Block [GeneFloat 3.6, GeneInt 2, GeneIntVector [8, 9]], StateFunc instructionCodeMember] emptyState 
-  boolTestFunc "instructionCodeMemberFalse" [False] [StateFunc instructionCodeFromExec, GeneInt 7, StateFunc instructionCodeFromExec, Block [GeneFloat 3.6, GeneInt 2, GeneIntVector [8, 9]], StateFunc instructionCodeMember] emptyState 
+  boolTestFunc "instructionCodeMemberTrue" [True] [StateFunc instructionCodeFromExec, GeneInt 2, StateFunc instructionCodeFromExec, Block [GeneFloat 3.6, GeneInt 2, GeneIntVector [8, 9]], StateFunc instructionCodeMember] emptyState
+  boolTestFunc "instructionCodeMemberFalse" [False] [StateFunc instructionCodeFromExec, GeneInt 7, StateFunc instructionCodeFromExec, Block [GeneFloat 3.6, GeneInt 2, GeneIntVector [8, 9]], StateFunc instructionCodeMember] emptyState
   boolTestFunc "instructionCodeMember2Blocks" [False] [StateFunc instructionCodeFromExec, Block [GeneInt 7, GeneInt 0], StateFunc instructionCodeFromExec, Block [GeneFloat 3.6, GeneInt 2, GeneIntVector [8, 9]], StateFunc instructionCodeMember] emptyState
-  
+  codeTestFunc "instructionCodeNInBounds" [GeneInt 0] [StateFunc instructionCodeFromExec, Block [GeneInt 0, GeneInt 1, GeneInt 2, GeneInt 3, GeneInt 4, GeneInt 5], GeneInt 0, StateFunc instructionCodeN] emptyState
+  codeTestFunc "instructionCodeNInBoundsEnd" [GeneInt 5] [StateFunc instructionCodeFromExec, Block [GeneInt 0, GeneInt 1, GeneInt 2, GeneInt 3, GeneInt 4, GeneInt 5], GeneInt 5, StateFunc instructionCodeN] emptyState
+  codeTestFunc "instructionCodeNModded" [GeneInt 3] [StateFunc instructionCodeFromExec, Block [GeneInt 0, GeneInt 1, GeneInt 2, GeneInt 3, GeneInt 4, GeneInt 5], GeneInt 9, StateFunc instructionCodeN] emptyState
+  codeTestFunc "instructionMakeEmptyCodeBlock" [Block []] [StateFunc instructionMakeEmptyCodeBlock] emptyState
+  boolTestFunc "instructionIsEmptyCodeBlockTrue" [True] [StateFunc instructionCodeFromExec, Block [], StateFunc instructionIsEmptyCodeBlock] emptyState
+  intTestFunc "instructionCodeSize" [8] [StateFunc instructionCodeFromExec, Block [GeneInt 1, Block [GeneInt 2, GeneInt 3], Block [GeneInt 4, GeneInt 5], GeneInt 6], StateFunc instructionCodeSize] emptyState
+  codeTestFunc "instructionCodeExtractInBounds" [GeneInt 3] [StateFunc instructionCodeFromExec, Block [GeneInt 1, Block [GeneInt 2, GeneInt 3], Block [GeneInt 4, GeneInt 5], GeneInt 6], GeneInt 3, StateFunc instructionCodeExtract] emptyState
+  codeTestFunc "instructionCodeExtractOutBounds" [GeneInt 3] [StateFunc instructionCodeFromExec, Block [GeneInt 1, Block [GeneInt 2, GeneInt 3], Block [GeneInt 4, GeneInt 5], GeneInt 6], GeneInt 11, StateFunc instructionCodeExtract] emptyState
+  codeTestFunc "instructionCodeExtractLastEmptyBlock" [Block []] [StateFunc instructionCodeFromExec, Block [GeneInt 1, Block [GeneInt 2, GeneInt 3], Block [GeneInt 4, GeneInt 5], Block []], GeneInt 7, StateFunc instructionCodeExtract] emptyState
+  codeTestFunc "instructionCodeExtractBlock" [Block [GeneInt 2, GeneInt 3]] [StateFunc instructionCodeFromExec, Block [GeneInt 1, Block [GeneInt 2, GeneInt 3], Block [GeneInt 4, GeneInt 5], Block []], GeneInt 1, StateFunc instructionCodeExtract] emptyState
