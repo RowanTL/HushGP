@@ -47,8 +47,14 @@ codeAtPoint [] _ = Block [] -- Should only happen if an empty block is last Gene
 codeAtPoint ((Block nestedGenes) : genes) index = codeAtPoint (nestedGenes <> genes) (index - 1)
 codeAtPoint (_ : genes) index = codeAtPoint genes (index - 1)
 
+codeInsertAtPoint :: [Gene] -> Gene -> Int -> [Gene]
+codeInsertAtPoint oldGenes gene 0 = gene : oldGenes
+codeInsertAtPoint [] gene _ = [gene] -- This shouldn't happen (lol)
+codeInsertAtPoint ((Block genes) : oldGenes) gene index = Block (codeInsertAtPoint genes gene (index - 1)) : oldGenes
+codeInsertAtPoint (oldGene : oldGenes) gene index = oldGene : codeInsertAtPoint oldGenes gene (index - 1) 
+
 -- This one functions differently than pysh.
--- I like this one because it preserves ordering
+-- I like this one because it preserves ordering in the second case
 codeCombine :: Gene -> Gene -> Gene
 codeCombine (Block xs) (Block ys) = Block (xs <> ys)
 codeCombine (Block xs) ygene = Block (xs <> [ygene])
@@ -200,6 +206,18 @@ instructionCodeExtract state@(State {_code = (block@(Block c1) : cs), _int = i1 
     index = abs i1 `mod` codeRecursiveSize block
   in
   state{_code = codeAtPoint c1 index : cs, _int = is}
-
 instructionCodeExtract state@(State {_code = cs, _int = _ : is}) = state{_code = cs, _int = is}
 instructionCodeExtract state = state
+
+instructionCodeInsert :: State -> State
+instructionCodeInsert state@(State {_code = (block@(Block c1) : c2 : cs), _int = i1 : is}) =
+  let
+    index = abs i1 `mod` codeRecursiveSize block
+  in
+    state{_code = Block (codeInsertAtPoint c1 c2 index) : cs, _int = is}
+instructionCodeInsert state@(State {_code = c1 : c2 : cs, _int = i1 : is}) =
+  let
+    index = abs i1 `mod` codeRecursiveSize (Block [c1])
+  in
+    state{_code = Block (codeInsertAtPoint [c1] c2 index) : cs, _int = is}
+instructionCodeInsert state = state
