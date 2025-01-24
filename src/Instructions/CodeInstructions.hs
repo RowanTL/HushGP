@@ -1,5 +1,6 @@
 module Instructions.CodeInstructions where
 
+import Data.List (elemIndex)
 import State
 import Instructions.GenericInstructions
 import Instructions.IntInstructions
@@ -221,3 +222,25 @@ instructionCodeInsert state@(State {_code = c1 : c2 : cs, _int = i1 : is}) =
   in
     state{_code = Block (codeInsertAtPoint [c1] c2 index) : cs, _int = is}
 instructionCodeInsert state = state
+
+-- How do I test if two functions are the same??????????
+-- This will impact the final case. This implementation can't determine
+-- if two functions are the same, so it assumes that they are.
+-- Maybe can test for equality by seeing if these two functions affect the current state
+-- in the same way.
+instructionCodeFirstPosition :: State -> State
+instructionCodeFirstPosition state@(State {_code = (Block []) : c2 : cs, _int = is}) = state {_code = cs, _int = (if c2 == Block [] then 0 else -1) : is}
+instructionCodeFirstPosition state@(State {_code = (Block c1) : c2 : cs, _int = is}) = state {_code = cs, _int = positionElem c1 c2 : is}
+  where
+    -- This is really not gonna be good for StateFunc
+    positionElem :: [Gene] -> Gene -> Int
+    positionElem genes gene =
+      case elemIndex gene genes of
+        Nothing -> -1
+        Just x -> x
+instructionCodeFirstPosition state@(State {_code = c1 : c2 : cs, _int = is}) = state {_code = cs, _int = (if c1 == c2 then 0 else -1) : is}
+instructionCodeFirstPosition state = state
+
+instructionCodeReverse :: State -> State
+instructionCodeReverse state@(State {_code = (Block c1) : cs}) = state {_code = Block (reverse c1) : cs}
+instructionCodeReverse state = state
