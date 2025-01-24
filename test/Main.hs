@@ -121,6 +121,20 @@ main = do
   codeTestFunc "instructionCodeExtractLastEmptyBlock" [Block []] [StateFunc instructionCodeFromExec, Block [GeneInt 1, Block [GeneInt 2, GeneInt 3], Block [GeneInt 4, GeneInt 5], Block []], GeneInt 7, StateFunc instructionCodeExtract] emptyState
   codeTestFunc "instructionCodeExtractBlock" [Block [GeneInt 2, GeneInt 3]] [StateFunc instructionCodeFromExec, Block [GeneInt 1, Block [GeneInt 2, GeneInt 3], Block [GeneInt 4, GeneInt 5], Block []], GeneInt 1, StateFunc instructionCodeExtract] emptyState
   codeTestFunc "instructionCodeExtractEdgeCase" [Block []] [StateFunc instructionCodeFromExec, Block [GeneInt 1, Block [GeneInt 2, GeneInt 3], Block [GeneInt 4, GeneInt 5], Block []], GeneInt 7, StateFunc instructionCodeExtract] emptyState
-  -- Need a function to test extracting a non-code-block item
-  -- Need functions to test inserting items. Block and NonBlock
-  
+  codeTestFunc "instructionCodeExtractNotBlock" [GeneInt 2] [StateFunc instructionCodeFromExec, GeneInt 2, GeneInt 56, StateFunc instructionCodeExtract] emptyState
+  codeTestFunc "instructionCodeInsertInBounds"
+    [Block [GeneInt 1, Block [GeneInt 2, GeneInt 9999, GeneInt 3], Block [GeneInt 4, GeneInt 5], GeneInt 6, Block [GeneInt 7, GeneInt 8], GeneInt 9]]
+    [StateFunc instructionCodeFromExec, GeneInt 9999, StateFunc instructionCodeFromExec, Block [GeneInt 1, Block [GeneInt 2, GeneInt 3], Block [GeneInt 4, GeneInt 5], GeneInt 6, Block [GeneInt 7, GeneInt 8], GeneInt 9], GeneInt 3, StateFunc instructionCodeInsert]
+    emptyState
+  codeTestFunc "instructionCodeInsertOutBounds"
+    [Block [GeneInt 1, Block [GeneInt 2, GeneInt 9999, GeneInt 3], Block [GeneInt 4, GeneInt 5], GeneInt 6, Block [GeneInt 7, GeneInt 8], GeneInt 9]]
+    [StateFunc instructionCodeFromExec, GeneInt 9999, StateFunc instructionCodeFromExec, Block [GeneInt 1, Block [GeneInt 2, GeneInt 3], Block [GeneInt 4, GeneInt 5], GeneInt 6, Block [GeneInt 7, GeneInt 8], GeneInt 9], GeneInt 15, StateFunc instructionCodeInsert]
+    emptyState
+  codeTestFunc "instructionCodeInsertNotBlock" [Block [GeneInt 2, GeneInt 1]] [StateFunc instructionCodeFromExec, GeneInt 2, StateFunc instructionCodeFromExec, GeneInt 1, GeneInt 1, StateFunc instructionCodeInsert] emptyState
+  intTestFunc "instructionCodePosition0" [0] [StateFunc instructionCodeFromExec, GeneInt 1, StateFunc instructionCodeFromExec, Block [GeneInt 1, GeneInt 2, GeneInt 3], StateFunc instructionCodeFirstPosition] emptyState
+  intTestFunc "instructionCodePosition-1" [-1] [StateFunc instructionCodeFromExec, GeneInt 7, StateFunc instructionCodeFromExec, Block [GeneInt 1, GeneInt 2, GeneInt 3], StateFunc instructionCodeFirstPosition] emptyState
+  intTestFunc "instructionCodePositionEmptyBlock" [0] [StateFunc instructionCodeFromExec, Block [], StateFunc instructionCodeFromExec, Block [], StateFunc instructionCodeFirstPosition] emptyState
+  codeTestFunc "instructionCodePositionBadStack" [GeneInt 1] [StateFunc instructionCodeFromExec, GeneInt 1, StateFunc instructionCodeFirstPosition] emptyState -- tests to ensure base case of insufficient code stack works. Should do this on more of these instructions.
+  codeTestFunc "instructionCodeReverse2Args" [Block [GeneInt 2, GeneInt 1]] [StateFunc instructionCodeFromExec, Block [GeneInt 1, GeneInt 2], StateFunc instructionCodeReverse] emptyState
+  codeTestFunc "instructionCodeReverse3Args" [Block [GeneInt 3, GeneInt 2, GeneInt 1]] [StateFunc instructionCodeFromExec, Block [GeneInt 1, GeneInt 2, GeneInt 3], StateFunc instructionCodeReverse] emptyState
+  codeTestFunc "instructionCodeReverseNonBlock" [GeneInt 1] [StateFunc instructionCodeFromExec, GeneInt 1, StateFunc instructionCodeReverse] emptyState
