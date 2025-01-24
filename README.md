@@ -6,10 +6,6 @@ the functions in the pyshgp list.
 
 https://erp12.github.io/pyshgp/html/core_instructions.html
 
-I'm not going to include no-ops.
-
-Interpush doesn't have the code stack. Time to test this against pysh.
-
 ## Tasks
 * [ ] Post minimal core of exec to haskell discourse for advice about speed optimization.
 * [x] Do test-driven development on this one.

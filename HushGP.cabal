@@ -44,6 +44,7 @@ library
                     , Instructions.GenericInstructions
                     , Instructions.LogicalInstructions
                     , Instructions.CodeInstructions
+                    , Instructions.StringInstructions
 
     -- Modules included in this library but not exported.
     -- other-modules:
