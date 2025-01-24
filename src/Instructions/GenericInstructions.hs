@@ -108,3 +108,18 @@ instructionShoveDup state@(State {_int = []}) _ = state
 -- also also not int generic
 instructionShove :: State -> Lens' State [a] -> State
 instructionShove state accessor = instructionShoveDup state accessor & accessor .~ drop 1 (view accessor (instructionShoveDup state accessor))
+
+-- not char generic
+instructionConcat :: Semigroup a => State -> Lens' State [a] -> State
+instructionConcat state accessor =
+  if (length . take 2 $ view accessor state) == 2
+  then droppedState & accessor .~ (head (view accessor state) <> view accessor state !! 1) : view accessor droppedState
+  -- then undefined
+  else state
+  where
+    droppedState :: State
+    droppedState = state & accessor .~ drop 2 (view accessor state)
+
+-- evolve fodder???????????
+instructionNoOp :: State -> State
+instructionNoOp state = state
