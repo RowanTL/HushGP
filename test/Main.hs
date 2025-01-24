@@ -3,6 +3,7 @@ import Instructions.CodeInstructions
 import Instructions.ExecInstructions
 import Instructions.FloatInstructions
 import Instructions.IntInstructions
+import Instructions.StringInstructions
 import Push
 import State
 
@@ -29,6 +30,11 @@ codeTestFunc :: String -> [Gene] -> [Gene] -> State -> IO ()
 codeTestFunc name goal genome startState =
   let state = loadProgram genome startState
    in assert (goal == _code (interpretExec state)) putStrLn (name <> " passed test.")
+
+stringTestFunc :: String -> [String] -> [Gene] -> State -> IO ()
+stringTestFunc name goal genome startState =
+  let state = loadProgram genome startState
+   in assert (goal == _string (interpretExec state)) putStrLn (name <> " passed test.")
 
 main :: IO ()
 main = do
@@ -138,3 +144,8 @@ main = do
   codeTestFunc "instructionCodeReverse2Args" [Block [GeneInt 2, GeneInt 1]] [StateFunc instructionCodeFromExec, Block [GeneInt 1, GeneInt 2], StateFunc instructionCodeReverse] emptyState
   codeTestFunc "instructionCodeReverse3Args" [Block [GeneInt 3, GeneInt 2, GeneInt 1]] [StateFunc instructionCodeFromExec, Block [GeneInt 1, GeneInt 2, GeneInt 3], StateFunc instructionCodeReverse] emptyState
   codeTestFunc "instructionCodeReverseNonBlock" [GeneInt 1] [StateFunc instructionCodeFromExec, GeneInt 1, StateFunc instructionCodeReverse] emptyState
+
+  -- String tests
+  stringTestFunc "instructionStringConcat" ["123abc"] [GeneString "abc", GeneString "123", StateFunc instructionStringConcat] emptyState
+  stringTestFunc "instructionStringSwap" ["abc", "123"] [GeneString "abc", GeneString "123", StateFunc instructionStringSwap] emptyState
+  stringTestFunc "instructionStringInsertString" ["123INSabc"] [GeneString "abc", GeneString "123", StateFunc instructionStringConcat, GeneString "INS", StateFunc instructionStringSwap, GeneInt 3, StateFunc instructionStringInsertString] emptyState
