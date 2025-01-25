@@ -79,3 +79,7 @@ instructionStringRemoveAllString state = state
 instructionStringOccurrencesOfString :: State -> State
 instructionStringOccurrencesOfString state@(State {_string = s1 : s2 : ss, _int = is}) = state{_string = ss, _int = amtOccurences s1 s2 : is}
 instructionStringOccurrencesOfString state = state
+
+instructionStringInsertChar :: State -> State
+instructionStringInsertChar state@(State {_string = s1 : ss, _char = c1 : cs, _int = i1 : is}) = state {_string = combineString [c1] (splitAt i1 s1) : ss, _char = cs, _int = is}
+instructionStringInsertChar state = state
