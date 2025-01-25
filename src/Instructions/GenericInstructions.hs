@@ -5,9 +5,47 @@ import State
 
 -- import Debug.Trace 
 
--- Files in the spaces in [[a]] with [a]
-fillInHoles :: [a] -> [[a]] -> [a]
-fillInHoles filler toFill = undefined -- TODO
+deleteAt :: Int -> [a] -> [a]
+deleteAt idx xs = take idx xs <> drop 1 (drop idx xs)
+
+findSubA :: forall a. Eq a => [a] -> [a] -> Int
+findSubA fullA subA 
+  | length fullA < length subA = -1
+  | length fullA == length subA = if fullA == subA then 0 else -1
+  | otherwise = findSubA' fullA subA 0
+  where
+    findSubA' :: [a] -> [a] -> Int -> Int
+    findSubA' fA sA subIndex
+      | null fA = -1
+      | length sA > length fA = -1
+      | sA == take (length sA) fA = subIndex
+      | otherwise = findSubA' (drop 1 fA) sA (subIndex + 1)
+
+-- The int is the amount of olds to replace with new
+-- Just chain findSubA calls lol
+-- Nothing means replace all
+-- May not be the most efficient method with the findSubA calls
+replace :: Eq a => [a] -> [a] -> [a] -> Maybe Int -> [a]
+replace fullA old new (Just amt) =
+  if findSubA fullA old /= -1 && amt > 0
+    then replace (take (findSubA fullA old) fullA <> new <> drop (findSubA fullA old + length old) fullA) old new (Just $ amt - 1)
+    else fullA
+replace fullA old new Nothing =
+  if findSubA fullA old /= -1
+    then replace (take (findSubA fullA old) fullA <> new <> drop (findSubA fullA old + length old) fullA) old new Nothing
+    else fullA
+
+amtOccurences :: forall a. Eq a => [a] -> [a] -> Int
+amtOccurences fullA subA = amtOccurences' fullA subA 0
+  where
+    amtOccurences' :: [a] -> [a] -> Int -> Int
+    amtOccurences' fA sA count =
+      if findSubA fA sA /= -1
+        then amtOccurences' (replace fA sA mempty (Just 1)) sA (count + 1)
+        else count
+
+combineTuple :: a -> ([a], [a]) -> [a]
+combineTuple val tup = fst tup <> [val] <> snd tup
 
 notEmptyStack :: State -> Lens' State [a] -> Bool
 notEmptyStack state accessor = not . null $ view accessor state
@@ -79,9 +117,6 @@ instructionYankDup state@(State {_int = i : is}) accessor =
   else state
 instructionYankDup state@(State {_int = []}) _ = state
 
-deleteAt :: Int -> [a] -> [a]
-deleteAt idx xs = take idx xs <> drop 1 (drop idx xs)
-
 -- Is this optimal? Running instrucitonYankDup twice?????
 -- int non generic too
 instructionYank :: forall a. State -> Lens' State [a] -> State
@@ -96,9 +131,6 @@ instructionYank state@(State {_int = rawIndex : _}) accessor =
   in
   if notEmptyStack state accessor then deletedState & accessor .~ item : view accessor deletedState else state
 instructionYank state _ = state
-
-combineTuple :: a -> ([a], [a]) -> [a]
-combineTuple val tup = fst tup <> [val] <> snd tup
 
 -- int non generic :(
 -- Rewrite this eventually?
