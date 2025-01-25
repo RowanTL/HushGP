@@ -39,33 +39,43 @@ instructionStringFromNthChar state = state
 -- instructionStringContainsString :: State -> State
 -- instructionStringContainsString state@(State )
 
--- Haskell is kinda really cool. This can totally be
--- abstracted
-findSubString :: String -> String -> Int
-findSubString fullString subString 
-  | length fullString < length subString = -1
-  | length fullString == length subString = if fullString == subString then 0 else -1
-  | otherwise = findSubString' fullString subString 0
-  where
-    findSubString' :: String -> String -> Int -> Int
-    findSubString' fStr sStr index
-      | null fStr = -1
-      | length sStr > length fStr = -1
-      | sStr == take (length sStr) fStr = index
-      | otherwise = findSubString' (drop 1 fStr) sStr (index + 1)
-
 instructionStringIndexOfString :: State -> State
-instructionStringIndexOfString state@(State {_string = s1 : s2 : ss, _int = is}) = state {_string = ss, _int = findSubString s1 s2 : is}
+instructionStringIndexOfString state@(State {_string = s1 : s2 : ss, _int = is}) = state {_string = ss, _int = findSubA s1 s2 : is}
 instructionStringIndexOfString state = state
 
 instructionStringContainsString :: State -> State
-instructionStringContainsString state@(State {_string = s1 : s2 : ss, _bool = bs}) = state {_string = ss, _bool = (findSubString s1 s2 /= -1) : bs}
+instructionStringContainsString state@(State {_string = s1 : s2 : ss, _bool = bs}) = state {_string = ss, _bool = (findSubA s1 s2 /= -1) : bs}
 instructionStringContainsString state = state
 
+-- pysh reverses this. Check this for propeller
 instructionStringSplitOnString :: State -> State
-instructionStringSplitOnString state@(State {_string = s1 : s2 : ss}) = state {_string = splitOn s2 s1 <> ss}
+instructionStringSplitOnString state@(State {_string = s1 : s2 : ss}) = state {_string = reverse $ splitOn s2 s1 <> ss}
 instructionStringSplitOnString state = state
 
 instructionStringReplaceFirstString :: State -> State
-instructionStringReplaceFirstString state@(State {_string = s1 : s2 : s3 : ss}) = undefined -- TODO
+instructionStringReplaceFirstString state@(State {_string = s1 : s2 : s3 : ss}) = state {_string = replace s1 s2 s3 (Just 1) : ss}
 instructionStringReplaceFirstString state = state
+
+instructionStringReplaceNString :: State -> State
+instructionStringReplaceNString state@(State {_string = s1 : s2 : s3 : ss, _int = i1 : is}) = state{_string = replace s1 s2 s3 (Just i1) : ss, _int = is}
+instructionStringReplaceNString state = state
+
+instructionStringReplaceAllString :: State -> State
+instructionStringReplaceAllString state@(State {_string = s1 : s2 : s3 : ss}) = state{_string = replace s1 s2 s3 Nothing : ss}
+instructionStringReplaceAllString state = state
+
+instructionStringRemoveFirstString :: State -> State
+instructionStringRemoveFirstString state@(State {_string = s1 : s2 : ss}) = state{_string = replace s1 s2 "" (Just 1) : ss}
+instructionStringRemoveFirstString state = state
+
+instructionStringRemoveNString :: State -> State
+instructionStringRemoveNString state@(State {_string = s1 : s2 : ss, _int = i1 : is}) = state{_string = replace s1 s2 "" (Just i1) : ss, _int = is}
+instructionStringRemoveNString state = state
+
+instructionStringRemoveAllString :: State -> State
+instructionStringRemoveAllString state@(State {_string = s1 : s2 : ss}) = state{_string = replace s1 s2 "" Nothing : ss}
+instructionStringRemoveAllString state = state
+
+instructionStringOccurrencesOfString :: State -> State
+instructionStringOccurrencesOfString state@(State {_string = s1 : s2 : ss, _int = is}) = state{_string = ss, _int = amtOccurences s1 s2 : is}
+instructionStringOccurrencesOfString state = state
