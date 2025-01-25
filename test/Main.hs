@@ -155,3 +155,5 @@ main = do
   intTestFunc "instructionStringIndexOfString3" [-1] [GeneString "z", GeneString "123abc", StateFunc instructionStringIndexOfString] emptyState
   boolTestFunc "instructionStringContainsStringTrue" [True] [GeneString "a", GeneString "123abc", StateFunc instructionStringContainsString] emptyState
   boolTestFunc "instructionStringContainsStringTrue" [False] [GeneString "z", GeneString "123abc", StateFunc instructionStringContainsString] emptyState
+  stringTestFunc "instructionStringSplitOnString" ["nd", "r fri", "llo gam", "h"] [GeneString "e", GeneString "hello gamer friend", StateFunc instructionStringSplitOnString] emptyState
+  stringTestFunc "instructionStringSplitOnString" ["", "hello gamer frien"] [GeneString "d", GeneString "hello gamer friend", StateFunc instructionStringSplitOnString] emptyState
