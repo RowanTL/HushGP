@@ -3,7 +3,11 @@ module Instructions.GenericInstructions where
 import Control.Lens
 import State
 
--- import Debug.Trace
+-- import Debug.Trace 
+
+-- Files in the spaces in [[a]] with [a]
+fillInHoles :: [a] -> [[a]] -> [a]
+fillInHoles filler toFill = undefined -- TODO
 
 notEmptyStack :: State -> Lens' State [a] -> Bool
 notEmptyStack state accessor = not . null $ view accessor state
