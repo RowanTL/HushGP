@@ -149,3 +149,9 @@ main = do
   stringTestFunc "instructionStringConcat" ["123abc"] [GeneString "abc", GeneString "123", StateFunc instructionStringConcat] emptyState
   stringTestFunc "instructionStringSwap" ["abc", "123"] [GeneString "abc", GeneString "123", StateFunc instructionStringSwap] emptyState
   stringTestFunc "instructionStringInsertString" ["123INSabc"] [GeneString "abc", GeneString "123", StateFunc instructionStringConcat, GeneString "INS", StateFunc instructionStringSwap, GeneInt 3, StateFunc instructionStringInsertString] emptyState
+  stringTestFunc "instructionStringFromFirstChar" ["1"] [GeneString "123", StateFunc instructionStringFromFirstChar] emptyState
+  stringTestFunc "instructionStringFromNthChar" ["a"] [GeneString "123abc", GeneInt 3, StateFunc instructionStringFromNthChar] emptyState
+  intTestFunc "instructionStringIndexOfString3" [3] [GeneString "a", GeneString "123abc", StateFunc instructionStringIndexOfString] emptyState
+  intTestFunc "instructionStringIndexOfString3" [-1] [GeneString "z", GeneString "123abc", StateFunc instructionStringIndexOfString] emptyState
+  boolTestFunc "instructionStringContainsStringTrue" [True] [GeneString "a", GeneString "123abc", StateFunc instructionStringContainsString] emptyState
+  boolTestFunc "instructionStringContainsStringTrue" [False] [GeneString "z", GeneString "123abc", StateFunc instructionStringContainsString] emptyState
