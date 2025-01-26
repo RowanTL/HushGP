@@ -206,6 +206,28 @@ main = do
   stringTestFunc "instructionStringHead0" [""] [GeneString "abc123", GeneInt 0, StateFunc instructionStringHead] emptyState
   stringTestFunc "instructionStringTail3" ["123"] [GeneString "abc123", GeneInt 3, StateFunc instructionStringTail] emptyState
   stringTestFunc "instructionStringTail0" [""] [GeneString "abc123", GeneInt 0, StateFunc instructionStringTail] emptyState
+  stringTestFunc "instructionStringAppendChar" ["Rabc123"] [GeneString "abc123", GeneChar 'R', StateFunc instructionStringAppendChar] emptyState
+  stringTestFunc "instructionStringRestFull" ["bc123"] [GeneString "abc123", StateFunc instructionStringRest] emptyState
+  stringTestFunc "instructionStringRestEmpty" [""] [GeneString "", StateFunc instructionStringRest] emptyState
+  stringTestFunc "instructionStringButLastFull" ["abc12"] [GeneString "abc123", StateFunc instructionStringButLast] emptyState
+  stringTestFunc "instructionStringButLastEmpty" [""] [GeneString "", StateFunc instructionStringButLast] emptyState
+  stringTestFunc "instructionStringDrop3" ["123"] [GeneString "abc123", GeneInt 3, StateFunc instructionStringDrop] emptyState
+  stringTestFunc "instructionStringDrop0" ["abc123"] [GeneString "abc123", GeneInt 0, StateFunc instructionStringDrop] emptyState
+  stringTestFunc "instructionStringButLastN3" ["abc"] [GeneString "abc123", GeneInt 3, StateFunc instructionStringButLastN] emptyState
+  stringTestFunc "instructionStringButLastN0" ["abc123"] [GeneString "abc123", GeneInt 0, StateFunc instructionStringButLastN] emptyState
+  intTestFunc "instructionStringLength6" [6] [GeneString "abc123", StateFunc instructionStringLength] emptyState
+  stringTestFunc "instructionStringMakeEmpty" ["", "abc123"] [GeneString "abc123", StateFunc instructionStringMakeEmpty] emptyState
+  stringTestFunc "instructionStringRemoveNth" ["abc23"] [GeneString "abc123", GeneInt 3, StateFunc instructionStringRemoveNth] emptyState
+  stringTestFunc "instructionStringSetNth" ["abR123"] [GeneString "abc123", GeneInt 2, GeneChar 'R', StateFunc instructionStringSetNth] emptyState
+  stringTestFunc "instructionStringStripWhitespace" ["abc123"] [GeneString " \r \n abc123 \t", StateFunc instructionStringStripWhitespace] emptyState
+  stringTestFunc "instructionStringFromBoolTrue" ["True"] [GeneBool True, StateFunc instructionStringFromBool] emptyState
+  stringTestFunc "instructionStringFromBoolTrue" ["False"] [GeneBool False, StateFunc instructionStringFromBool] emptyState
+  stringTestFunc "instructionStringFromInt1000" ["1000"] [GeneInt 1000, StateFunc instructionStringFromInt] emptyState
+  stringTestFunc "instructionStringFromInt-1" ["-1"] [GeneInt (-1), StateFunc instructionStringFromInt] emptyState
+  stringTestFunc "instructionStringFromFloat3.2" ["3.2"] [GeneFloat 3.2, StateFunc instructionStringFromFloat] emptyState
+  stringTestFunc "instructionStringFromFloat-99.0" ["-99.0"] [GeneFloat (-99.0), StateFunc instructionStringFromFloat] emptyState
+  stringTestFunc "instructionStringFromChar" ["Z"] [GeneChar 'Z', StateFunc instructionStringFromChar] emptyState
+  stringTestFunc "instructionStringFromChar" [" "] [GeneChar ' ', StateFunc instructionStringFromChar] emptyState
 
   -- char instructions
   stringTestFunc "instructionCharConcat" ["ab"] [GeneChar 'b', GeneChar 'a', StateFunc instructionCharConcat] emptyState  
@@ -214,3 +236,12 @@ main = do
   charTestFunc "instructionCharFromLastCharSuccess" ['3'] [GeneString "abc123", StateFunc instructionCharFromLastChar] emptyState
   charTestFunc "instructionCharFromLastCharFail" [] [GeneString "", StateFunc instructionCharFromLastChar] emptyState
   charTestFunc "instructionCharFromNthCharSuccess" ['c'] [GeneString "abc123", GeneInt 2, StateFunc instructionCharFromNthChar] emptyState
+  boolTestFunc "instructionCharIsWhitespaceSpace" [True] [GeneChar ' ', StateFunc instructionCharIsWhitespace] emptyState
+  boolTestFunc "instructionCharIsWhitespacet" [True] [GeneChar '\t', StateFunc instructionCharIsWhitespace] emptyState
+  boolTestFunc "instructionCharIsWhitespacer" [True] [GeneChar '\r', StateFunc instructionCharIsWhitespace] emptyState
+  boolTestFunc "instructionCharIsWhitespacen" [True] [GeneChar '\n', StateFunc instructionCharIsWhitespace] emptyState
+  boolTestFunc "instructionCharIsWhitespaceFalse" [False] [GeneChar 'a', StateFunc instructionCharIsWhitespace] emptyState
+  boolTestFunc "instructionCharIsLetterTrue" [True] [GeneChar 'a', StateFunc instructionCharIsLetter] emptyState
+  boolTestFunc "instructionCharIsLetterFalse" [False] [GeneChar '1', StateFunc instructionCharIsLetter] emptyState
+  boolTestFunc "instructionCharIsDigitTrue" [True] [GeneChar '1', StateFunc instructionCharIsDigit] emptyState
+  boolTestFunc "instructionCharIsDigitFalse" [False] [GeneChar 'a', StateFunc instructionCharIsDigit] emptyState
