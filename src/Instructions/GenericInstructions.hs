@@ -14,7 +14,6 @@ combineTuple val tup = fst tup <> [val] <> snd tup
 combineTupleList :: [a] -> ([a], [a]) -> [a]
 combineTupleList val tup = fst tup <> val <> snd tup
 
-
 insertAt :: Int -> a -> [a] -> [a]
 insertAt idx val xs = combineTuple val (splitAt idx xs)
 
