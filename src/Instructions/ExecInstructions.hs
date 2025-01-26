@@ -5,10 +5,10 @@ import Instructions.IntInstructions
 import Instructions.GenericInstructions
 
 instructionExecIf :: State -> State
-instructionExecIf state@(State {_exec = (e1 : e2 : es), _bool = (b : _)}) =
+instructionExecIf state@(State {_exec = (e1 : e2 : es), _bool = (b : bs)}) =
   if b
-    then state {_exec = e1 : es}
-    else state {_exec = e2 : es}
+    then state {_exec = e1 : es, _bool = bs}
+    else state {_exec = e2 : es, _bool = bs}
 instructionExecIf state = state
 
 instructionExecDup :: State -> State

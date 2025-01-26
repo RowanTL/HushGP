@@ -3,12 +3,25 @@ module Instructions.StringInstructions where
 import State
 import Instructions.GenericInstructions
 import Data.List.Split
+import Control.Lens
 
-absNum :: Integral a => a -> [b] -> Int
-absNum rawNum lst = abs (fromIntegral rawNum) `mod` length lst
+-- shamelessly stolen from https://hackage.haskell.org/package/MissingH-1.6.0.1/docs/src/Data.String.Utils.html#strip
+wschars :: String
+wschars = " \t\r\n"
 
-combineString :: String -> (String, String) -> String
-combineString toInsert (front, back) = front <> toInsert <> back
+strip :: String -> String
+strip = lstrip . rstrip
+
+lstrip :: String -> String
+lstrip s = case s of
+                  [] -> []
+                  (x:xs) -> if x `elem` wschars
+                            then lstrip xs
+                            else s
+
+-- this is a tad inefficient init
+rstrip :: String -> String
+rstrip = reverse . lstrip . reverse
 
 instructionStringConcat :: State -> State
 instructionStringConcat state = instructionConcat state string
@@ -17,7 +30,7 @@ instructionStringSwap :: State -> State
 instructionStringSwap state = instructionSwap state string
 
 instructionStringInsertString :: State -> State
-instructionStringInsertString state@(State{_string = s1 : s2 : ss, _int = i1 : is}) = state {_string = combineString s2 (splitAt i1 s1) : ss, _int = is}
+instructionStringInsertString state@(State{_string = s1 : s2 : ss, _int = i1 : is}) = state {_string = combineTupleList s2 (splitAt i1 s1) : ss, _int = is}
 instructionStringInsertString state = state
 
 instructionStringFromFirstChar :: State -> State
@@ -34,9 +47,6 @@ instructionStringFromLastChar state = state
 instructionStringFromNthChar :: State -> State
 instructionStringFromNthChar state@(State {_string = s1 : ss, _int = i1 : is}) = state{_string = [s1 !! absNum i1 s1] : ss, _int = is}
 instructionStringFromNthChar state = state
-
--- instructionStringContainsString :: State -> State
--- instructionStringContainsString state@(State )
 
 instructionStringIndexOfString :: State -> State
 instructionStringIndexOfString state@(State {_string = s1 : s2 : ss, _int = is}) = state {_string = ss, _int = findSubA s1 s2 : is}
@@ -80,7 +90,7 @@ instructionStringOccurrencesOfString state@(State {_string = s1 : s2 : ss, _int 
 instructionStringOccurrencesOfString state = state
 
 instructionStringInsertChar :: State -> State
-instructionStringInsertChar state@(State {_string = s1 : ss, _char = c1 : cs, _int = i1 : is}) = state{_string = combineString [c1] (splitAt i1 s1) : ss, _char = cs, _int = is}
+instructionStringInsertChar state@(State {_string = s1 : ss, _char = c1 : cs, _int = i1 : is}) = state{_string = combineTuple c1 (splitAt i1 s1) : ss, _char = cs, _int = is}
 instructionStringInsertChar state = state
 
 instructionStringContainsChar :: State -> State
@@ -172,3 +182,31 @@ instructionStringIsEmptyString state = state
 instructionStringRemoveNth :: State -> State
 instructionStringRemoveNth state@(State {_string = s1 : ss, _int = i1 : is}) = state{_string = deleteAt (absNum i1 s1) s1 : ss, _int = is}
 instructionStringRemoveNth state = state
+
+instructionStringSetNth :: State -> State
+instructionStringSetNth state@(State {_string = s1 : ss, _char = c1 : cs, _int = i1 : is}) = state{_string = replaceAt (absNum i1 s1) c1 s1 : ss, _char = cs, _int = is}
+instructionStringSetNth state = state
+
+instructionStringStripWhitespace :: State -> State
+instructionStringStripWhitespace state@(State {_string = s1 : ss}) = state{_string = strip s1 : ss}
+instructionStringStripWhitespace state = state
+
+-- Need to do uncons to all of the warnings in this mug
+instructionStringFromLens :: Show a => State -> Lens' State [a] -> State
+instructionStringFromLens state@(State {_string = ss}) accessor =
+  case uncons (view accessor state) of
+    Nothing -> state
+    Just (x,_) -> state{_string = show x : ss}
+
+instructionStringFromBool :: State -> State
+instructionStringFromBool state = instructionStringFromLens state bool
+
+instructionStringFromInt :: State -> State
+instructionStringFromInt state = instructionStringFromLens state int
+
+instructionStringFromFloat :: State -> State
+instructionStringFromFloat state = instructionStringFromLens state float
+
+instructionStringFromChar :: State -> State
+instructionStringFromChar state@(State {_string = ss, _char = c1 : cs}) = state{_string = [c1] : ss, _char = cs}
+instructionStringFromChar state = state

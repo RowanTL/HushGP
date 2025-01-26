@@ -8,6 +8,19 @@ import State
 deleteAt :: Int -> [a] -> [a]
 deleteAt idx xs = take idx xs <> drop 1 (drop idx xs)
 
+combineTuple :: a -> ([a], [a]) -> [a]
+combineTuple val tup = fst tup <> [val] <> snd tup
+
+combineTupleList :: [a] -> ([a], [a]) -> [a]
+combineTupleList val tup = fst tup <> val <> snd tup
+
+
+insertAt :: Int -> a -> [a] -> [a]
+insertAt idx val xs = combineTuple val (splitAt idx xs)
+
+replaceAt :: Int -> a -> [a] -> [a]
+replaceAt idx val xs = deleteAt (idx + 1) (insertAt idx val xs)
+
 findSubA :: forall a. Eq a => [a] -> [a] -> Int
 findSubA fullA subA 
   | length fullA < length subA = -1
@@ -50,8 +63,8 @@ takeR amt fullA = drop (length fullA - amt) fullA
 dropR :: Int -> [a] -> [a]
 dropR amt fullA = take (length fullA - amt) fullA
 
-combineTuple :: a -> ([a], [a]) -> [a]
-combineTuple val tup = fst tup <> [val] <> snd tup
+absNum :: Integral a => a -> [b] -> Int
+absNum rawNum lst = abs (fromIntegral rawNum) `mod` length lst
 
 notEmptyStack :: State -> Lens' State [a] -> Bool
 notEmptyStack state accessor = not . null $ view accessor state
