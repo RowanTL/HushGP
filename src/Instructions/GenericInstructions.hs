@@ -44,6 +44,12 @@ amtOccurences fullA subA = amtOccurences' fullA subA 0
         then amtOccurences' (replace fA sA mempty (Just 1)) sA (count + 1)
         else count
 
+takeR :: Int -> [a] -> [a]
+takeR amt fullA = drop (length fullA - amt) fullA
+
+dropR :: Int -> [a] -> [a]
+dropR amt fullA = take (length fullA - amt) fullA
+
 combineTuple :: a -> ([a], [a]) -> [a]
 combineTuple val tup = fst tup <> [val] <> snd tup
 
