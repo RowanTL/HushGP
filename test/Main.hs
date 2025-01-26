@@ -4,8 +4,11 @@ import Instructions.ExecInstructions
 import Instructions.FloatInstructions
 import Instructions.IntInstructions
 import Instructions.StringInstructions
+import Instructions.CharInstructions
 import Push
 import State
+
+-- import Debug.Trace
 
 -- @TODO: Finish int and float tests
 
@@ -36,6 +39,11 @@ stringTestFunc name goal genome startState =
   let state = loadProgram genome startState
    in assert (goal == _string (interpretExec state)) putStrLn (name <> " passed test.")
 
+charTestFunc :: String -> [Char] -> [Gene] -> State -> IO ()
+charTestFunc name goal genome startState =
+  let state = loadProgram genome startState
+   in assert (goal == _char (interpretExec state)) putStrLn (name <> " passed test.")
+
 main :: IO ()
 main = do
   -- Int tests
@@ -46,7 +54,7 @@ main = do
   intTestFunc "instructionIntDiv0" [0, 2] [GeneInt 2, GeneInt 0, StateFunc instructionIntDiv] emptyState
   intTestFunc "instructionIntMod" [3] [GeneInt 13, GeneInt 5, StateFunc instructionIntMod] emptyState
   intTestFunc "instructionIntPop" [2] [GeneInt 2, GeneInt 0, StateFunc instructionIntPop] emptyState
-  intTestFunc "instrucitonIntDup" [3, 3, 2] [GeneInt 2, GeneInt 3, StateFunc instructionIntDup] emptyState
+  intTestFunc "instructionIntDup" [3, 3, 2] [GeneInt 2, GeneInt 3, StateFunc instructionIntDup] emptyState
   intTestFunc "instructionIntDupN" [2, 2, 2] [GeneInt 2, GeneInt 3, StateFunc instructionIntDupN] emptyState
   intTestFunc "instructionIntSwap" [2, 0, 3] [GeneInt 3, GeneInt 2, GeneInt 0, StateFunc instructionIntSwap] emptyState
   intTestFunc "instructionIntSwapFail" [1] [GeneInt 1, StateFunc instructionIntSwap] emptyState
@@ -152,8 +160,57 @@ main = do
   stringTestFunc "instructionStringFromFirstChar" ["1"] [GeneString "123", StateFunc instructionStringFromFirstChar] emptyState
   stringTestFunc "instructionStringFromNthChar" ["a"] [GeneString "123abc", GeneInt 3, StateFunc instructionStringFromNthChar] emptyState
   intTestFunc "instructionStringIndexOfString3" [3] [GeneString "a", GeneString "123abc", StateFunc instructionStringIndexOfString] emptyState
-  intTestFunc "instructionStringIndexOfString3" [-1] [GeneString "z", GeneString "123abc", StateFunc instructionStringIndexOfString] emptyState
+  intTestFunc "instructionStringIndexOfString-1" [-1] [GeneString "z", GeneString "123abc", StateFunc instructionStringIndexOfString] emptyState
   boolTestFunc "instructionStringContainsStringTrue" [True] [GeneString "a", GeneString "123abc", StateFunc instructionStringContainsString] emptyState
-  boolTestFunc "instructionStringContainsStringTrue" [False] [GeneString "z", GeneString "123abc", StateFunc instructionStringContainsString] emptyState
-  stringTestFunc "instructionStringSplitOnString" ["nd", "r fri", "llo gam", "h"] [GeneString "e", GeneString "hello gamer friend", StateFunc instructionStringSplitOnString] emptyState
-  stringTestFunc "instructionStringSplitOnString" ["", "hello gamer frien"] [GeneString "d", GeneString "hello gamer friend", StateFunc instructionStringSplitOnString] emptyState
+  boolTestFunc "instructionStringContainsStringFalse" [False] [GeneString "z", GeneString "123abc", StateFunc instructionStringContainsString] emptyState
+  stringTestFunc "instructionStringSplitOnStringMult" ["nd", "r fri", "llo gam", "h"] [GeneString "e", GeneString "hello gamer friend", StateFunc instructionStringSplitOnString] emptyState
+  stringTestFunc "instructionStringSplitOnStringEmpty" ["", "hello gamer frien"] [GeneString "d", GeneString "hello gamer friend", StateFunc instructionStringSplitOnString] emptyState
+  stringTestFunc "instructionStringReplaceFirstStringSuccess" ["thREPLACEs is a sentence"] [GeneString "REPLACE", GeneString "i", GeneString "this is a sentence", StateFunc instructionStringReplaceFirstString] emptyState
+  stringTestFunc "instructionStringReplaceFirstStringFail" ["this is a sentence"] [GeneString "REPLACE", GeneString "z", GeneString "this is a sentence", StateFunc instructionStringReplaceFirstString] emptyState
+  stringTestFunc "instructionStringReplaceNStringSuccess" ["thREPLACEs REPLACEs a sentence i"] [GeneString "REPLACE", GeneString "i", GeneString "this is a sentence i", GeneInt 2, StateFunc instructionStringReplaceNString] emptyState
+  stringTestFunc "instructionStringReplaceNStringFail" ["this is a sentence i"] [GeneString "REPLACE", GeneString "z", GeneString "this is a sentence i", GeneInt 2, StateFunc instructionStringReplaceNString] emptyState
+  stringTestFunc "instructionStringReplaceAllStringSuccess" ["thREPLACEs REPLACEs a sentence REPLACE"] [GeneString "REPLACE", GeneString "i", GeneString "this is a sentence i", GeneInt 2, StateFunc instructionStringReplaceAllString] emptyState
+  stringTestFunc "instructionStringReplaceAllStringFail" ["this is a sentence i"] [GeneString "REPLACE", GeneString "z", GeneString "this is a sentence i", GeneInt 2, StateFunc instructionStringReplaceAllString] emptyState
+  stringTestFunc "instructionStringRemoveFirstStringSuccess" ["ths is a sentence"] [GeneString "i", GeneString "this is a sentence", StateFunc instructionStringRemoveFirstString] emptyState
+  stringTestFunc "instructionStringRemoveFirstStringFail" ["this is a sentence"] [GeneString "z", GeneString "this is a sentence", StateFunc instructionStringRemoveFirstString] emptyState
+  stringTestFunc "instructionStringRemoveNStringSuccess" ["ths s a sentence i"] [GeneString "i", GeneString "this is a sentence i", GeneInt 2, StateFunc instructionStringRemoveNString] emptyState
+  stringTestFunc "instructionStringRemoveNStringFail" ["this is a sentence i"] [GeneString "z", GeneString "this is a sentence i", GeneInt 2, StateFunc instructionStringRemoveNString] emptyState
+  stringTestFunc "instructionStringRemoveAllStringSuccess" ["ths s a sentence "] [GeneString "i", GeneString "this is a sentence i", StateFunc instructionStringRemoveAllString] emptyState
+  stringTestFunc "instructionStringRemoveAllStringFail" ["this is a sentence i"] [GeneString "z", GeneString "this is a sentence i", StateFunc instructionStringRemoveAllString] emptyState
+  intTestFunc "instructionStringOccurrencesOfString3" [3] [GeneString "i", GeneString "this is a sentence i", StateFunc instructionStringOccurrencesOfString] emptyState 
+  intTestFunc "instructionStringOccurrencesOfString3" [2] [GeneString "is", GeneString "this is a sentence i", StateFunc instructionStringOccurrencesOfString] emptyState 
+  intTestFunc "instructionStringOccurrencesOfString0" [0] [GeneString "z", GeneString "this is a sentence i", StateFunc instructionStringOccurrencesOfString] emptyState 
+  stringTestFunc "instructionStringInsertChar" ["123Zabc"] [GeneString "abc", GeneString "123", StateFunc instructionStringConcat, GeneChar 'Z', GeneInt 3, StateFunc instructionStringInsertChar] emptyState
+  boolTestFunc "instructionStringContainsCharTrue" [True] [GeneString "abc", GeneChar 'a', StateFunc instructionStringContainsChar] emptyState
+  boolTestFunc "instructionStringContainsCharFalse" [False] [GeneString "abc", GeneChar 'z', StateFunc instructionStringContainsChar] emptyState
+  intTestFunc "instructionStringIndexOfChar3" [3] [GeneChar 'a', GeneString "123abc", StateFunc instructionStringIndexOfChar] emptyState
+  intTestFunc "instructionStringIndexOfChar-1" [-1] [GeneChar 'z', GeneString "123abc", StateFunc instructionStringIndexOfChar] emptyState
+  stringTestFunc "instructionStringSplitOnCharMult" ["nd", "r fri", "llo gam", "h"] [GeneChar 'e', GeneString "hello gamer friend", StateFunc instructionStringSplitOnChar] emptyState
+  stringTestFunc "instructionStringSplitOnCharEmpty" ["", "hello gamer frien"] [GeneChar 'd', GeneString "hello gamer friend", StateFunc instructionStringSplitOnChar] emptyState
+  stringTestFunc "instructionStringReplaceFirstCharSuccess" ["thRs is a sentence"] [GeneChar 'R', GeneChar 'i', GeneString "this is a sentence", StateFunc instructionStringReplaceFirstChar] emptyState
+  stringTestFunc "instructionStringReplaceFirstCharFail" ["this is a sentence"] [GeneChar 'R', GeneChar 'z', GeneString "this is a sentence", StateFunc instructionStringReplaceFirstChar] emptyState
+  stringTestFunc "instructionStringReplaceNCharSuccess" ["thRs Rs a sentence i"] [GeneChar 'R', GeneChar 'i', GeneString "this is a sentence i", GeneInt 2, StateFunc instructionStringReplaceNChar] emptyState
+  stringTestFunc "instructionStringReplaceNCharFail" ["this is a sentence i"] [GeneChar 'R', GeneChar 'z', GeneString "this is a sentence i", GeneInt 2, StateFunc instructionStringReplaceNChar] emptyState
+  stringTestFunc "instructionStringReplaceAllCharSuccess" ["thRs Rs a sentence R"] [GeneChar 'R', GeneChar 'i', GeneString "this is a sentence i", GeneInt 2, StateFunc instructionStringReplaceAllChar] emptyState
+  stringTestFunc "instructionStringReplaceAllCharFail" ["this is a sentence i"] [GeneChar 'R', GeneChar 'z', GeneString "this is a sentence i", GeneInt 2, StateFunc instructionStringReplaceAllChar] emptyState
+  stringTestFunc "instructionStringRemoveFirstCharSuccess" ["ths is a sentence"] [GeneChar 'i', GeneString "this is a sentence", StateFunc instructionStringRemoveFirstChar] emptyState
+  stringTestFunc "instructionStringRemoveFirstCharFail" ["this is a sentence"] [GeneChar 'z', GeneString "this is a sentence", StateFunc instructionStringRemoveFirstChar] emptyState
+  stringTestFunc "instructionStringRemoveNCharSuccess" ["ths s a sentence i"] [GeneChar 'i', GeneString "this is a sentence i", GeneInt 2, StateFunc instructionStringRemoveNChar] emptyState
+  stringTestFunc "instructionStringRemoveNCharFail" ["this is a sentence i"] [GeneChar 'z', GeneString "this is a sentence i", GeneInt 2, StateFunc instructionStringRemoveNChar] emptyState
+  stringTestFunc "instructionStringRemoveAllCharSuccess" ["ths s a sentence "] [GeneChar 'i', GeneString "this is a sentence i", StateFunc instructionStringRemoveAllChar] emptyState
+  stringTestFunc "instructionStringRemoveAllCharFail" ["this is a sentence i"] [GeneChar 'z', GeneString "this is a sentence i", StateFunc instructionStringRemoveAllChar] emptyState
+  intTestFunc "instructionStringOccurrencesOfChar3" [3] [GeneChar 'i', GeneString "this is a sentence i", StateFunc instructionStringOccurrencesOfChar] emptyState 
+  intTestFunc "instructionStringOccurrencesOfChar0" [0] [GeneChar 'z', GeneString "this is a sentence i", StateFunc instructionStringOccurrencesOfChar] emptyState 
+  stringTestFunc "instructionStringReverse" ["321cba"] [GeneString "abc123", StateFunc instructionStringReverse] emptyState
+  stringTestFunc "instructionStringHead3" ["abc"] [GeneString "abc123", GeneInt 3, StateFunc instructionStringHead] emptyState
+  stringTestFunc "instructionStringHead0" [""] [GeneString "abc123", GeneInt 0, StateFunc instructionStringHead] emptyState
+  stringTestFunc "instructionStringTail3" ["123"] [GeneString "abc123", GeneInt 3, StateFunc instructionStringTail] emptyState
+  stringTestFunc "instructionStringTail0" [""] [GeneString "abc123", GeneInt 0, StateFunc instructionStringTail] emptyState
+
+  -- char instructions
+  stringTestFunc "instructionCharConcat" ["ab"] [GeneChar 'b', GeneChar 'a', StateFunc instructionCharConcat] emptyState  
+  charTestFunc "instructionCharFromFirstCharSuccess" ['a'] [GeneString "abc123", StateFunc instructionCharFromFirstChar] emptyState
+  charTestFunc "instructionCharFromFirstCharFail" [] [GeneString "", StateFunc instructionCharFromFirstChar] emptyState
+  charTestFunc "instructionCharFromLastCharSuccess" ['3'] [GeneString "abc123", StateFunc instructionCharFromLastChar] emptyState
+  charTestFunc "instructionCharFromLastCharFail" [] [GeneString "", StateFunc instructionCharFromLastChar] emptyState
+  charTestFunc "instructionCharFromNthCharSuccess" ['c'] [GeneString "abc123", GeneInt 2, StateFunc instructionCharFromNthChar] emptyState
