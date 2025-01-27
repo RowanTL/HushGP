@@ -1,10 +1,10 @@
 import Control.Exception (assert)
+import Instructions.CharInstructions
 import Instructions.CodeInstructions
 import Instructions.ExecInstructions
 import Instructions.FloatInstructions
 import Instructions.IntInstructions
 import Instructions.StringInstructions
-import Instructions.CharInstructions
 import Instructions.VectorIntInstructions
 import Push
 import State
@@ -142,11 +142,13 @@ main = do
   codeTestFunc "instructionCodeExtractBlock" [Block [GeneInt 2, GeneInt 3]] [StateFunc instructionCodeFromExec, Block [GeneInt 1, Block [GeneInt 2, GeneInt 3], Block [GeneInt 4, GeneInt 5], Block []], GeneInt 1, StateFunc instructionCodeExtract] emptyState
   codeTestFunc "instructionCodeExtractEdgeCase" [Block []] [StateFunc instructionCodeFromExec, Block [GeneInt 1, Block [GeneInt 2, GeneInt 3], Block [GeneInt 4, GeneInt 5], Block []], GeneInt 7, StateFunc instructionCodeExtract] emptyState
   codeTestFunc "instructionCodeExtractNotBlock" [GeneInt 2] [StateFunc instructionCodeFromExec, GeneInt 2, GeneInt 56, StateFunc instructionCodeExtract] emptyState
-  codeTestFunc "instructionCodeInsertInBounds"
+  codeTestFunc
+    "instructionCodeInsertInBounds"
     [Block [GeneInt 1, Block [GeneInt 2, GeneInt 9999, GeneInt 3], Block [GeneInt 4, GeneInt 5], GeneInt 6, Block [GeneInt 7, GeneInt 8], GeneInt 9]]
     [StateFunc instructionCodeFromExec, GeneInt 9999, StateFunc instructionCodeFromExec, Block [GeneInt 1, Block [GeneInt 2, GeneInt 3], Block [GeneInt 4, GeneInt 5], GeneInt 6, Block [GeneInt 7, GeneInt 8], GeneInt 9], GeneInt 3, StateFunc instructionCodeInsert]
     emptyState
-  codeTestFunc "instructionCodeInsertOutBounds"
+  codeTestFunc
+    "instructionCodeInsertOutBounds"
     [Block [GeneInt 1, Block [GeneInt 2, GeneInt 9999, GeneInt 3], Block [GeneInt 4, GeneInt 5], GeneInt 6, Block [GeneInt 7, GeneInt 8], GeneInt 9]]
     [StateFunc instructionCodeFromExec, GeneInt 9999, StateFunc instructionCodeFromExec, Block [GeneInt 1, Block [GeneInt 2, GeneInt 3], Block [GeneInt 4, GeneInt 5], GeneInt 6, Block [GeneInt 7, GeneInt 8], GeneInt 9], GeneInt 15, StateFunc instructionCodeInsert]
     emptyState
@@ -183,9 +185,9 @@ main = do
   stringTestFunc "instructionStringRemoveNStringFail" ["this is a sentence i"] [GeneString "z", GeneString "this is a sentence i", GeneInt 2, StateFunc instructionStringRemoveNString] emptyState
   stringTestFunc "instructionStringRemoveAllStringSuccess" ["ths s a sentence "] [GeneString "i", GeneString "this is a sentence i", StateFunc instructionStringRemoveAllString] emptyState
   stringTestFunc "instructionStringRemoveAllStringFail" ["this is a sentence i"] [GeneString "z", GeneString "this is a sentence i", StateFunc instructionStringRemoveAllString] emptyState
-  intTestFunc "instructionStringOccurrencesOfString3" [3] [GeneString "i", GeneString "this is a sentence i", StateFunc instructionStringOccurrencesOfString] emptyState 
-  intTestFunc "instructionStringOccurrencesOfString3" [2] [GeneString "is", GeneString "this is a sentence i", StateFunc instructionStringOccurrencesOfString] emptyState 
-  intTestFunc "instructionStringOccurrencesOfString0" [0] [GeneString "z", GeneString "this is a sentence i", StateFunc instructionStringOccurrencesOfString] emptyState 
+  intTestFunc "instructionStringOccurrencesOfString3" [3] [GeneString "i", GeneString "this is a sentence i", StateFunc instructionStringOccurrencesOfString] emptyState
+  intTestFunc "instructionStringOccurrencesOfString3" [2] [GeneString "is", GeneString "this is a sentence i", StateFunc instructionStringOccurrencesOfString] emptyState
+  intTestFunc "instructionStringOccurrencesOfString0" [0] [GeneString "z", GeneString "this is a sentence i", StateFunc instructionStringOccurrencesOfString] emptyState
   stringTestFunc "instructionStringInsertChar" ["123Zabc"] [GeneString "abc", GeneString "123", StateFunc instructionStringConcat, GeneChar 'Z', GeneInt 3, StateFunc instructionStringInsertChar] emptyState
   boolTestFunc "instructionStringContainsCharTrue" [True] [GeneString "abc", GeneChar 'a', StateFunc instructionStringContainsChar] emptyState
   boolTestFunc "instructionStringContainsCharFalse" [False] [GeneString "abc", GeneChar 'z', StateFunc instructionStringContainsChar] emptyState
@@ -205,8 +207,8 @@ main = do
   stringTestFunc "instructionStringRemoveNCharFail" ["this is a sentence i"] [GeneChar 'z', GeneString "this is a sentence i", GeneInt 2, StateFunc instructionStringRemoveNChar] emptyState
   stringTestFunc "instructionStringRemoveAllCharSuccess" ["ths s a sentence "] [GeneChar 'i', GeneString "this is a sentence i", StateFunc instructionStringRemoveAllChar] emptyState
   stringTestFunc "instructionStringRemoveAllCharFail" ["this is a sentence i"] [GeneChar 'z', GeneString "this is a sentence i", StateFunc instructionStringRemoveAllChar] emptyState
-  intTestFunc "instructionStringOccurrencesOfChar3" [3] [GeneChar 'i', GeneString "this is a sentence i", StateFunc instructionStringOccurrencesOfChar] emptyState 
-  intTestFunc "instructionStringOccurrencesOfChar0" [0] [GeneChar 'z', GeneString "this is a sentence i", StateFunc instructionStringOccurrencesOfChar] emptyState 
+  intTestFunc "instructionStringOccurrencesOfChar3" [3] [GeneChar 'i', GeneString "this is a sentence i", StateFunc instructionStringOccurrencesOfChar] emptyState
+  intTestFunc "instructionStringOccurrencesOfChar0" [0] [GeneChar 'z', GeneString "this is a sentence i", StateFunc instructionStringOccurrencesOfChar] emptyState
   stringTestFunc "instructionStringReverse" ["321cba"] [GeneString "abc123", StateFunc instructionStringReverse] emptyState
   stringTestFunc "instructionStringHead3" ["abc"] [GeneString "abc123", GeneInt 3, StateFunc instructionStringHead] emptyState
   stringTestFunc "instructionStringHead0" [""] [GeneString "abc123", GeneInt 0, StateFunc instructionStringHead] emptyState
@@ -236,7 +238,7 @@ main = do
   stringTestFunc "instructionStringFromChar" [" "] [GeneChar ' ', StateFunc instructionStringFromChar] emptyState
 
   -- char instructions
-  stringTestFunc "instructionCharConcat" ["ab"] [GeneChar 'b', GeneChar 'a', StateFunc instructionCharConcat] emptyState  
+  stringTestFunc "instructionCharConcat" ["ab"] [GeneChar 'b', GeneChar 'a', StateFunc instructionCharConcat] emptyState
   charTestFunc "instructionCharFromFirstCharSuccess" ['a'] [GeneString "abc123", StateFunc instructionCharFromFirstChar] emptyState
   charTestFunc "instructionCharFromFirstCharFail" [] [GeneString "", StateFunc instructionCharFromFirstChar] emptyState
   charTestFunc "instructionCharFromLastCharSuccess" ['3'] [GeneString "abc123", StateFunc instructionCharFromLastChar] emptyState
@@ -253,4 +255,4 @@ main = do
   boolTestFunc "instructionCharIsDigitFalse" [False] [GeneChar 'a', StateFunc instructionCharIsDigit] emptyState
 
   -- vector int instructions
-  intVectorTestFunc "instructionIntVectorConcat" [[4,5,6,1,2,3]] [GeneIntVector [1,2,3], GeneIntVector [4,5,6], StateFunc instructionIntVectorConcat] emptyState  
+  intVectorTestFunc "instructionIntVectorConcat" [[4, 5, 6, 1, 2, 3]] [GeneIntVector [1, 2, 3], GeneIntVector [4, 5, 6], StateFunc instructionIntVectorConcat] emptyState
