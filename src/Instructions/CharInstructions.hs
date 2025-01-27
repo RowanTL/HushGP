@@ -2,7 +2,8 @@ module Instructions.CharInstructions where
 
 import Data.Char
 import State
-import Instructions.GenericInstructions
+import Data.List (uncons)
+-- import Instructions.GenericInstructions
 import Instructions.StringInstructions (wschars)
 
 intToAscii :: (Integral a) => a -> Char
@@ -14,9 +15,9 @@ instructionCharConcat state = state
 
 instructionCharFromFirstChar :: State -> State
 instructionCharFromFirstChar state@(State {_char = cs, _string = s1 : ss}) =
-  if not $ null s1
-    then state {_char = head s1 : cs, _string = ss}
-    else state
+  case uncons s1 of
+    Nothing -> state
+    Just (x,_) -> state {_char = x : cs, _string = ss}
 instructionCharFromFirstChar state = state
 
 instructionCharFromLastChar :: State -> State

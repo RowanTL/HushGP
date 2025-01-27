@@ -70,7 +70,10 @@ notEmptyStack state accessor = not . null $ view accessor state
 
 -- This head error should never happen
 instructionDup :: State -> Lens' State [a] -> State
-instructionDup state accessor = if notEmptyStack state accessor then state & accessor .~ head (view accessor state) : view accessor state else state
+instructionDup state accessor =
+  case uncons (view accessor state) of
+    Nothing -> state
+    Just (x,_) -> state & accessor .~ x : view accessor state
 
 instructionPop :: State -> Lens' State [a] -> State
 instructionPop state accessor = if notEmptyStack state accessor then state & accessor .~ drop 1 (view accessor state) else state
@@ -80,7 +83,10 @@ instructionPop state accessor = if notEmptyStack state accessor then state & acc
 instructionDupN :: State -> Lens' State [a] -> State
 instructionDupN state accessor = 
   if notEmptyStack state accessor && notEmptyStack state int
-  then instructionDupNHelper (head (view int state)) accessor (instructionPop state int)
+  then
+    case uncons (view int state) of
+      Nothing -> state -- is this redundant?
+      Just (x,_) -> instructionDupNHelper x accessor (instructionPop state int)
   else state
   where
     instructionDupNHelper :: Int -> Lens' State [a] -> State -> State
@@ -118,7 +124,12 @@ instructionFlush state accessor = state & accessor .~ []
 instructionEq :: forall a. Eq a => State -> Lens' State [a] -> State
 instructionEq state accessor =
   if length stackTop == 2
-  then state & bool .~ (head stackTop == stackTop !! 1) : view bool state & accessor .~ drop 2 (view accessor state)
+  -- then state & bool .~ (head stackTop == stackTop !! 1) : view bool state & accessor .~ drop 2 (view accessor state)
+  then
+    case uncons stackTop of
+      Nothing -> state
+      Just (x1, x2 : _) -> state & bool .~ (x1 == x2) : view bool state & accessor .~ drop 2 (view accessor state)
+      Just _ -> state
   else state
   where
     stackTop :: [a]
