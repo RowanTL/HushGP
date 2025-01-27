@@ -3,5 +3,5 @@ module Instructions.VectorIntInstructions where
 import Instructions.GenericInstructions
 import State
 
-instructionVectorIntConcat :: State -> State
-instructionVectorIntConcat state = instructionConcat state intVector
+instructionIntVectorConcat :: State -> State
+instructionIntVectorConcat state = instructionConcat state intVector
