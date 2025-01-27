@@ -76,17 +76,20 @@ instructionDup state accessor =
     Just (x,_) -> state & accessor .~ x : view accessor state
 
 instructionPop :: State -> Lens' State [a] -> State
-instructionPop state accessor = if notEmptyStack state accessor then state & accessor .~ drop 1 (view accessor state) else state
+instructionPop state accessor = state & accessor .~ drop 1 (view accessor state)
+
+-- instructionPop :: State -> Lens' State [a] -> State
+-- instructionPop state accessor = if notEmptyStack state accessor then instructionPop state accessor else state
 
 -- I might be able to move some of the int stack error checking
 -- to the integer call. For now this may be a tad inefficient.
 instructionDupN :: State -> Lens' State [a] -> State
 instructionDupN state accessor = 
-  if notEmptyStack state accessor && notEmptyStack state int
+  if notEmptyStack state accessor
   then
-    case uncons (view int state) of
-      Nothing -> state -- is this redundant?
-      Just (x,_) -> instructionDupNHelper x accessor (instructionPop state int)
+    case uncons (view int state)  of
+      Just (i1,_) -> instructionDupNHelper i1 accessor (instructionPop state int)
+      _ -> state
   else state
   where
     instructionDupNHelper :: Int -> Lens' State [a] -> State -> State
@@ -165,9 +168,9 @@ instructionYank state _ = state
 -- Rewrite this eventually?
 instructionShoveDup :: State -> Lens' State [a] -> State
 instructionShoveDup state@(State {_int = i : is}) accessor =
-  if notEmptyStack state accessor
-  then (state & accessor .~ combineTuple (head $ view accessor state) (splitAt (max 0 (min i (length (view accessor state) - 1))) (view accessor state))) {_int = is}
-  else state
+  case uncons (view accessor state) of
+    Just (x,_) -> (state & accessor .~ combineTuple x (splitAt (max 0 (min i (length (view accessor state) - 1))) (view accessor state))) {_int = is}
+    _ -> state
 instructionShoveDup state@(State {_int = []}) _ = state
 
 -- also also not int generic
@@ -177,10 +180,9 @@ instructionShove state accessor = instructionShoveDup state accessor & accessor 
 -- not char generic
 instructionConcat :: Semigroup a => State -> Lens' State [a] -> State
 instructionConcat state accessor =
-  if (length . take 2 $ view accessor state) == 2
-  then droppedState & accessor .~ (head (view accessor state) <> view accessor state !! 1) : view accessor droppedState
-  -- then undefined
-  else state
+  case uncons (view accessor state) of
+    Just (x1, x2:_) -> droppedState & accessor .~ (x1 <> x2) : view accessor droppedState
+    _ -> state
   where
     droppedState :: State
     droppedState = state & accessor .~ drop 2 (view accessor state)
