@@ -5,6 +5,7 @@ import Instructions.FloatInstructions
 import Instructions.IntInstructions
 import Instructions.StringInstructions
 import Instructions.CharInstructions
+import Instructions.VectorIntInstructions
 import Push
 import State
 
@@ -43,6 +44,11 @@ charTestFunc :: String -> [Char] -> [Gene] -> State -> IO ()
 charTestFunc name goal genome startState =
   let state = loadProgram genome startState
    in assert (goal == _char (interpretExec state)) putStrLn (name <> " passed test.")
+
+intVectorTestFunc :: String -> [[Int]] -> [Gene] -> State -> IO ()
+intVectorTestFunc name goal genome startState =
+  let state = loadProgram genome startState
+   in assert (goal == _intVector (interpretExec state)) putStrLn (name <> " passed test.")
 
 main :: IO ()
 main = do
@@ -245,3 +251,6 @@ main = do
   boolTestFunc "instructionCharIsLetterFalse" [False] [GeneChar '1', StateFunc instructionCharIsLetter] emptyState
   boolTestFunc "instructionCharIsDigitTrue" [True] [GeneChar '1', StateFunc instructionCharIsDigit] emptyState
   boolTestFunc "instructionCharIsDigitFalse" [False] [GeneChar 'a', StateFunc instructionCharIsDigit] emptyState
+
+  -- vector int instructions
+  intVectorTestFunc "instructionIntVectorConcat" [[4,5,6,1,2,3]] [GeneIntVector [1,2,3], GeneIntVector [4,5,6], StateFunc instructionIntVectorConcat] emptyState  
