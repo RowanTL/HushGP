@@ -20,6 +20,15 @@ insertAt idx val xs = combineTuple val (splitAt idx xs)
 replaceAt :: Int -> a -> [a] -> [a]
 replaceAt idx val xs = deleteAt (idx + 1) (insertAt idx val xs)
 
+subList :: Int -> Int -> [a] -> [a]
+subList idx0 idx1 xs =
+  let
+    (start, end) = if idx0 <= idx1 then (idx0, idx1) else (idx1, idx0)
+    adjStart = max 0 start
+    adjEnd = min end (length xs)
+  in
+    take adjEnd (drop adjStart xs)
+
 findSubA :: forall a. Eq a => [a] -> [a] -> Int
 findSubA fullA subA 
   | length fullA < length subA = -1
@@ -62,13 +71,16 @@ takeR amt fullA = drop (length fullA - amt) fullA
 dropR :: Int -> [a] -> [a]
 dropR amt fullA = take (length fullA - amt) fullA
 
+safeInit :: [a] -> [a]
+safeInit [] = []
+safeInit xs = init xs
+
 absNum :: Integral a => a -> [b] -> Int
 absNum rawNum lst = abs (fromIntegral rawNum) `mod` length lst
 
 notEmptyStack :: State -> Lens' State [a] -> Bool
 notEmptyStack state accessor = not . null $ view accessor state
 
--- This head error should never happen
 instructionDup :: State -> Lens' State [a] -> State
 instructionDup state accessor =
   case uncons (view accessor state) of
@@ -83,26 +95,24 @@ instructionPop state accessor = state & accessor .~ drop 1 (view accessor state)
 
 -- I might be able to move some of the int stack error checking
 -- to the integer call. For now this may be a tad inefficient.
-instructionDupN :: State -> Lens' State [a] -> State
+instructionDupN :: forall a. State -> Lens' State [a] -> State
 instructionDupN state accessor = 
-  if notEmptyStack state accessor
-  then
-    case uncons (view int state)  of
-      Just (i1,_) -> instructionDupNHelper i1 accessor (instructionPop state int)
-      _ -> state
-  else state
+  case uncons (view int state) of
+    Just (i1,is) ->
+      case uncons (view accessor state{_int = is}) of
+        Just (a1,as) -> instructionDupNHelper i1 a1 accessor (state{_int = is} & accessor .~ as)
+        _ -> state
+    _ -> state
   where
-    instructionDupNHelper :: Int -> Lens' State [a] -> State -> State
-    instructionDupNHelper count internalAccessor internalState =
-      if count > 1 && notEmptyStack internalState int
-      then instructionDupNHelper (count - 1) internalAccessor (instructionDup internalState accessor) 
+    instructionDupNHelper :: Int -> a -> Lens' State [a] -> State -> State
+    instructionDupNHelper count instruction internalAccessor internalState =
+      if count > 0
+      then instructionDupNHelper (count - 1) instruction internalAccessor (internalState & accessor .~ (instruction : view accessor internalState))
       else internalState
 
 instructionSwap :: State -> Lens' State [a] -> State
 instructionSwap state accessor =
-  if (length . take 2 $ view accessor state) == 2
-  then state & accessor .~ swapper (view accessor state)
-  else state
+  state & accessor .~ swapper (view accessor state)
   where
     swapper :: [a] -> [a]
     swapper (x1 : x2 : xs) = x2 : x1 : xs
@@ -113,9 +123,7 @@ instructionSwap state accessor =
 -- an instruction later. Template haskell seems very complicated tho.
 instructionRot :: State -> Lens' State [a] -> State
 instructionRot state accessor =
-  if (length . take 3 $ view accessor state) == 3
-  then state & accessor .~ rotator (view accessor state)
-  else state
+  state & accessor .~ rotator (view accessor state)
   where
     rotator :: [a] -> [a]
     rotator (x1 : x2 : x3 : xs) = x3 : x1 : x2 : xs
@@ -126,20 +134,17 @@ instructionFlush state accessor = state & accessor .~ []
 
 instructionEq :: forall a. Eq a => State -> Lens' State [a] -> State
 instructionEq state accessor =
-  if length stackTop == 2
-  -- then state & bool .~ (head stackTop == stackTop !! 1) : view bool state & accessor .~ drop 2 (view accessor state)
-  then
-    case uncons stackTop of
-      Nothing -> state
-      Just (x1, x2 : _) -> state & bool .~ (x1 == x2) : view bool state & accessor .~ drop 2 (view accessor state)
-      Just _ -> state
-  else state
+  case uncons stackTop of
+    Nothing -> state
+    Just (x1, x2 : _) -> state & bool .~ (x1 == x2) : view bool state & accessor .~ drop 2 (view accessor state)
+    Just _ -> state
   where
     stackTop :: [a]
     stackTop = take 2 $ view accessor state
 
 instructionStackDepth :: State -> Lens' State [a] -> State
-instructionStackDepth state accessor = state & int .~ (length (view accessor state) : view int state)
+-- instructionStackDepth state accessor = state & int .~ (length (view accessor state) : view int state)
+instructionStackDepth state@(State {_int = is}) accessor = state{_int = length (view accessor state) : is}
 
 -- Will have a non-generic definition for the int stack
 instructionYankDup :: State -> Lens' State [a] -> State
@@ -190,3 +195,116 @@ instructionConcat state accessor =
 -- evolve fodder???????????
 instructionNoOp :: State -> State
 instructionNoOp state = state
+
+instructionConj :: State -> Lens' State [a] -> Lens' State [[a]] -> State
+instructionConj state primAccessor vectorAccessor =
+  case (uncons (view primAccessor state), uncons (view vectorAccessor state)) of
+    (Just (p1,ps), Just (v1,vs)) -> state & primAccessor .~ ps & vectorAccessor .~ ((p1 : v1) : vs)
+    _ -> state
+
+-- v for vector, vs for vectorstack (also applicable to strings)
+-- Could abstract this unconsing even further
+instructionTakeN :: State -> Lens' State [[a]] -> State
+instructionTakeN state@(State {_int = i1 : is}) accessor = 
+  case uncons (view accessor state) of
+    Just (v1, vs) -> state{_int = is} & accessor .~ (take (absNum i1 v1) v1 : vs)
+    _ -> state
+instructionTakeN state _ = state
+
+instructionSubVector :: State -> Lens' State [[a]] -> State
+instructionSubVector state@(State {_int = i1 : i2 : is}) accessor =
+  case uncons (view accessor state) of
+    Just (v1, vs) -> state{_int = is} & accessor .~ (subList i1 i2 v1 : vs)
+    _ -> state
+instructionSubVector state _ = state
+
+instructionVectorFirst :: State -> Lens' State [a] -> Lens' State [[a]] -> State
+instructionVectorFirst state primAccessor vectorAccessor =
+  case uncons (view vectorAccessor state) of
+    Just (v1, vs) ->
+      case uncons v1 of
+        Just (vp1, _) -> state & primAccessor .~ (vp1 : view primAccessor state) & vectorAccessor .~ vs
+        _ -> state
+    _ -> state
+
+instructionVectorLast :: State -> Lens' State [a] -> Lens' State [[a]] -> State
+instructionVectorLast state primAccessor vectorAccessor =
+  case uncons (view vectorAccessor state) of
+    Just (v1, vs) ->
+      case uncons (drop (length v1 - 1) v1) of -- gonna keep this implementation over using last as this can't error
+        Just (vplast, _) -> state & primAccessor .~ (vplast : view primAccessor state) & vectorAccessor .~ vs
+        _ -> state
+    _ -> state
+
+instructionVectorNth :: State -> Lens' State [a] -> Lens' State [[a]] -> State
+instructionVectorNth state@(State {_int = i1 : is}) primAccessor vectorAccessor =
+  case uncons (view vectorAccessor state) of
+    Just (v1, vs) -> state{_int = is} & primAccessor .~ (v1 !! absNum i1 v1 : view primAccessor state{_int = is}) & vectorAccessor .~ vs
+    _ -> state
+instructionVectorNth state _ _ = state
+
+instructionRest :: State -> Lens' State [[a]] -> State
+instructionRest state accessor =
+  case uncons (view accessor state) of
+    Just (v1, vs) -> state & accessor .~ (drop 1 v1 : vs)
+    _ -> state
+
+instructionButLast :: State -> Lens' State [[a]] -> State
+instructionButLast state accessor =
+  case uncons (view accessor state) of
+    Just (v1, vs) -> state & accessor .~ (safeInit v1 : vs)
+    _ -> state
+
+instructionLength :: State -> Lens' State [[a]] -> State
+instructionLength state@(State {_int = is}) accessor =
+  case uncons (view accessor state) of
+    Just (v1, vs) -> state{_int = length v1 : is} & accessor .~ vs
+    _ -> state
+
+instructionReverse :: State -> Lens' State [[a]] -> State
+instructionReverse state accessor =
+  case uncons (view accessor state) of
+    Just (v1, vs) -> state & accessor .~ (reverse v1 : vs)
+    _ -> state
+
+instructionPushAll :: State -> Lens' State [a] -> Lens' State [[a]] -> State
+instructionPushAll state primAccessor vectorAccessor =
+  case uncons (view vectorAccessor state) of
+    Just (v1, vs) -> state & vectorAccessor .~ vs & primAccessor .~ (v1 <> view primAccessor state)
+    _ -> state
+
+instructionVectorMakeEmpty :: State -> Lens' State [[a]] -> State
+instructionVectorMakeEmpty state accessor = state & accessor .~ ([] : view accessor state)
+
+instructionVectorIsEmpty :: State -> Lens' State [[a]] -> State
+instructionVectorIsEmpty state@(State {_bool = bs}) accessor =
+  case uncons (view accessor state) of
+    Just (v1, vs) -> state{_bool = null v1 : bs} & accessor .~ vs
+    _ -> state
+
+instructionVectorContains :: Eq a => State -> Lens' State [a] -> Lens' State [[a]] -> State
+instructionVectorContains state@(State {_bool = bs}) primAccessor vectorAccessor =
+  case (uncons (view vectorAccessor state), uncons (view primAccessor state)) of
+    (Just (v1, vs), Just (p1, ps)) -> state{_bool = (findSubA v1 [p1] /= -1) : bs} & vectorAccessor .~ vs & primAccessor .~ ps
+    _ -> state
+
+-- I couldn't think of a better way of doing this
+instructionVectorIndexOf :: Eq a => State -> Lens' State [a] -> Lens' State [[a]] -> State
+instructionVectorIndexOf state primAccessor vectorAccessor =
+  case (uncons (view vectorAccessor state), uncons (view primAccessor state)) of
+    (Just (v1, vs), Just (p1, ps)) -> (state & vectorAccessor .~ vs & primAccessor .~ ps) & int .~ (findSubA v1 [p1] : view int (state & vectorAccessor .~ vs & primAccessor .~ ps))
+    _ -> state
+
+instructionVectorOccurrencesOf :: Eq a => State -> Lens' State [a] -> Lens' State [[a]] -> State
+instructionVectorOccurrencesOf state primAccessor vectorAccessor = 
+  case (uncons (view vectorAccessor state), uncons (view primAccessor state)) of
+    (Just (v1, vs), Just (p1, ps)) -> (state & vectorAccessor .~ vs & primAccessor .~ ps) & int .~ (amtOccurences v1 [p1] : view int (state & vectorAccessor .~ vs & primAccessor .~ ps))
+    _ -> state
+
+instructionVectorSetNth :: State -> Lens' State [a] -> Lens' State [[a]] -> State
+instructionVectorSetNth state@(State {_int = i1 : is}) primAccessor vectorAccessor =
+  case (uncons (view vectorAccessor state{_int = is}), uncons (view primAccessor state{_int = is})) of
+    (Just (v1, vs), Just (p1, ps)) -> state{_int = is} & vectorAccessor .~ (replaceAt (absNum i1 v1) p1 v1 : vs) & primAccessor .~ ps
+    _ -> state
+instructionVectorSetNth state _ _ = state
+    

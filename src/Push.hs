@@ -1,5 +1,3 @@
-{-# LANGUAGE RecordWildCards #-}
-
 module Push where
 
 import Control.Lens

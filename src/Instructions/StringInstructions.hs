@@ -94,12 +94,12 @@ instructionStringInsertChar state@(State {_string = s1 : ss, _char = c1 : cs, _i
 instructionStringInsertChar state = state
 
 instructionStringContainsChar :: State -> State
-instructionStringContainsChar state@(State {_string = s1 : ss, _char = c1 : cs, _bool = bs}) = state{_string = ss, _char = cs, _bool = (findSubA s1 [c1] /= -1) : bs}
-instructionStringContainsChar state = state
+-- instructionStringContainsChar state@(State {_string = s1 : ss, _char = c1 : cs, _bool = bs}) = state{_string = ss, _char = cs, _bool = (findSubA s1 [c1] /= -1) : bs}
+-- instructionStringContainsChar state = state
+instructionStringContainsChar state = instructionVectorContains state char string
 
 instructionStringIndexOfChar :: State -> State
-instructionStringIndexOfChar state@(State {_string = s1 : ss, _char = c1 : cs, _int = is}) = state{_string = ss, _char = cs, _int = findSubA s1 [c1] : is}
-instructionStringIndexOfChar state = state
+instructionStringIndexOfChar state = instructionVectorIndexOf state char string
 
 instructionStringSplitOnChar :: State -> State
 instructionStringSplitOnChar state@(State {_string = s1 : ss, _char = c1 : cs}) = state {_string = reverse $ splitOn [c1] s1 <> ss, _char = cs}
@@ -130,35 +130,26 @@ instructionStringRemoveAllChar state@(State {_string = s1 : ss, _char = c1 : cs}
 instructionStringRemoveAllChar state = state
 
 instructionStringOccurrencesOfChar :: State -> State
-instructionStringOccurrencesOfChar state@(State {_string = s1 : ss, _char = c1 : cs, _int = is}) = state{_string = ss, _char = cs, _int = amtOccurences s1 [c1] : is}
-instructionStringOccurrencesOfChar state = state
+instructionStringOccurrencesOfChar state = instructionVectorOccurrencesOf state char string
 
 instructionStringReverse :: State -> State
-instructionStringReverse state@(State {_string = s1 : ss}) = state{_string = reverse s1 : ss}
-instructionStringReverse state = state
+instructionStringReverse state = instructionReverse state string
 
 instructionStringHead :: State -> State
-instructionStringHead state@(State {_string = s1 : ss, _int = i1 : is}) = state{_string = take (absNum i1 s1) s1 : ss, _int = is}
-instructionStringHead state = state
+instructionStringHead state = instructionTakeN state string
 
 instructionStringTail :: State -> State
 instructionStringTail state@(State {_string = s1 : ss, _int = i1 : is}) = state{_string = takeR (absNum i1 s1) s1 : ss, _int = is}
 instructionStringTail state = state
 
 instructionStringAppendChar :: State -> State
-instructionStringAppendChar state@(State {_string = s1 : ss, _char = c1 : cs}) = state{_string = (c1 : s1) : ss, _char = cs}
-instructionStringAppendChar state = state
+instructionStringAppendChar state = instructionConj state char string
 
 instructionStringRest :: State -> State
-instructionStringRest state@(State {_string = s1 : ss}) = state{_string = drop 1 s1 : ss}
-instructionStringRest state = state
+instructionStringRest state = instructionRest state string
 
 instructionStringButLast :: State -> State
-instructionStringButLast state@(State {_string = s1 : ss}) =
-  if not $ null s1
-    then state{_string = init s1 : ss}
-    else state
-instructionStringButLast state = state
+instructionStringButLast state = instructionButLast state string
 
 instructionStringDrop :: State -> State
 instructionStringDrop state@(State {_string = s1 : ss, _int = i1 : is}) = state{_string = drop (absNum i1 s1) s1 : ss, _int = is}
@@ -169,11 +160,10 @@ instructionStringButLastN state@(State {_string = s1 : ss, _int = i1 : is}) = st
 instructionStringButLastN state = state
 
 instructionStringLength :: State -> State
-instructionStringLength state@(State {_string = s1 : ss, _int = is}) = state{_string = ss, _int = length s1 : is}
-instructionStringLength state = state
+instructionStringLength state = instructionLength state string
 
 instructionStringMakeEmpty :: State -> State
-instructionStringMakeEmpty state@(State {_string = ss}) = state{_string = "" : ss}
+instructionStringMakeEmpty state = instructionVectorMakeEmpty state string
 
 instructionStringIsEmptyString :: State -> State
 instructionStringIsEmptyString state@(State {_string = s1 : ss, _bool = bs}) = state{_string = ss, _bool = null s1 : bs}
@@ -184,8 +174,9 @@ instructionStringRemoveNth state@(State {_string = s1 : ss, _int = i1 : is}) = s
 instructionStringRemoveNth state = state
 
 instructionStringSetNth :: State -> State
-instructionStringSetNth state@(State {_string = s1 : ss, _char = c1 : cs, _int = i1 : is}) = state{_string = replaceAt (absNum i1 s1) c1 s1 : ss, _char = cs, _int = is}
-instructionStringSetNth state = state
+-- instructionStringSetNth state@(State {_string = s1 : ss, _char = c1 : cs, _int = i1 : is}) = state{_string = replaceAt (absNum i1 s1) c1 s1 : ss, _char = cs, _int = is}
+-- instructionStringSetNth state = state
+instructionStringSetNth state = instructionVectorSetNth state char string
 
 instructionStringStripWhitespace :: State -> State
 instructionStringStripWhitespace state@(State {_string = s1 : ss}) = state{_string = strip s1 : ss}
