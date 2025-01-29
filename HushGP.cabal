@@ -47,6 +47,7 @@ library
                     , Instructions.StringInstructions
                     , Instructions.CharInstructions
                     , Instructions.VectorIntInstructions
+                    , Instructions.VectorFloatInstructions
 
     -- Modules included in this library but not exported.
     -- other-modules:
