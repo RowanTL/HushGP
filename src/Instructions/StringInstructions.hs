@@ -174,8 +174,6 @@ instructionStringRemoveNth state@(State {_string = s1 : ss, _int = i1 : is}) = s
 instructionStringRemoveNth state = state
 
 instructionStringSetNth :: State -> State
--- instructionStringSetNth state@(State {_string = s1 : ss, _char = c1 : cs, _int = i1 : is}) = state{_string = replaceAt (absNum i1 s1) c1 s1 : ss, _char = cs, _int = is}
--- instructionStringSetNth state = state
 instructionStringSetNth state = instructionVectorSetNth state char string
 
 instructionStringStripWhitespace :: State -> State
