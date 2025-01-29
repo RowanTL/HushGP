@@ -1,14 +1,7 @@
 import Control.Exception (assert)
-import Instructions.CharInstructions
-import Instructions.CodeInstructions
-import Instructions.ExecInstructions
-import Instructions.FloatInstructions
-import Instructions.IntInstructions
-import Instructions.StringInstructions
-import Instructions.VectorIntInstructions
+import Instructions
 import Push
 import State
-
 -- import Debug.Trace
 
 -- TODO: Need a function that can compare states.

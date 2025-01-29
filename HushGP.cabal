@@ -38,6 +38,7 @@ library
     exposed-modules:  Push
                     , GP
                     , State
+                    , Instructions
                     , Instructions.IntInstructions
                     , Instructions.ExecInstructions
                     , Instructions.FloatInstructions
