@@ -106,8 +106,7 @@ instructionStringSplitOnChar state@(State {_string = s1 : ss, _char = c1 : cs}) 
 instructionStringSplitOnChar state = state
 
 instructionStringReplaceFirstChar :: State -> State
-instructionStringReplaceFirstChar state@(State {_string = s1 : ss, _char = c1 : c2 : cs}) = state {_string = replace s1 [c1] [c2] (Just 1) : ss, _char = cs}
-instructionStringReplaceFirstChar state = state
+instructionStringReplaceFirstChar state = instructionVectorReplaceFirst state char string
 
 instructionStringReplaceNChar :: State -> State
 instructionStringReplaceNChar state@(State {_string = s1 : ss, _char = c1 : c2 : cs, _int = i1 : is}) = state{_string = replace s1 [c1] [c2] (Just i1) : ss, _char = cs, _int = is}
@@ -125,8 +124,7 @@ instructionStringRemoveNChar state@(State {_string = s1 : ss, _char = c1 : cs, _
 instructionStringRemoveNChar state = state
 
 instructionStringRemoveAllChar :: State -> State
-instructionStringRemoveAllChar state@(State {_string = s1 : ss, _char = c1 : cs}) = state{_string = replace s1 [c1] "" Nothing : ss, _char = cs}
-instructionStringRemoveAllChar state = state
+instructionStringRemoveAllChar state = instructionVectorRemove state char string
 
 instructionStringOccurrencesOfChar :: State -> State
 instructionStringOccurrencesOfChar state = instructionVectorOccurrencesOf state char string

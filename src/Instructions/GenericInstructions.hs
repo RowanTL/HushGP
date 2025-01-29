@@ -313,3 +313,16 @@ instructionVectorReplace state primAccessor vectorAccessor =
   case (uncons (view vectorAccessor state), uncons (view primAccessor state)) of
     (Just (v1, vs), Just (p1, p2 : ps)) -> state & vectorAccessor .~ (replace v1 [p1] [p2] Nothing : vs) & primAccessor .~ ps
     _ -> state
+
+instructionVectorReplaceFirst :: Eq a => State -> Lens' State [a] -> Lens' State [[a]] -> State
+instructionVectorReplaceFirst state primAccessor vectorAccessor =
+  case (uncons (view vectorAccessor state), uncons (view primAccessor state)) of
+    (Just (v1, vs), Just (p1, p2 : ps)) -> state & vectorAccessor .~ (replace v1 [p1] [p2] (Just 1) : vs) & primAccessor .~ ps
+    _ -> state
+
+instructionVectorRemove :: Eq a => State -> Lens' State [a] -> Lens' State [[a]] -> State
+instructionVectorRemove state primAccessor vectorAccessor =
+  case (uncons (view vectorAccessor state), uncons (view primAccessor state)) of
+    (Just (v1, vs), Just (p1, ps)) -> state & vectorAccessor .~ (replace v1 [p1] [] Nothing : vs) & primAccessor .~ ps
+    _ -> state
+  

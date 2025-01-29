@@ -53,3 +53,12 @@ instructionVectorIntOccurrencesOf state = instructionVectorOccurrencesOf state i
 
 instructionVectorIntSetNth :: State -> State
 instructionVectorIntSetNth state = instructionVectorSetNth state int vectorInt
+
+instructionVectorIntReplace :: State -> State
+instructionVectorIntReplace state = instructionVectorReplace state int vectorInt
+
+instructionVectorIntReplaceFirst :: State -> State
+instructionVectorIntReplaceFirst state = instructionVectorReplaceFirst state int vectorInt
+
+instructionVectorIntRemove :: State -> State
+instructionVectorIntRemove state = instructionVectorRemove state int vectorInt

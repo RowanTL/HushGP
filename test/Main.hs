@@ -283,4 +283,8 @@ main = do
   intTestFunc "instructionVectorIntOccurrencesOf0" [0] [GeneVectorInt [1,2,3,4,2,6,7], GeneInt 0, StateFunc instructionVectorIntOccurrencesOf] emptyState
   vectorIntTestFunc "instructionVectorIntSetNth3" [[0,1,2,99,4,5]] [GeneVectorInt [0,1,2,3,4,5], GeneInt 99, GeneInt 3, StateFunc instructionVectorIntSetNth] emptyState
   vectorIntTestFunc "instructionVectorIntSetNth9" [[0,1,2,99,4,5]] [GeneVectorInt [0,1,2,3,4,5], GeneInt 99, GeneInt 9, StateFunc instructionVectorIntSetNth] emptyState
-  -- vectorIntTestFunc "instructionVectorInt"
+  vectorIntTestFunc "instructionVectorIntReplace3" [[0,1,2,99,4,5,99,5,99]] [GeneInt 99, GeneInt 3, GeneVectorInt [0,1,2,3,4,5,3,5,3], StateFunc instructionVectorIntReplace] emptyState
+  vectorIntTestFunc "instructionVectorIntReplace-1" [[0,1,2,3,4,5,3,5,3]] [GeneInt 99, GeneInt (-1), GeneVectorInt [0,1,2,3,4,5,3,5,3], StateFunc instructionVectorIntReplace] emptyState
+  vectorIntTestFunc "instructionVectorIntReplaceFirst3" [[0,1,2,99,4,5,3,5,3]] [GeneInt 99, GeneInt 3, GeneVectorInt [0,1,2,3,4,5,3,5,3], StateFunc instructionVectorIntReplaceFirst] emptyState
+  vectorIntTestFunc "instructionVectorIntReplaceFirst-2" [[0,1,2,3,4,5,3,5,3]] [GeneInt 99, GeneInt (-2), GeneVectorInt [0,1,2,3,4,5,3,5,3], StateFunc instructionVectorIntReplaceFirst] emptyState
+  vectorIntTestFunc "instructionVectorIntRemove" [[0,1,2,4,5,5]] [GeneInt 3, GeneVectorInt [0,1,2,3,4,5,3,5,3], StateFunc instructionVectorIntRemove] emptyState
