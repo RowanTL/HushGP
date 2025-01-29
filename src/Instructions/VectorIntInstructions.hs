@@ -62,3 +62,6 @@ instructionVectorIntReplaceFirst state = instructionVectorReplaceFirst state int
 
 instructionVectorIntRemove :: State -> State
 instructionVectorIntRemove state = instructionVectorRemove state int vectorInt
+
+instructionVectorIntIterate :: State -> State
+instructionVectorIntIterate state = instructionVectorIterate state int vectorInt GeneVectorInt instructionVectorIntIterate

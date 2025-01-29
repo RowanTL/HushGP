@@ -326,3 +326,14 @@ instructionVectorRemove state primAccessor vectorAccessor =
     (Just (v1, vs), Just (p1, ps)) -> state & vectorAccessor .~ (replace v1 [p1] [] Nothing : vs) & primAccessor .~ ps
     _ -> state
   
+instructionVectorIterate :: State -> Lens' State [a] -> Lens' State [[a]] -> ([a] -> Gene) -> (State -> State) -> State
+instructionVectorIterate state@(State {_exec = e1 : es}) primAccessor vectorAccessor vectorType typeIterateFunction =
+  case uncons (view vectorAccessor state) of
+    Just ([], vs) -> state{_exec = es} & vectorAccessor .~ vs
+    Just ([x], vs) -> state & primAccessor .~ (x : view primAccessor state) & vectorAccessor .~ vs
+    Just (v1, vs) ->
+      (case uncons v1 of
+        Just (nv1, nvs) -> state{_exec = e1 : vectorType nvs : StateFunc typeIterateFunction : e1 : es} & primAccessor .~ (nv1 : view primAccessor state) & vectorAccessor .~ vs 
+        _ -> state) -- This should never happen
+    _ -> state
+instructionVectorIterate state _ _ _ _ = state
