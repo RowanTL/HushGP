@@ -8,7 +8,10 @@ module Instructions (
   module Instructions.ExecInstructions,
   module Instructions.LogicalInstructions,
   module Instructions.VectorIntInstructions,
-  module Instructions.VectorFloatInstructions
+  module Instructions.VectorFloatInstructions,
+  module Instructions.VectorStringInstructions,
+  module Instructions.VectorLogicalInstructions,
+  module Instructions.VectorCharInstructions
 )
 where
 
@@ -22,3 +25,6 @@ import Instructions.ExecInstructions
 import Instructions.LogicalInstructions
 import Instructions.VectorIntInstructions
 import Instructions.VectorFloatInstructions
+import Instructions.VectorStringInstructions
+import Instructions.VectorLogicalInstructions
+import Instructions.VectorCharInstructions
