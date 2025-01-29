@@ -143,7 +143,6 @@ instructionEq state accessor =
     stackTop = take 2 $ view accessor state
 
 instructionStackDepth :: State -> Lens' State [a] -> State
--- instructionStackDepth state accessor = state & int .~ (length (view accessor state) : view int state)
 instructionStackDepth state@(State {_int = is}) accessor = state{_int = length (view accessor state) : is}
 
 -- Will have a non-generic definition for the int stack
@@ -152,7 +151,7 @@ instructionYankDup state@(State {_int = i : is}) accessor =
   if notEmptyStack state accessor
   then (state & accessor .~ (view accessor state !! max 0 (min i (length (view accessor state) - 1))) : view accessor state) {_int = is}
   else state
-instructionYankDup state@(State {_int = []}) _ = state
+instructionYankDup state _ = state
 
 -- Is this optimal? Running instrucitonYankDup twice?????
 -- int non generic too

@@ -10,10 +10,10 @@ instructionVectorFloatConj :: State -> State
 instructionVectorFloatConj state = instructionConj state float vectorFloat
 
 instructionVectorFloatTakeN :: State -> State
-instructionVectorFloatTakeN state = instructionTakeN state vectorInt
+instructionVectorFloatTakeN state = instructionTakeN state vectorFloat
 
 instructionVectorFloatSubVector :: State -> State
-instructionVectorFloatSubVector state = instructionSubVector state vectorInt
+instructionVectorFloatSubVector state = instructionSubVector state vectorFloat
 
 instructionVectorFloatFirst :: State -> State
 instructionVectorFloatFirst state = instructionVectorFirst state float vectorFloat
@@ -62,3 +62,6 @@ instructionVectorFloatReplaceFirst state = instructionVectorReplaceFirst state f
 
 instructionVectorFloatRemove :: State -> State
 instructionVectorFloatRemove state = instructionVectorRemove state float vectorFloat
+
+instructionVectorFloatIterate :: State -> State
+instructionVectorFloatIterate state = instructionVectorIterate state float vectorFloat GeneVectorFloat instructionVectorFloatIterate
