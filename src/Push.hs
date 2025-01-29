@@ -49,8 +49,7 @@ loadProgram newstack state = state & exec .~ newstack
 --     ends up on top).
 -- The empty-stack safety of interpretExec on empty stacks depends on the functions it calls.
 interpretExec :: State -> State
-interpretExec state@(State {_exec = []}) = state & exec .~ []
-interpretExec state@(State {_exec = (e : es)}) =
+interpretExec state@(State {_exec = e : es}) =
   case e of
     (GeneInt val) -> interpretExec (state & exec .~ es & int .~ val : view int state)
     (GeneFloat val) -> interpretExec (state & exec .~ es & float .~ val : view float state)
@@ -66,5 +65,6 @@ interpretExec state@(State {_exec = (e : es)}) =
     (Block block) -> interpretExec (state {_exec = block ++ es})
     (PlaceInput val) -> interpretExec (state {_exec = (view input state Map.! val) : es})
     Close -> undefined -- remove Close constructor later?
+interpretExec state = state
 
 -- Need to make interpretExec strict, right?
