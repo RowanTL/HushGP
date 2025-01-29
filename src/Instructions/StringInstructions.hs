@@ -114,8 +114,7 @@ instructionStringReplaceNChar state@(State {_string = s1 : ss, _char = c1 : c2 :
 instructionStringReplaceNChar state = state
 
 instructionStringReplaceAllChar :: State -> State
-instructionStringReplaceAllChar state@(State {_string = s1 : ss, _char = c1 : c2 : cs}) = state{_string = replace s1 [c1] [c2] Nothing : ss, _char = cs}
-instructionStringReplaceAllChar state = state
+instructionStringReplaceAllChar state = instructionVectorReplace state char string
 
 instructionStringRemoveFirstChar :: State -> State
 instructionStringRemoveFirstChar state@(State {_string = s1 : ss, _char = c1 : cs}) = state {_string = replace s1 [c1] "" (Just 1) : ss, _char = cs}

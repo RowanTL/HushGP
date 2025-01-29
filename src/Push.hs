@@ -23,11 +23,11 @@ instructionParameterLoad state@(State {_parameter = (p : _)}) = case p of
   (GeneBool val) -> state & bool .~ val : view bool state
   (GeneString val) -> state & string .~ val : view string state
   (GeneChar val) -> state & char .~ val : view char state
-  (GeneIntVector val) -> state & intVector .~ val : view intVector state
-  (GeneFloatVector val) -> state & floatVector .~ val : view floatVector state
-  (GeneBoolVector val) -> state & boolVector .~ val : view boolVector state
-  (GeneStringVector val) -> state & stringVector .~ val : view stringVector state
-  (GeneCharVector val) -> state & charVector .~ val : view charVector state
+  (GeneVectorInt val) -> state & vectorInt .~ val : view vectorInt state
+  (GeneVectorFloat val) -> state & vectorFloat .~ val : view vectorFloat state
+  (GeneVectorBool val) -> state & vectorBool .~ val : view vectorBool state
+  (GeneVectorString val) -> state & vectorString .~ val : view vectorString state
+  (GeneVectorChar val) -> state & vectorChar .~ val : view vectorChar state
   (StateFunc _) -> undefined
   (PlaceInput _) -> undefined
   Close -> undefined
@@ -57,11 +57,11 @@ interpretExec state@(State {_exec = (e : es)}) =
     (GeneBool val) -> interpretExec (state & exec .~ es & bool .~ val : view bool state)
     (GeneString val) -> interpretExec (state & exec .~ es & string .~ val : view string state)
     (GeneChar val) -> interpretExec (state & exec .~ es & char .~ val : view char state)
-    (GeneIntVector val) -> interpretExec (state & exec .~ es & intVector .~ val : view intVector state)
-    (GeneFloatVector val) -> interpretExec (state & exec .~ es & floatVector .~ val : view floatVector state)
-    (GeneBoolVector val) -> interpretExec (state & exec .~ es & boolVector .~ val : view boolVector state)
-    (GeneStringVector val) -> interpretExec (state & exec .~ es & stringVector .~ val : view stringVector state)
-    (GeneCharVector val) -> interpretExec (state & exec .~ es & charVector .~ val : view charVector state)
+    (GeneVectorInt val) -> interpretExec (state & exec .~ es & vectorInt .~ val : view vectorInt state)
+    (GeneVectorFloat val) -> interpretExec (state & exec .~ es & vectorFloat .~ val : view vectorFloat state)
+    (GeneVectorBool val) -> interpretExec (state & exec .~ es & vectorBool .~ val : view vectorBool state)
+    (GeneVectorString val) -> interpretExec (state & exec .~ es & vectorString .~ val : view vectorString state)
+    (GeneVectorChar val) -> interpretExec (state & exec .~ es & vectorChar .~ val : view vectorChar state)
     (StateFunc func) -> interpretExec $ func state {_exec = es}
     (Block block) -> interpretExec (state {_exec = block ++ es})
     (PlaceInput val) -> interpretExec (state {_exec = (view input state Map.! val) : es})

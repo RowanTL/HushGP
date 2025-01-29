@@ -3,53 +3,53 @@ module Instructions.VectorIntInstructions where
 import Instructions.GenericInstructions
 import State
 
-instructionIntVectorConcat :: State -> State
-instructionIntVectorConcat state = instructionConcat state intVector
+instructionVectorIntConcat :: State -> State
+instructionVectorIntConcat state = instructionConcat state vectorInt
 
-instructionIntVectorConj :: State -> State
-instructionIntVectorConj state = instructionConj state int intVector
+instructionVectorIntConj :: State -> State
+instructionVectorIntConj state = instructionConj state int vectorInt
 
-instructionIntVectorTakeN :: State -> State
-instructionIntVectorTakeN state = instructionTakeN state intVector
+instructionVectorIntTakeN :: State -> State
+instructionVectorIntTakeN state = instructionTakeN state vectorInt
 
-instructionIntVectorSubVector :: State -> State
-instructionIntVectorSubVector state = instructionSubVector state intVector
+instructionVectorIntSubVector :: State -> State
+instructionVectorIntSubVector state = instructionSubVector state vectorInt
 
-instructionIntVectorFirst :: State -> State
-instructionIntVectorFirst state = instructionVectorFirst state int intVector
+instructionVectorIntFirst :: State -> State
+instructionVectorIntFirst state = instructionVectorFirst state int vectorInt
 
-instructionIntVectorLast :: State -> State
-instructionIntVectorLast state = instructionVectorLast state int intVector
+instructionVectorIntLast :: State -> State
+instructionVectorIntLast state = instructionVectorLast state int vectorInt
 
-instructionIntVectorNth :: State -> State
-instructionIntVectorNth state = instructionVectorNth state int intVector
+instructionVectorIntNth :: State -> State
+instructionVectorIntNth state = instructionVectorNth state int vectorInt
 
-instructionIntVectorRest :: State -> State
-instructionIntVectorRest state = instructionRest state intVector
+instructionVectorIntRest :: State -> State
+instructionVectorIntRest state = instructionRest state vectorInt
 
-instructionIntVectorButLast :: State -> State
-instructionIntVectorButLast state = instructionButLast state intVector
+instructionVectorIntButLast :: State -> State
+instructionVectorIntButLast state = instructionButLast state vectorInt
 
-instructionIntVectorLength :: State -> State
-instructionIntVectorLength state = instructionLength state intVector
+instructionVectorIntLength :: State -> State
+instructionVectorIntLength state = instructionLength state vectorInt
 
-instructionIntVectorReverse :: State -> State
-instructionIntVectorReverse state = instructionReverse state intVector
+instructionVectorIntReverse :: State -> State
+instructionVectorIntReverse state = instructionReverse state vectorInt
 
-instructionIntVectorPushAll :: State -> State
-instructionIntVectorPushAll state = instructionPushAll state int intVector
+instructionVectorIntPushAll :: State -> State
+instructionVectorIntPushAll state = instructionPushAll state int vectorInt
 
-instructionIntVectorMakeEmpty :: State -> State
-instructionIntVectorMakeEmpty state = instructionVectorMakeEmpty state intVector
+instructionVectorIntMakeEmpty :: State -> State
+instructionVectorIntMakeEmpty state = instructionVectorMakeEmpty state vectorInt
 
-instructionIntVectorIsEmpty :: State -> State
-instructionIntVectorIsEmpty state = instructionVectorIsEmpty state intVector
+instructionVectorIntIsEmpty :: State -> State
+instructionVectorIntIsEmpty state = instructionVectorIsEmpty state vectorInt
 
-instructionIntVectorIndexOf :: State -> State
-instructionIntVectorIndexOf state = instructionVectorIndexOf state int intVector
+instructionVectorIntIndexOf :: State -> State
+instructionVectorIntIndexOf state = instructionVectorIndexOf state int vectorInt
 
-instructionIntVectorOccurrencesOf :: State -> State
-instructionIntVectorOccurrencesOf state = instructionVectorOccurrencesOf state int intVector
+instructionVectorIntOccurrencesOf :: State -> State
+instructionVectorIntOccurrencesOf state = instructionVectorOccurrencesOf state int vectorInt
 
-instructionIntVectorSetNth :: State -> State
-instructionIntVectorSetNth state = instructionVectorSetNth state int intVector
+instructionVectorIntSetNth :: State -> State
+instructionVectorIntSetNth state = instructionVectorSetNth state int vectorInt

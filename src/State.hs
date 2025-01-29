@@ -15,11 +15,11 @@ data Gene
   | GeneBool Bool
   | GeneString String
   | GeneChar Char
-  | GeneIntVector [Int]
-  | GeneFloatVector [Float]
-  | GeneBoolVector [Bool]
-  | GeneStringVector [String]
-  | GeneCharVector [Char]
+  | GeneVectorInt [Int]
+  | GeneVectorFloat [Float]
+  | GeneVectorBool [Bool]
+  | GeneVectorString [String]
+  | GeneVectorChar [Char]
   | StateFunc (State -> State)
   | PlaceInput String
   | Close
@@ -32,11 +32,11 @@ instance Eq Gene where
   GeneString x == GeneString y = x == y
   GeneChar x == GeneChar y = x == y
   PlaceInput x == PlaceInput y = x == y
-  GeneIntVector xs == GeneIntVector ys = xs == ys
-  GeneFloatVector xs == GeneFloatVector ys = xs == ys
-  GeneBoolVector xs == GeneBoolVector ys = xs == ys
-  GeneStringVector xs == GeneStringVector ys = xs == ys
-  GeneCharVector xs == GeneCharVector ys = xs == ys
+  GeneVectorInt xs == GeneVectorInt ys = xs == ys
+  GeneVectorFloat xs == GeneVectorFloat ys = xs == ys
+  GeneVectorBool xs == GeneVectorBool ys = xs == ys
+  GeneVectorString xs == GeneVectorString ys = xs == ys
+  GeneVectorChar xs == GeneVectorChar ys = xs == ys
   Close == Close = True
   StateFunc _ == StateFunc _ = True -- This line is probably not the best thing to do
   Block x == Block y = x == y
@@ -50,11 +50,11 @@ instance Show Gene where
   show (GeneChar x) = "Char: " <> show x
   show (StateFunc _) = "Func: unnamed"
   show (PlaceInput x) = "In: " <> x
-  show (GeneIntVector xs) = "Int Vec: " <> show xs
-  show (GeneFloatVector xs) = "Float Vec: " <> show xs
-  show (GeneBoolVector xs) = "Bool Vec: " <> show xs
-  show (GeneStringVector xs) = "String Vec: " <> show xs
-  show (GeneCharVector xs) = "Char Vec: " <> show xs
+  show (GeneVectorInt xs) = "Int Vec: " <> show xs
+  show (GeneVectorFloat xs) = "Float Vec: " <> show xs
+  show (GeneVectorBool xs) = "Bool Vec: " <> show xs
+  show (GeneVectorString xs) = "String Vec: " <> show xs
+  show (GeneVectorChar xs) = "Char Vec: " <> show xs
   show Close = "Close"
   show (Block xs) = "Block: " <> show xs
 
@@ -66,11 +66,11 @@ data State = State
     _bool :: [Bool],
     _string :: [String],
     _char :: [Char],
-    _intVector :: [[Int]],
-    _floatVector :: [[Float]],
-    _boolVector :: [[Bool]],
-    _stringVector :: [[String]],
-    _charVector :: [[Char]],
+    _vectorInt :: [[Int]],
+    _vectorFloat :: [[Float]],
+    _vectorBool :: [[Bool]],
+    _vectorString :: [[String]],
+    _vectorChar :: [[Char]],
     _parameter :: [Gene],
     _input :: Map.Map String Gene
   }
@@ -89,11 +89,11 @@ emptyState =
       _string = [],
       _char = [],
       _parameter = [],
-      _intVector = [],
-      _floatVector = [],
-      _boolVector = [],
-      _stringVector = [],
-      _charVector = [],
+      _vectorInt = [],
+      _vectorFloat = [],
+      _vectorBool = [],
+      _vectorString = [],
+      _vectorChar = [],
       _input = Map.empty
     }
 
@@ -108,10 +108,10 @@ exampleState =
       _string = ["abc", "123"],
       _char = ['d', 'e', 'f'],
       _parameter = [],
-      _intVector = [[1, 2], [5, 6, 8]],
-      _floatVector = [[1.234, 9.21], [5.42, 6.221, 8.5493]],
-      _boolVector = [[True, False], [False, False, True]],
-      _stringVector = [["this is a sentence", "this is also a sentence"], ["s0", "s1", "s2"]],
-      _charVector = [['z', 'x'], ['r', 'a', 't', 'l']],
+      _vectorInt = [[1, 2], [5, 6, 8]],
+      _vectorFloat = [[1.234, 9.21], [5.42, 6.221, 8.5493]],
+      _vectorBool = [[True, False], [False, False, True]],
+      _vectorString = [["this is a sentence", "this is also a sentence"], ["s0", "s1", "s2"]],
+      _vectorChar = [['z', 'x'], ['r', 'a', 't', 'l']],
       _input = Map.empty
     }

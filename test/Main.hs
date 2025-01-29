@@ -44,10 +44,10 @@ charTestFunc name goal genome startState =
   let state = loadProgram genome startState
    in assert (goal == _char (interpretExec state)) putStrLn (name <> " passed test.")
 
-intVectorTestFunc :: String -> [[Int]] -> [Gene] -> State -> IO ()
-intVectorTestFunc name goal genome startState =
+vectorIntTestFunc :: String -> [[Int]] -> [Gene] -> State -> IO ()
+vectorIntTestFunc name goal genome startState =
   let state = loadProgram genome startState
-   in assert (goal == _intVector (interpretExec state)) putStrLn (name <> " passed test.")
+   in assert (goal == _vectorInt (interpretExec state)) putStrLn (name <> " passed test.")
 
 main :: IO ()
 main = do
@@ -111,7 +111,7 @@ main = do
   codeTestFunc "instructionCodeFirst" [GeneInt 5] [StateFunc instructionCodeFromExec, Block [GeneInt 5, StateFunc instructionIntSub], StateFunc instructionCodeFirst] emptyState
   codeTestFunc "instructionCodeLast" [GeneBool True] [StateFunc instructionCodeFromExec, Block [GeneInt 5, StateFunc instructionIntSub, GeneBool True], StateFunc instructionCodeLast] emptyState
   codeTestFunc "instructionCodeTail" [Block [GeneFloat 3.2, GeneBool True, GeneInt 3]] [StateFunc instructionCodeFromExec, Block [StateFunc instructionFloatAdd, GeneFloat 3.2, GeneBool True, GeneInt 3], StateFunc instructionCodeTail] emptyState
-  codeTestFunc "instructionCodeInit" [Block [GeneIntVector [1], GeneFloat 3.2, GeneBool True]] [StateFunc instructionCodeFromExec, Block [GeneIntVector [1], GeneFloat 3.2, GeneBool True, GeneInt 3], StateFunc instructionCodeInit] emptyState
+  codeTestFunc "instructionCodeInit" [Block [GeneVectorInt [1], GeneFloat 3.2, GeneBool True]] [StateFunc instructionCodeFromExec, Block [GeneVectorInt [1], GeneFloat 3.2, GeneBool True, GeneInt 3], StateFunc instructionCodeInit] emptyState
   codeTestFunc "instructionCodeWrap" [Block [GeneInt 3]] [StateFunc instructionCodeFromExec, GeneInt 3, StateFunc instructionCodeWrap] emptyState
   codeTestFunc "instructionCodeList" [Block [GeneFloat 5.43, GeneInt 3]] [StateFunc instructionCodeFromExec, GeneInt 3, StateFunc instructionCodeFromExec, GeneFloat 5.43, StateFunc instructionCodeList] emptyState
   codeTestFunc "instructionCodeCombine2Blocks" [Block [GeneInt 3, GeneInt 4, GeneInt 1, GeneInt 2]] [StateFunc instructionCodeFromExec, Block [GeneInt 1, GeneInt 2], StateFunc instructionCodeFromExec, Block [GeneInt 3, GeneInt 4], StateFunc instructionCodeCombine] emptyState
@@ -129,9 +129,9 @@ main = do
   intTestFunc "instructionCodeIfTrue" [6] [GeneBool True, StateFunc instructionCodeFromExec, GeneInt 3, StateFunc instructionCodeFromExec, GeneInt 6, StateFunc instructionCodeIf] emptyState
   intTestFunc "instructionCodeIfFalse" [3] [GeneBool False, StateFunc instructionCodeFromExec, GeneInt 3, StateFunc instructionCodeFromExec, GeneInt 6, StateFunc instructionCodeIf] emptyState
   intTestFunc "instructionCodeWhen" [6, 3, 6] [GeneInt 6, GeneInt 3, GeneInt 4, GeneInt 2, GeneBool True, StateFunc instructionCodeFromExec, StateFunc instructionIntAdd, StateFunc instructionCodeWhen] emptyState
-  boolTestFunc "instructionCodeMemberTrue" [True] [StateFunc instructionCodeFromExec, GeneInt 2, StateFunc instructionCodeFromExec, Block [GeneFloat 3.6, GeneInt 2, GeneIntVector [8, 9]], StateFunc instructionCodeMember] emptyState
-  boolTestFunc "instructionCodeMemberFalse" [False] [StateFunc instructionCodeFromExec, GeneInt 7, StateFunc instructionCodeFromExec, Block [GeneFloat 3.6, GeneInt 2, GeneIntVector [8, 9]], StateFunc instructionCodeMember] emptyState
-  boolTestFunc "instructionCodeMember2Blocks" [False] [StateFunc instructionCodeFromExec, Block [GeneInt 7, GeneInt 0], StateFunc instructionCodeFromExec, Block [GeneFloat 3.6, GeneInt 2, GeneIntVector [8, 9]], StateFunc instructionCodeMember] emptyState
+  boolTestFunc "instructionCodeMemberTrue" [True] [StateFunc instructionCodeFromExec, GeneInt 2, StateFunc instructionCodeFromExec, Block [GeneFloat 3.6, GeneInt 2, GeneVectorInt [8, 9]], StateFunc instructionCodeMember] emptyState
+  boolTestFunc "instructionCodeMemberFalse" [False] [StateFunc instructionCodeFromExec, GeneInt 7, StateFunc instructionCodeFromExec, Block [GeneFloat 3.6, GeneInt 2, GeneVectorInt [8, 9]], StateFunc instructionCodeMember] emptyState
+  boolTestFunc "instructionCodeMember2Blocks" [False] [StateFunc instructionCodeFromExec, Block [GeneInt 7, GeneInt 0], StateFunc instructionCodeFromExec, Block [GeneFloat 3.6, GeneInt 2, GeneVectorInt [8, 9]], StateFunc instructionCodeMember] emptyState
   codeTestFunc "instructionCodeNInBounds" [GeneInt 0] [StateFunc instructionCodeFromExec, Block [GeneInt 0, GeneInt 1, GeneInt 2, GeneInt 3, GeneInt 4, GeneInt 5], GeneInt 0, StateFunc instructionCodeN] emptyState
   codeTestFunc "instructionCodeNInBoundsEnd" [GeneInt 5] [StateFunc instructionCodeFromExec, Block [GeneInt 0, GeneInt 1, GeneInt 2, GeneInt 3, GeneInt 4, GeneInt 5], GeneInt 5, StateFunc instructionCodeN] emptyState
   codeTestFunc "instructionCodeNModded" [GeneInt 3] [StateFunc instructionCodeFromExec, Block [GeneInt 0, GeneInt 1, GeneInt 2, GeneInt 3, GeneInt 4, GeneInt 5], GeneInt 9, StateFunc instructionCodeN] emptyState
@@ -257,29 +257,30 @@ main = do
   boolTestFunc "instructionCharIsDigitFalse" [False] [GeneChar 'a', StateFunc instructionCharIsDigit] emptyState
 
   -- vector int instructions
-  intVectorTestFunc "instructionIntVectorConcat" [[4, 5, 6, 1, 2, 3]] [GeneIntVector [1, 2, 3], GeneIntVector [4, 5, 6], StateFunc instructionIntVectorConcat] emptyState
-  intVectorTestFunc "instructionIntVectorConj" [[99, 1, 2, 3]] [GeneIntVector [1, 2, 3], GeneInt 99, StateFunc instructionIntVectorConj] emptyState
-  intVectorTestFunc "instructionIntTakeN" [[1, 2], [6, 7, 8]] [GeneIntVector [6, 7, 8], GeneIntVector [1, 2, 3], GeneInt 2, StateFunc instructionIntVectorTakeN] emptyState
-  intVectorTestFunc "instructionIntVectorSubVector" [[1, 2, 3]] [GeneIntVector [0, 1, 2, 3, 4, 5], GeneInt 3, GeneInt 1, StateFunc instructionIntVectorSubVector] emptyState
-  intTestFunc "instructionIntVectorFirst" [1] [GeneIntVector [1,2,3,4,5], StateFunc instructionIntVectorFirst] emptyState
-  intTestFunc "instructionIntVectorLast" [5] [GeneIntVector [1,2,3,4,5], StateFunc instructionIntVectorLast] emptyState
-  intTestFunc "instructionIntVectorNthInBounds" [2] [GeneIntVector [1,2,3,4,5], GeneInt 1, StateFunc instructionIntVectorNth] emptyState
-  intTestFunc "instructionIntVectorNthOverflow" [2] [GeneIntVector [1,2,3,4,5], GeneInt 6, StateFunc instructionIntVectorNth] emptyState
-  intVectorTestFunc "instructionIntVectorRestFull" [[2,3,4,5]] [GeneIntVector [1,2,3,4,5], StateFunc instructionIntVectorRest] emptyState
-  intVectorTestFunc "instructionIntVectorRestEmpty" [[]] [GeneIntVector [], StateFunc instructionIntVectorRest] emptyState
-  intVectorTestFunc "instructionIntVectorButLastFull" [[1,2,3,4]] [GeneIntVector [1,2,3,4,5], StateFunc instructionIntVectorButLast] emptyState
-  intVectorTestFunc "instructionIntVectorButLastEmpty" [[]] [GeneIntVector [], StateFunc instructionIntVectorButLast] emptyState
-  intTestFunc "instructionIntVectorLength3" [3] [GeneIntVector [1,2,3], StateFunc instructionIntVectorLength] emptyState
-  intTestFunc "instructionIntVectorLength0" [0] [GeneIntVector [], StateFunc instructionIntVectorLength] emptyState
-  intVectorTestFunc "instructionIntVectorReverse" [[4,3,2,1]] [GeneIntVector [1,2,3,4], StateFunc instructionIntVectorReverse] emptyState
-  intTestFunc "instructionIntVectorPushAllFull" [1,2,3,4,99] [GeneIntVector [1,2,3,4], GeneInt 99, StateFunc instructionIntVectorPushAll] emptyState
-  intTestFunc "instructionIntVectorPushAllEmpty" [99] [GeneIntVector [], GeneInt 99, StateFunc instructionIntVectorPushAll] emptyState
-  intVectorTestFunc "instructionIntVectorMakeEmpty" [[]] [StateFunc instructionIntVectorMakeEmpty] emptyState
-  boolTestFunc "instructionIntVectorIsEmptyTrue" [True] [GeneIntVector [], StateFunc instructionIntVectorIsEmpty] emptyState
-  boolTestFunc "instructionIntVectorIsEmptyFalse" [False] [GeneIntVector [1,2,3,4], StateFunc instructionIntVectorIsEmpty] emptyState
-  intTestFunc "instructionIntVectorIndexOf1" [1] [GeneIntVector [1,2,3,4,5], GeneInt 2, StateFunc instructionIntVectorIndexOf] emptyState
-  intTestFunc "instructionIntVectorIndexOfFail" [-1] [GeneIntVector [], GeneInt 2, StateFunc instructionIntVectorIndexOf] emptyState
-  intTestFunc "instructionIntVectorOccurrencesOf2" [2] [GeneIntVector [1,2,3,4,2,6,7], GeneInt 2, StateFunc instructionIntVectorOccurrencesOf] emptyState
-  intTestFunc "instructionIntVectorOccurrencesOf0" [0] [GeneIntVector [1,2,3,4,2,6,7], GeneInt 0, StateFunc instructionIntVectorOccurrencesOf] emptyState
-  intVectorTestFunc "instructionIntVectorSetNth3" [[0,1,2,99,4,5]] [GeneIntVector [0,1,2,3,4,5], GeneInt 99, GeneInt 3, StateFunc instructionIntVectorSetNth] emptyState
-  intVectorTestFunc "instructionIntVectorSetNth9" [[0,1,2,99,4,5]] [GeneIntVector [0,1,2,3,4,5], GeneInt 99, GeneInt 9, StateFunc instructionIntVectorSetNth] emptyState
+  vectorIntTestFunc "instructionVectorIntConcat" [[4, 5, 6, 1, 2, 3]] [GeneVectorInt [1, 2, 3], GeneVectorInt [4, 5, 6], StateFunc instructionVectorIntConcat] emptyState
+  vectorIntTestFunc "instructionVectorIntConj" [[99, 1, 2, 3]] [GeneVectorInt [1, 2, 3], GeneInt 99, StateFunc instructionVectorIntConj] emptyState
+  vectorIntTestFunc "instructionIntTakeN" [[1, 2], [6, 7, 8]] [GeneVectorInt [6, 7, 8], GeneVectorInt [1, 2, 3], GeneInt 2, StateFunc instructionVectorIntTakeN] emptyState
+  vectorIntTestFunc "instructionVectorIntSubVector" [[1, 2, 3]] [GeneVectorInt [0, 1, 2, 3, 4, 5], GeneInt 3, GeneInt 1, StateFunc instructionVectorIntSubVector] emptyState
+  intTestFunc "instructionVectorIntFirst" [1] [GeneVectorInt [1,2,3,4,5], StateFunc instructionVectorIntFirst] emptyState
+  intTestFunc "instructionVectorIntLast" [5] [GeneVectorInt [1,2,3,4,5], StateFunc instructionVectorIntLast] emptyState
+  intTestFunc "instructionVectorIntNthInBounds" [2] [GeneVectorInt [1,2,3,4,5], GeneInt 1, StateFunc instructionVectorIntNth] emptyState
+  intTestFunc "instructionVectorIntNthOverflow" [2] [GeneVectorInt [1,2,3,4,5], GeneInt 6, StateFunc instructionVectorIntNth] emptyState
+  vectorIntTestFunc "instructionVectorIntRestFull" [[2,3,4,5]] [GeneVectorInt [1,2,3,4,5], StateFunc instructionVectorIntRest] emptyState
+  vectorIntTestFunc "instructionVectorIntRestEmpty" [[]] [GeneVectorInt [], StateFunc instructionVectorIntRest] emptyState
+  vectorIntTestFunc "instructionVectorIntButLastFull" [[1,2,3,4]] [GeneVectorInt [1,2,3,4,5], StateFunc instructionVectorIntButLast] emptyState
+  vectorIntTestFunc "instructionVectorIntButLastEmpty" [[]] [GeneVectorInt [], StateFunc instructionVectorIntButLast] emptyState
+  intTestFunc "instructionVectorIntLength3" [3] [GeneVectorInt [1,2,3], StateFunc instructionVectorIntLength] emptyState
+  intTestFunc "instructionVectorIntLength0" [0] [GeneVectorInt [], StateFunc instructionVectorIntLength] emptyState
+  vectorIntTestFunc "instructionVectorIntReverse" [[4,3,2,1]] [GeneVectorInt [1,2,3,4], StateFunc instructionVectorIntReverse] emptyState
+  intTestFunc "instructionVectorIntPushAllFull" [1,2,3,4,99] [GeneVectorInt [1,2,3,4], GeneInt 99, StateFunc instructionVectorIntPushAll] emptyState
+  intTestFunc "instructionVectorIntPushAllEmpty" [99] [GeneVectorInt [], GeneInt 99, StateFunc instructionVectorIntPushAll] emptyState
+  vectorIntTestFunc "instructionVectorIntMakeEmpty" [[]] [StateFunc instructionVectorIntMakeEmpty] emptyState
+  boolTestFunc "instructionVectorIntIsEmptyTrue" [True] [GeneVectorInt [], StateFunc instructionVectorIntIsEmpty] emptyState
+  boolTestFunc "instructionVectorIntIsEmptyFalse" [False] [GeneVectorInt [1,2,3,4], StateFunc instructionVectorIntIsEmpty] emptyState
+  intTestFunc "instructionVectorIntIndexOf1" [1] [GeneVectorInt [1,2,3,4,5], GeneInt 2, StateFunc instructionVectorIntIndexOf] emptyState
+  intTestFunc "instructionVectorIntIndexOfFail" [-1] [GeneVectorInt [], GeneInt 2, StateFunc instructionVectorIntIndexOf] emptyState
+  intTestFunc "instructionVectorIntOccurrencesOf2" [2] [GeneVectorInt [1,2,3,4,2,6,7], GeneInt 2, StateFunc instructionVectorIntOccurrencesOf] emptyState
+  intTestFunc "instructionVectorIntOccurrencesOf0" [0] [GeneVectorInt [1,2,3,4,2,6,7], GeneInt 0, StateFunc instructionVectorIntOccurrencesOf] emptyState
+  vectorIntTestFunc "instructionVectorIntSetNth3" [[0,1,2,99,4,5]] [GeneVectorInt [0,1,2,3,4,5], GeneInt 99, GeneInt 3, StateFunc instructionVectorIntSetNth] emptyState
+  vectorIntTestFunc "instructionVectorIntSetNth9" [[0,1,2,99,4,5]] [GeneVectorInt [0,1,2,3,4,5], GeneInt 99, GeneInt 9, StateFunc instructionVectorIntSetNth] emptyState
+  -- vectorIntTestFunc "instructionVectorInt"

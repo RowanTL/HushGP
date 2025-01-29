@@ -308,3 +308,8 @@ instructionVectorSetNth state@(State {_int = i1 : is}) primAccessor vectorAccess
     _ -> state
 instructionVectorSetNth state _ _ = state
     
+instructionVectorReplace :: Eq a => State -> Lens' State [a] -> Lens' State [[a]] -> State
+instructionVectorReplace state primAccessor vectorAccessor =
+  case (uncons (view vectorAccessor state), uncons (view primAccessor state)) of
+    (Just (v1, vs), Just (p1, p2 : ps)) -> state & vectorAccessor .~ (replace v1 [p1] [p2] Nothing : vs) & primAccessor .~ ps
+    _ -> state
