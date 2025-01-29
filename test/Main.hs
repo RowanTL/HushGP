@@ -42,6 +42,11 @@ vectorIntTestFunc name goal genome startState =
   let state = loadProgram genome startState
    in assert (goal == _vectorInt (interpretExec state)) putStrLn (name <> " passed test.")
 
+vectorFloatTestFunc :: String -> [[Float]] -> [Gene] -> State -> IO ()
+vectorFloatTestFunc name goal genome startState =
+  let state = loadProgram genome startState
+   in assert (goal == _vectorFloat (interpretExec state)) putStrLn (name <> " passed test.")
+
 main :: IO ()
 main = do
   -- Int tests
@@ -282,3 +287,37 @@ main = do
   vectorIntTestFunc "instructionVectorIntReplaceFirst-2" [[0,1,2,3,4,5,3,5,3]] [GeneInt 99, GeneInt (-2), GeneVectorInt [0,1,2,3,4,5,3,5,3], StateFunc instructionVectorIntReplaceFirst] emptyState
   vectorIntTestFunc "instructionVectorIntRemove" [[0,1,2,4,5,5]] [GeneInt 3, GeneVectorInt [0,1,2,3,4,5,3,5,3], StateFunc instructionVectorIntRemove] emptyState
   intTestFunc "instructionVectorIntIterate" [66] [GeneInt 40, GeneVectorInt [0,1,2,3,4,5,3,5,3], StateFunc instructionVectorIntIterate, StateFunc instructionIntAdd] emptyState
+
+  -- vector float functions
+  vectorFloatTestFunc "instructionVectorFloatConcat" [[4.0, 5.0, 6.0, 1.0, 2.0, 3.0]] [GeneVectorFloat [1.0, 2.0, 3.0], GeneVectorFloat [4.0, 5.0, 6.0], StateFunc instructionVectorFloatConcat] emptyState
+  vectorFloatTestFunc "instructionVectorFloatConj" [[99.0, 1.0, 2.0, 3.0]] [GeneVectorFloat [1.0, 2.0, 3.0], GeneFloat 99.0, StateFunc instructionVectorFloatConj] emptyState
+  vectorFloatTestFunc "instructionFloatTakeN" [[1.0, 2.0], [6.0, 7.0, 8.0]] [GeneVectorFloat [6.0, 7.0, 8.0], GeneVectorFloat [1.0, 2.0, 3.0], GeneInt 2, StateFunc instructionVectorFloatTakeN] emptyState
+  vectorFloatTestFunc "instructionVectorFloatSubVector" [[1.0, 2.0, 3.0]] [GeneVectorFloat [0.0, 1.0, 2.0, 3.0, 4.0, 5.0], GeneInt 3, GeneInt 1, StateFunc instructionVectorFloatSubVector] emptyState
+  floatTestFunc "instructionVectorFloatFirst" [1.0] [GeneVectorFloat [1.0,2.0,3.0,4.0,5.0], StateFunc instructionVectorFloatFirst] emptyState
+  floatTestFunc "instructionVectorFloatLast" [5.0] [GeneVectorFloat [1.0,2.0,3.0,4.0,5.0], StateFunc instructionVectorFloatLast] emptyState
+  floatTestFunc "instructionVectorFloatNthInBounds" [2.0] [GeneVectorFloat [1.0,2.0,3.0,4.0,5.0], GeneInt 1, StateFunc instructionVectorFloatNth] emptyState
+  floatTestFunc "instructionVectorFloatNthOverflow" [2.0] [GeneVectorFloat [1.0,2.0,3.0,4.0,5.0], GeneInt 6, StateFunc instructionVectorFloatNth] emptyState
+  vectorFloatTestFunc "instructionVectorFloatRestFull" [[2.0,3.0,4.0,5.0]] [GeneVectorFloat [1.0,2.0,3.0,4.0,5.0], StateFunc instructionVectorFloatRest] emptyState
+  vectorFloatTestFunc "instructionVectorFloatRestEmpty" [[]] [GeneVectorFloat [], StateFunc instructionVectorFloatRest] emptyState
+  vectorFloatTestFunc "instructionVectorFloatButLastFull" [[1.0,2.0,3.0,4.0]] [GeneVectorFloat [1.0,2.0,3.0,4.0,5.0], StateFunc instructionVectorFloatButLast] emptyState
+  vectorFloatTestFunc "instructionVectorFloatButLastEmpty" [[]] [GeneVectorFloat [], StateFunc instructionVectorFloatButLast] emptyState
+  intTestFunc "instructionVectorFloatLength3" [3] [GeneVectorFloat [1.0,2.0,3.0], StateFunc instructionVectorFloatLength] emptyState
+  intTestFunc "instructionVectorFloatLength0" [0] [GeneVectorFloat [], StateFunc instructionVectorFloatLength] emptyState
+  vectorFloatTestFunc "instructionVectorFloatReverse" [[4.0,3.0,2.0,1.0]] [GeneVectorFloat [1.0,2.0,3.0,4.0], StateFunc instructionVectorFloatReverse] emptyState
+  floatTestFunc "instructionVectorFloatPushAllFull" [1.0,2.0,3.0,4.0,99.0] [GeneVectorFloat [1.0,2.0,3.0,4.0], GeneFloat 99.0, StateFunc instructionVectorFloatPushAll] emptyState
+  floatTestFunc "instructionVectorFloatPushAllEmpty" [99.0] [GeneVectorFloat [], GeneFloat 99.0, StateFunc instructionVectorFloatPushAll] emptyState
+  vectorFloatTestFunc "instructionVectorFloatMakeEmpty" [[]] [StateFunc instructionVectorFloatMakeEmpty] emptyState
+  boolTestFunc "instructionVectorFloatIsEmptyTrue" [True] [GeneVectorFloat [], StateFunc instructionVectorFloatIsEmpty] emptyState
+  boolTestFunc "instructionVectorFloatIsEmptyFalse" [False] [GeneVectorFloat [1.0,2.0,3.0,4.0], StateFunc instructionVectorFloatIsEmpty] emptyState
+  intTestFunc "instructionVectorFloatIndexOf1" [1] [GeneVectorFloat [1.0,2.0,3.0,4.0,5.0], GeneFloat 2.0, StateFunc instructionVectorFloatIndexOf] emptyState
+  intTestFunc "instructionVectorFloatIndexOfFail" [-1] [GeneVectorFloat [], GeneFloat 2.0, StateFunc instructionVectorFloatIndexOf] emptyState
+  intTestFunc "instructionVectorFloatOccurrencesOf2" [2] [GeneVectorFloat [1.0,2.0,3.0,4.0,2.0,6.0,7.0], GeneFloat 2.0, StateFunc instructionVectorFloatOccurrencesOf] emptyState
+  intTestFunc "instructionVectorFloatOccurrencesOf0" [0] [GeneVectorFloat [1.0,2.0,3.0,4.0,2.0,6.0,7.0], GeneFloat 0.0, StateFunc instructionVectorFloatOccurrencesOf] emptyState
+  vectorFloatTestFunc "instructionVectorFloatSetNth3" [[0.0,1.0,2.0,99.0,4.0,5.0]] [GeneVectorFloat [0.0,1.0,2.0,3.0,4.0,5.0], GeneFloat 99.0, GeneInt 3, StateFunc instructionVectorFloatSetNth] emptyState
+  vectorFloatTestFunc "instructionVectorFloatSetNth9" [[0.0,1.0,2.0,99.0,4.0,5.0]] [GeneVectorFloat [0.0,1.0,2.0,3.0,4.0,5.0], GeneFloat 99.0, GeneInt 9, StateFunc instructionVectorFloatSetNth] emptyState
+  vectorFloatTestFunc "instructionVectorFloatReplace3" [[0.0,1.0,2.0,99.0,4.0,5.0,99.0,5.0,99.0]] [GeneFloat 99.0, GeneFloat 3.0, GeneVectorFloat [0.0,1.0,2.0,3.0,4.0,5.0,3.0,5.0,3.0], StateFunc instructionVectorFloatReplace] emptyState
+  vectorFloatTestFunc "instructionVectorFloatReplace-1" [[0.0,1.0,2.0,3.0,4.0,5.0,3.0,5.0,3.0]] [GeneFloat 99.0, GeneFloat (-1.0), GeneVectorFloat [0.0,1.0,2.0,3.0,4.0,5.0,3.0,5.0,3.0], StateFunc instructionVectorFloatReplace] emptyState
+  vectorFloatTestFunc "instructionVectorFloatReplaceFirst3" [[0.0,1.0,2.0,99.0,4.0,5.0,3.0,5.0,3.0]] [GeneFloat 99.0, GeneFloat 3.0, GeneVectorFloat [0.0,1.0,2.0,3.0,4.0,5.0,3.0,5.0,3.0], StateFunc instructionVectorFloatReplaceFirst] emptyState
+  vectorFloatTestFunc "instructionVectorFloatReplaceFirst-2" [[0.0,1.0,2.0,3.0,4.0,5.0,3.0,5.0,3.0]] [GeneFloat 99.0, GeneFloat (-2.0), GeneVectorFloat [0.0,1.0,2.0,3.0,4.0,5.0,3.0,5.0,3.0], StateFunc instructionVectorFloatReplaceFirst] emptyState
+  vectorFloatTestFunc "instructionVectorFloatRemove" [[0.0,1.0,2.0,4.0,5.0,5.0]] [GeneFloat 3, GeneVectorFloat [0.0,1.0,2.0,3.0,4.0,5.0,3.0,5.0,3.0], StateFunc instructionVectorFloatRemove] emptyState
+  floatTestFunc "instructionVectorFloatIterate" [66.0] [GeneFloat 40.0, GeneVectorFloat [0.0,1.0,2.0,3.0,4.0,5.0,3.0,5.0,3.0], StateFunc instructionVectorFloatIterate, StateFunc instructionFloatAdd] emptyState
