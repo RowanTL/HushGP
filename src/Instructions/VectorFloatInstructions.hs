@@ -65,3 +65,42 @@ instructionVectorFloatRemove state = instructionVectorRemove state float vectorF
 
 instructionVectorFloatIterate :: State -> State
 instructionVectorFloatIterate state = instructionVectorIterate state float vectorFloat GeneVectorFloat instructionVectorFloatIterate
+
+instructionVectorFloatPop :: State -> State
+instructionVectorFloatPop state = instructionPop state vectorFloat
+
+instructionVectorFloatDup :: State -> State
+instructionVectorFloatDup state = instructionDup state vectorFloat
+
+instructionVectorFloatDupN :: State -> State
+instructionVectorFloatDupN state = instructionDupN state vectorFloat
+
+instructionVectorFloatSwap :: State -> State
+instructionVectorFloatSwap state = instructionSwap state vectorFloat
+
+instructionVectorFloatRot :: State -> State
+instructionVectorFloatRot state = instructionRot state vectorFloat
+
+instructionVectorFloatFlush :: State -> State
+instructionVectorFloatFlush state = instructionFlush state vectorFloat
+
+instructionVectorFloatEq :: State -> State
+instructionVectorFloatEq state = instructionEq state vectorFloat
+
+instructionVectorFloatStackDepth :: State -> State
+instructionVectorFloatStackDepth state = instructionStackDepth state vectorFloat
+
+instructionVectorFloatYank :: State -> State
+instructionVectorFloatYank state = instructionYank state vectorFloat
+
+instructionVectorFloatYankDup :: State -> State
+instructionVectorFloatYankDup state = instructionYankDup state vectorFloat
+
+instructionVectorFloatStackIsEmpty :: State -> State
+instructionVectorFloatStackIsEmpty state = instructionIsEmpty state vectorFloat
+
+instructionVectorFloatShove :: State -> State
+instructionVectorFloatShove state = instructionShove state vectorFloat
+
+instructionVectorFloatShoveDup :: State -> State
+instructionVectorFloatShoveDup state = instructionShoveDup state vectorFloat

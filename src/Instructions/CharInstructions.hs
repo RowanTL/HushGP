@@ -48,3 +48,42 @@ instructionCharFromAsciiFloat state = state
 instructionCharsFromString :: State -> State
 instructionCharsFromString state@(State {_char = cs, _string = s1 : ss}) = state{_char = s1 <> cs, _string = ss}
 instructionCharsFromString state = state
+
+instructionCharPop :: State -> State
+instructionCharPop state = instructionPop state char
+
+instructionCharDup :: State -> State
+instructionCharDup state = instructionDup state char
+
+instructionCharDupN :: State -> State
+instructionCharDupN state = instructionDupN state char
+
+instructionCharSwap :: State -> State
+instructionCharSwap state = instructionSwap state char
+
+instructionCharRot :: State -> State
+instructionCharRot state = instructionRot state char
+
+instructionCharFlush :: State -> State
+instructionCharFlush state = instructionFlush state char
+
+instructionCharEq :: State -> State
+instructionCharEq state = instructionEq state char
+
+instructionCharStackDepth :: State -> State
+instructionCharStackDepth state = instructionStackDepth state char
+
+instructionCharYank :: State -> State
+instructionCharYank state = instructionYank state char
+
+instructionCharYankDup :: State -> State
+instructionCharYankDup state = instructionYankDup state char
+
+instructionCharIsEmpty :: State -> State
+instructionCharIsEmpty state = instructionIsEmpty state char
+
+instructionCharShove :: State -> State
+instructionCharShove state = instructionShove state char
+
+instructionCharShoveDup :: State -> State
+instructionCharShoveDup state = instructionShoveDup state char

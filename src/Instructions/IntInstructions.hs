@@ -125,3 +125,6 @@ instructionIntShoveDup state@(State {_int = rawIndex : item : is}) =
   in
   state {_int = item : combineTuple item (splitAt myIndex is)}
 instructionIntShoveDup state = state
+
+instructionIntIsEmpty :: State -> State
+instructionIntIsEmpty state = instructionIsEmpty state int

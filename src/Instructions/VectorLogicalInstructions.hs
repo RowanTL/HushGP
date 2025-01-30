@@ -65,3 +65,42 @@ instructionVectorBoolRemove state = instructionVectorRemove state bool vectorBoo
 
 instructionVectorBoolIterate :: State -> State
 instructionVectorBoolIterate state = instructionVectorIterate state bool vectorBool GeneVectorBool instructionVectorBoolIterate
+
+instructionVectorBoolPop :: State -> State
+instructionVectorBoolPop state = instructionPop state vectorBool
+
+instructionVectorBoolDup :: State -> State
+instructionVectorBoolDup state = instructionDup state vectorBool
+
+instructionVectorBoolDupN :: State -> State
+instructionVectorBoolDupN state = instructionDupN state vectorBool
+
+instructionVectorBoolSwap :: State -> State
+instructionVectorBoolSwap state = instructionSwap state vectorBool
+
+instructionVectorBoolRot :: State -> State
+instructionVectorBoolRot state = instructionRot state vectorBool
+
+instructionVectorBoolFlush :: State -> State
+instructionVectorBoolFlush state = instructionFlush state vectorBool
+
+instructionVectorBoolEq :: State -> State
+instructionVectorBoolEq state = instructionEq state vectorBool
+
+instructionVectorBoolStackDepth :: State -> State
+instructionVectorBoolStackDepth state = instructionStackDepth state vectorBool
+
+instructionVectorBoolYank :: State -> State
+instructionVectorBoolYank state = instructionYank state vectorBool
+
+instructionVectorBoolYankDup :: State -> State
+instructionVectorBoolYankDup state = instructionYankDup state vectorBool
+
+instructionVectorBoolStackIsEmpty :: State -> State
+instructionVectorBoolStackIsEmpty state = instructionIsEmpty state vectorBool
+
+instructionVectorBoolShove :: State -> State
+instructionVectorBoolShove state = instructionShove state vectorBool
+
+instructionVectorBoolShoveDup :: State -> State
+instructionVectorBoolShoveDup state = instructionShoveDup state vectorBool

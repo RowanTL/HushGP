@@ -196,3 +196,39 @@ instructionStringFromFloat state = instructionStringFromLens state float
 instructionStringFromChar :: State -> State
 instructionStringFromChar state@(State {_string = ss, _char = c1 : cs}) = state{_string = [c1] : ss, _char = cs}
 instructionStringFromChar state = state
+
+instructionStringPop :: State -> State
+instructionStringPop state = instructionPop state string
+
+instructionStringDup :: State -> State
+instructionStringDup state = instructionDup state string
+
+instructionStringDupN :: State -> State
+instructionStringDupN state = instructionDupN state string
+
+instructionStringRot :: State -> State
+instructionStringRot state = instructionRot state string
+
+instructionStringFlush :: State -> State
+instructionStringFlush state = instructionFlush state string
+
+instructionStringEq :: State -> State
+instructionStringEq state = instructionEq state string
+
+instructionStringStackDepth :: State -> State
+instructionStringStackDepth state = instructionStackDepth state string
+
+instructionStringYank :: State -> State
+instructionStringYank state = instructionYank state string
+
+instructionStringYankDup :: State -> State
+instructionStringYankDup state = instructionYankDup state string
+
+instructionStringIsEmpty :: State -> State
+instructionStringIsEmpty state = instructionIsEmpty state string
+
+instructionStringShove :: State -> State
+instructionStringShove state = instructionShove state string
+
+instructionStringShoveDup :: State -> State
+instructionStringShoveDup state = instructionShoveDup state string

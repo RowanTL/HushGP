@@ -35,6 +35,21 @@ instructionExecEq state = instructionEq state exec
 instructionExecStackDepth :: State -> State
 instructionExecStackDepth state = instructionStackDepth state exec
 
+instructionExecYank :: State -> State
+instructionExecYank state = instructionYank state exec
+
+instructionExecYankDup :: State -> State
+instructionExecYankDup state = instructionYankDup state exec
+
+instructionExecShove :: State -> State
+instructionExecShove state = instructionShove state exec
+
+instructionExecShoveDup :: State -> State
+instructionExecShoveDup state = instructionShoveDup state exec
+
+instructionExecIsEmpty :: State -> State
+instructionExecIsEmpty state = instructionIsEmpty state exec
+
 instructionExecDoRange :: State -> State
 instructionExecDoRange state@(State {_exec = (e1 : es), _int = (i0 : i1 : is)}) =
   if increment i0 i1 /= 0

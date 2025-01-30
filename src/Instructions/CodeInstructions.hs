@@ -4,6 +4,7 @@ import Data.List (elemIndex)
 import State
 import Instructions.GenericInstructions
 import Instructions.IntInstructions
+import Control.Lens
 
 -- import Debug.Trace
 
@@ -75,9 +76,9 @@ codeRecursiveSize _ = 1
 instructionCodePop :: State -> State
 instructionCodePop state = instructionPop state code
 
-instructionCodeFromExec :: State -> State
-instructionCodeFromExec state@(State {_exec = (e1 : es), _code = cs}) = state {_exec = es, _code = e1 : cs}
-instructionCodeFromExec state = state
+-- instructionCodeFromExec :: State -> State
+-- instructionCodeFromExec state@(State {_exec = (e1 : es), _code = cs}) = state {_exec = es, _code = e1 : cs}
+-- instructionCodeFromExec state = state
 
 instructionCodeIsCodeBlock :: State -> State
 instructionCodeIsCodeBlock state@(State {_code = (c : cs), _bool = bs}) = state {_code = cs, _bool = isBlock c : bs}
@@ -244,3 +245,72 @@ instructionCodeFirstPosition state = state
 instructionCodeReverse :: State -> State
 instructionCodeReverse state@(State {_code = (Block c1) : cs}) = state {_code = Block (reverse c1) : cs}
 instructionCodeReverse state = state
+
+instructionCodeDup :: State -> State
+instructionCodeDup state = instructionDup state code
+
+instructionCodeDupN :: State -> State
+instructionCodeDupN state = instructionDupN state code
+
+instructionCodeSwap :: State -> State
+instructionCodeSwap state = instructionSwap state code
+
+instructionCodeRot :: State -> State
+instructionCodeRot state = instructionRot state code
+
+instructionCodeFlush :: State -> State
+instructionCodeFlush state = instructionFlush state code
+
+instructionCodeEq :: State -> State
+instructionCodeEq state = instructionEq state code
+
+instructionCodeStackDepth :: State -> State
+instructionCodeStackDepth state = instructionStackDepth state code
+
+instructionCodeYank :: State -> State
+instructionCodeYank state = instructionYank state code
+
+instructionCodeYankDup :: State -> State
+instructionCodeYankDup state = instructionYankDup state code
+
+instructionCodeStackIsEmpty :: State -> State
+instructionCodeStackIsEmpty state = instructionIsEmpty state code
+
+instructionCodeShove :: State -> State
+instructionCodeShove state = instructionShove state code
+
+instructionCodeShoveDup :: State -> State
+instructionCodeShoveDup state = instructionShoveDup state code
+
+instructionCodeFromBool :: State -> State
+instructionCodeFromBool state = instructionCodeFrom state bool GeneBool 
+
+instructionCodeFromInt :: State -> State
+instructionCodeFromInt state = instructionCodeFrom state int GeneInt
+
+instructionCodeFromChar :: State -> State
+instructionCodeFromChar state = instructionCodeFrom state char GeneChar
+
+instructionCodeFromFloat :: State -> State
+instructionCodeFromFloat state = instructionCodeFrom state float GeneFloat
+
+instructionCodeFromString :: State -> State
+instructionCodeFromString state = instructionCodeFrom state string GeneString
+
+instructionCodeFromVectorInt :: State -> State
+instructionCodeFromVectorInt state = instructionCodeFrom state vectorInt GeneVectorInt
+
+instructionCodeFromVectorFloat :: State -> State
+instructionCodeFromVectorFloat state = instructionCodeFrom state vectorFloat GeneVectorFloat
+
+instructionCodeFromVectorString :: State -> State
+instructionCodeFromVectorString state = instructionCodeFrom state vectorString GeneVectorString
+
+instructionCodeFromVectorBool :: State -> State
+instructionCodeFromVectorBool state = instructionCodeFrom state vectorBool GeneVectorBool
+
+instructionCodeFromVectorChar :: State -> State
+instructionCodeFromVectorChar state = instructionCodeFrom state vectorChar GeneVectorChar
+
+instructionCodeFromExec :: State -> State
+instructionCodeFromExec state = instructionCodeFrom state exec id

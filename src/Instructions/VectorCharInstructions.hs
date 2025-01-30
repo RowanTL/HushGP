@@ -65,3 +65,42 @@ instructionVectorCharRemove state = instructionVectorRemove state char vectorCha
 
 instructionVectorCharIterate :: State -> State
 instructionVectorCharIterate state = instructionVectorIterate state char vectorChar GeneVectorChar instructionVectorCharIterate
+
+instructionVectorCharPop :: State -> State
+instructionVectorCharPop state = instructionPop state vectorChar
+
+instructionVectorCharDup :: State -> State
+instructionVectorCharDup state = instructionDup state vectorChar
+
+instructionVectorCharDupN :: State -> State
+instructionVectorCharDupN state = instructionDupN state vectorChar
+
+instructionVectorCharSwap :: State -> State
+instructionVectorCharSwap state = instructionSwap state vectorChar
+
+instructionVectorCharRot :: State -> State
+instructionVectorCharRot state = instructionRot state vectorChar
+
+instructionVectorCharFlush :: State -> State
+instructionVectorCharFlush state = instructionFlush state vectorChar
+
+instructionVectorCharEq :: State -> State
+instructionVectorCharEq state = instructionEq state vectorChar
+
+instructionVectorCharStackDepth :: State -> State
+instructionVectorCharStackDepth state = instructionStackDepth state vectorChar
+
+instructionVectorCharYank :: State -> State
+instructionVectorCharYank state = instructionYank state vectorChar
+
+instructionVectorCharYankDup :: State -> State
+instructionVectorCharYankDup state = instructionYankDup state vectorChar
+
+instructionVectorCharStackIsEmpty :: State -> State
+instructionVectorCharStackIsEmpty state = instructionIsEmpty state vectorChar
+
+instructionVectorCharShove :: State -> State
+instructionVectorCharShove state = instructionShove state vectorChar
+
+instructionVectorCharShoveDup :: State -> State
+instructionVectorCharShoveDup state = instructionShoveDup state vectorChar

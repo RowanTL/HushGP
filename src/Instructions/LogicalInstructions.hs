@@ -1,6 +1,7 @@
 module Instructions.LogicalInstructions where
 
 import State
+import Instructions.GenericInstructions
 
 instructionBoolFromInt :: State -> State
 instructionBoolFromInt state@(State {_int = (i : is), _bool = bs}) = state {_int = is, _bool = (i /= 0) : bs}
@@ -37,3 +38,42 @@ xor b1 b2
 
 instructionBoolXor :: State -> State
 instructionBoolXor = boolTemplate xor
+
+instructionBoolPop :: State -> State
+instructionBoolPop state = instructionPop state bool
+
+instructionBoolDup :: State -> State
+instructionBoolDup state = instructionDup state bool
+
+instructionBoolDupN :: State -> State
+instructionBoolDupN state = instructionDupN state bool
+
+instructionBoolSwap :: State -> State
+instructionBoolSwap state = instructionSwap state bool
+
+instructionBoolRot :: State -> State
+instructionBoolRot state = instructionRot state bool
+
+instructionBoolFlush :: State -> State
+instructionBoolFlush state = instructionFlush state bool
+
+instructionBoolEq :: State -> State
+instructionBoolEq state = instructionEq state bool
+
+instructionBoolStackDepth :: State -> State
+instructionBoolStackDepth state = instructionStackDepth state bool
+
+instructionBoolYank :: State -> State
+instructionBoolYank state = instructionYank state bool
+
+instructionBoolYankDup :: State -> State
+instructionBoolYankDup state = instructionYankDup state bool
+
+instructionBoolShove :: State -> State
+instructionBoolShove state = instructionShove state bool
+
+instructionBoolShoveDup :: State -> State
+instructionBoolShoveDup state = instructionShoveDup state bool
+
+instructionBoolIsEmpty :: State -> State
+instructionBoolIsEmpty state = instructionIsEmpty state bool

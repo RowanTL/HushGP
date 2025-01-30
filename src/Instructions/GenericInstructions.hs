@@ -90,6 +90,9 @@ instructionDup state accessor =
 instructionPop :: State -> Lens' State [a] -> State
 instructionPop state accessor = state & accessor .~ drop 1 (view accessor state)
 
+instructionIsEmpty :: State -> Lens' State [a] -> State
+instructionIsEmpty state@(State {_bool = bs}) accessor = state{_bool = null (view accessor state) : bs}
+
 -- instructionPop :: State -> Lens' State [a] -> State
 -- instructionPop state accessor = if notEmptyStack state accessor then instructionPop state accessor else state
 
@@ -336,3 +339,9 @@ instructionVectorIterate state@(State {_exec = e1 : es}) primAccessor vectorAcce
         _ -> state) -- This should never happen
     _ -> state
 instructionVectorIterate state _ _ _ _ = state
+
+instructionCodeFrom :: State -> Lens' State [a] -> (a -> Gene) -> State
+instructionCodeFrom state@(State {_code = cs}) accessor geneType =
+  case uncons (view accessor state) of
+    Just (x, xs) -> state{_code = geneType x : cs} & accessor .~ xs
+    _ -> state
