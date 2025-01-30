@@ -29,6 +29,7 @@ subList idx0 idx1 xs =
   in
     take adjEnd (drop adjStart xs)
 
+-- Maybe could've used Data.List.isSubsequenceOf :shrug:
 findSubA :: forall a. Eq a => [a] -> [a] -> Int
 findSubA fullA subA 
   | length fullA < length subA = -1

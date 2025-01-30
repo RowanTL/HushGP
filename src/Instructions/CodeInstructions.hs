@@ -76,10 +76,6 @@ codeRecursiveSize _ = 1
 instructionCodePop :: State -> State
 instructionCodePop state = instructionPop state code
 
--- instructionCodeFromExec :: State -> State
--- instructionCodeFromExec state@(State {_exec = (e1 : es), _code = cs}) = state {_exec = es, _code = e1 : cs}
--- instructionCodeFromExec state = state
-
 instructionCodeIsCodeBlock :: State -> State
 instructionCodeIsCodeBlock state@(State {_code = (c : cs), _bool = bs}) = state {_code = cs, _bool = isBlock c : bs}
 instructionCodeIsCodeBlock state = state
