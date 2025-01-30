@@ -4,8 +4,6 @@ import Data.List (elemIndex)
 import State
 import Instructions.GenericInstructions
 import Instructions.IntInstructions
-import Control.Lens
-
 -- import Debug.Trace
 
 isBlock :: Gene -> Bool
