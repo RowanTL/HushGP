@@ -57,6 +57,7 @@ replace fullA old new Nothing =
     then replace (take (findSubA fullA old) fullA <> new <> drop (findSubA fullA old + length old) fullA) old new Nothing
     else fullA
 
+-- a rather inefficient search
 amtOccurences :: forall a. Eq a => [a] -> [a] -> Int
 amtOccurences fullA subA = amtOccurences' fullA subA 0
   where
@@ -149,39 +150,37 @@ instructionEq state accessor =
 instructionStackDepth :: State -> Lens' State [a] -> State
 instructionStackDepth state@(State {_int = is}) accessor = state{_int = length (view accessor state) : is}
 
--- Will have a non-generic definition for the int stack
 instructionYankDup :: State -> Lens' State [a] -> State
 instructionYankDup state@(State {_int = i : is}) accessor = 
   if notEmptyStack state accessor
-  then (state & accessor .~ (view accessor state !! max 0 (min i (length (view accessor state) - 1))) : view accessor state) {_int = is}
+  then state{_int = is} & accessor .~ (view accessor state{_int = is} !! max 0 (min i (length (view accessor state{_int = is}) - 1))) : view accessor state{_int = is}
   else state
 instructionYankDup state _ = state
 
--- Is this optimal? Running instrucitonYankDup twice?????
 -- int non generic too
 instructionYank :: forall a. State -> Lens' State [a] -> State
-instructionYank state@(State {_int = rawIndex : _}) accessor =
+instructionYank state@(State {_int = i : is}) accessor =
   let
     myIndex :: Int
-    myIndex = max 0 (min rawIndex (length (view accessor state) - 1))
+    myIndex = max 0 (min i (length (view accessor state{_int = is}) - 1))
     item :: a
-    item = view accessor state !! myIndex
+    item = view accessor state{_int = is} !! myIndex
     deletedState :: State
-    deletedState = state & accessor .~ deleteAt myIndex (view accessor state)
+    deletedState = state{_int = is} & accessor .~ deleteAt myIndex (view accessor state{_int = is})
   in
-  if notEmptyStack state accessor then deletedState & accessor .~ item : view accessor deletedState else state
+  if notEmptyStack state{_int = is} accessor then deletedState & accessor .~ item : view accessor deletedState else state
 instructionYank state _ = state
 
--- int non generic :(
--- Rewrite this eventually?
+-- instructionShoveDup and instructionShove behave differently when indexing in such a way that
+-- the duplicated index matters whether or not it's present in the stack at the moment of calculation.
+-- I'm not going to keep this behavior. Check out interpysh examples for how pysh handles it.
 instructionShoveDup :: State -> Lens' State [a] -> State
 instructionShoveDup state@(State {_int = i : is}) accessor =
-  case uncons (view accessor state) of
-    Just (x,_) -> (state & accessor .~ combineTuple x (splitAt (max 0 (min i (length (view accessor state) - 1))) (view accessor state))) {_int = is}
+  case uncons (view accessor state{_int = is}) of
+    Just (x,_) -> state{_int = is} & accessor .~ combineTuple x (splitAt (max 0 (min i (length (view accessor state{_int = is}) - 1))) (view accessor state{_int = is}))
     _ -> state
-instructionShoveDup state@(State {_int = []}) _ = state
+instructionShoveDup state _ = state
 
--- also also not int generic
 instructionShove :: State -> Lens' State [a] -> State
 instructionShove state accessor = instructionShoveDup state accessor & accessor .~ drop 1 (view accessor (instructionShoveDup state accessor))
 
@@ -206,7 +205,7 @@ instructionConj state primAccessor vectorAccessor =
     _ -> state
 
 -- v for vector, vs for vectorstack (also applicable to strings)
--- Could abstract this unconsing even further
+-- Could abstract this unconsing even further in all functions below
 instructionTakeN :: State -> Lens' State [[a]] -> State
 instructionTakeN state@(State {_int = i1 : is}) accessor = 
   case uncons (view accessor state) of

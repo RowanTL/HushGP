@@ -88,43 +88,17 @@ instructionIntEq state = instructionEq state int
 instructionIntStackDepth :: State -> State
 instructionIntStackDepth state = instructionStackDepth state int
 
--- int specific
 instructionIntYank :: State -> State
--- instructionIntYank state = instructionYank state int
-instructionIntYank state@(State {_int = rawIndex : i1 : is}) = 
-  let
-    myIndex :: Int
-    myIndex = max 0 (min rawIndex (length is - 1))
-  in
-  state {_int = is !! myIndex : i1 : deleteAt myIndex is}
-instructionIntYank state = state
+instructionIntYank state = instructionYank state int
 
 instructionIntYankDup :: State -> State
-instructionIntYankDup state@(State {_int = rawIndex : item : is}) = 
-  let
-    myIndex :: Int
-    myIndex = max 0 (min rawIndex (length is - 1))
-  in
-  state {_int = is !! myIndex : item : is}
-instructionIntYankDup state = state
+instructionIntYankDup state = instructionYankDup state int
 
 instructionIntShove :: State -> State
-instructionIntShove state@(State {_int = rawIndex : item : is}) =
-  let
-    myIndex :: Int
-    myIndex = max 0 (min rawIndex (length is - 1))
-  in
-  state {_int = combineTuple item (splitAt myIndex is)}
-instructionIntShove state = state
+instructionIntShove state = instructionShove state int
 
 instructionIntShoveDup :: State -> State
-instructionIntShoveDup state@(State {_int = rawIndex : item : is}) =
-  let
-    myIndex :: Int
-    myIndex = max 0 (min rawIndex (length is - 1))
-  in
-  state {_int = item : combineTuple item (splitAt myIndex is)}
-instructionIntShoveDup state = state
+instructionIntShoveDup state = instructionShoveDup state int
 
 instructionIntIsEmpty :: State -> State
 instructionIntIsEmpty state = instructionIsEmpty state int
