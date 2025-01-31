@@ -64,7 +64,7 @@ interpretExec state@(State {_exec = e : es}) =
     (StateFunc func) -> interpretExec $ func state {_exec = es}
     (Block block) -> interpretExec (state {_exec = block ++ es})
     (PlaceInput val) -> interpretExec (state {_exec = (view input state Map.! val) : es})
-    Close -> undefined -- remove Close constructor later?
+    Close -> undefined  -- This should be removed later. Will be converted to Blocks in the Plushy -> Exec stack process
 interpretExec state = state
 
 -- Need to make interpretExec strict, right?

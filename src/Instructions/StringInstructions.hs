@@ -94,8 +94,6 @@ instructionStringInsertChar state@(State {_string = s1 : ss, _char = c1 : cs, _i
 instructionStringInsertChar state = state
 
 instructionStringContainsChar :: State -> State
--- instructionStringContainsChar state@(State {_string = s1 : ss, _char = c1 : cs, _bool = bs}) = state{_string = ss, _char = cs, _bool = (findSubA s1 [c1] /= -1) : bs}
--- instructionStringContainsChar state = state
 instructionStringContainsChar state = instructionVectorContains state char string
 
 instructionStringIndexOfChar :: State -> State
