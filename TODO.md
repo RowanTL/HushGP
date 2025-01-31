@@ -8,3 +8,4 @@
 - [ ] Add a function to sort a vector
 
 ## PushGP TODO
+- [ ] Implement a Plushy genome translator

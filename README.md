@@ -22,7 +22,6 @@ worth it in the grand scheme. Would mean we could also track the functions when 
     * [x] tests/ are just copied from make-grade, need to write for this project.
     * [ ] Included examples of basic assertions, QuickCheck, Hspec, hspec-quickcheck.
 * [x] Look at Lenses library for abstraction
-* [ ] Use Plushy genomes for this project.
 
 ## Design considerations
 The biggest design constraint is that for the exec stack (but not data stacks)
