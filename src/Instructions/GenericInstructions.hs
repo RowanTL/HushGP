@@ -157,7 +157,6 @@ instructionYankDup state@(State {_int = i : is}) accessor =
   else state
 instructionYankDup state _ = state
 
--- int non generic too
 instructionYank :: forall a. State -> Lens' State [a] -> State
 instructionYank state@(State {_int = i : is}) accessor =
   let
@@ -171,7 +170,7 @@ instructionYank state@(State {_int = i : is}) accessor =
   if notEmptyStack state{_int = is} accessor then deletedState & accessor .~ item : view accessor deletedState else state
 instructionYank state _ = state
 
--- instructionShoveDup and instructionShove behave differently when indexing in such a way that
+-- In pysh, instructionShoveDup and instructionShove behave differently when indexing in such a way that
 -- the duplicated index matters whether or not it's present in the stack at the moment of calculation.
 -- I'm not going to keep this behavior. Check out interpysh examples for how pysh handles it.
 instructionShoveDup :: State -> Lens' State [a] -> State
