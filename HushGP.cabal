@@ -52,6 +52,7 @@ library
                     , Instructions.VectorStringInstructions
                     , Instructions.VectorLogicalInstructions
                     , Instructions.VectorCharInstructions
+                    , LearnQuickCheck
 
     -- Modules included in this library but not exported.
     -- other-modules:
@@ -61,7 +62,7 @@ library
 
     -- Other library packages from which modules are imported.
     build-depends:
-        base, containers, lens, split
+        base, containers, lens, split, QuickCheck
 
     -- Directories containing source files.
     hs-source-dirs:   src
