@@ -64,7 +64,7 @@ instructionVectorStringRemove :: State -> State
 instructionVectorStringRemove state = instructionVectorRemove state string vectorString
 
 instructionVectorStringIterate :: State -> State
-instructionVectorStringIterate state = instructionVectorIterate state string vectorString GeneVectorString instructionVectorStringIterate
+instructionVectorStringIterate state = instructionVectorIterate state string vectorString GeneVectorString instructionVectorStringIterate "instructionVectorStringIterate"
 
 instructionVectorStringPop :: State -> State
 instructionVectorStringPop state = instructionPop state vectorString

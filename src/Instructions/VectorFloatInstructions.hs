@@ -64,7 +64,7 @@ instructionVectorFloatRemove :: State -> State
 instructionVectorFloatRemove state = instructionVectorRemove state float vectorFloat
 
 instructionVectorFloatIterate :: State -> State
-instructionVectorFloatIterate state = instructionVectorIterate state float vectorFloat GeneVectorFloat instructionVectorFloatIterate
+instructionVectorFloatIterate state = instructionVectorIterate state float vectorFloat GeneVectorFloat instructionVectorFloatIterate "instructionVectorFloatIterate"
 
 instructionVectorFloatPop :: State -> State
 instructionVectorFloatPop state = instructionPop state vectorFloat

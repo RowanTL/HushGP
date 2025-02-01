@@ -126,13 +126,19 @@ instructionCodeDoDup state = state
 
 -- https://erp12.github.io/pyshgp/html/core_instructions.html#code-do-then-pop
 instructionCodeDoThenPop :: State -> State
-instructionCodeDoThenPop state@(State {_code = c1 : _, _exec = es}) = state {_exec = c1 : StateFunc instructionCodePop : es}
+instructionCodeDoThenPop state@(State {_code = c1 : _, _exec = es}) = state {_exec = c1 : StateFunc (instructionCodePop, "instructionCodePop") : es}
 instructionCodeDoThenPop state = state
+
+codeFromExec :: Gene
+codeFromExec = StateFunc (instructionCodeFromExec, "instructionCodeFromExec")
+
+codeDoRange :: Gene
+codeDoRange = StateFunc (instructionCodeDoRange, "instructionCodeDoRange")
 
 instructionCodeDoRange :: State -> State
 instructionCodeDoRange state@(State {_code = (c1 : cs), _int = (i0 : i1 : is), _exec = es}) =
   if increment i0 i1 /= 0
-    then state {_exec = c1 : Block [GeneInt (i1 + increment i0 i1), GeneInt i0, StateFunc instructionCodeFromExec, c1, StateFunc instructionCodeDoRange] : es, _int = i1 : is, _code = cs}
+    then state {_exec = c1 : Block [GeneInt (i1 + increment i0 i1), GeneInt i0, codeFromExec, c1, codeDoRange] : es, _int = i1 : is, _code = cs}
     else state {_exec = c1: es, _int = i1 : is, _code = cs}
   where
     increment :: Int -> Int -> Int
@@ -146,14 +152,14 @@ instructionCodeDoCount :: State -> State
 instructionCodeDoCount state@(State {_code = (c : cs), _int = (i : is), _exec = es}) =
   if i < 1
     then state
-    else state {_code = cs, _int = is, _exec = Block [GeneInt 0, GeneInt $ i - 1, StateFunc instructionCodeFromExec, c, StateFunc instructionCodeDoRange] : es}
+    else state {_code = cs, _int = is, _exec = Block [GeneInt 0, GeneInt $ i - 1, codeFromExec, c, codeDoRange] : es}
 instructionCodeDoCount state = state
 
 instructionCodeDoTimes :: State -> State
 instructionCodeDoTimes state@(State {_code = (c : cs), _int = (i : is), _exec = es}) =
   if i < 1
     then state
-    else state {_code = cs, _int = is, _exec = Block [GeneInt 0, GeneInt $ i - 1, StateFunc instructionCodeFromExec, Block [StateFunc instructionIntPop, c], StateFunc instructionCodeDoRange] : es}
+    else state {_code = cs, _int = is, _exec = Block [GeneInt 0, GeneInt $ i - 1, codeFromExec, Block [StateFunc (instructionIntPop, "instructionIntPop"), c], codeDoRange] : es}
 instructionCodeDoTimes state = state
 
 instructionCodeIf :: State -> State

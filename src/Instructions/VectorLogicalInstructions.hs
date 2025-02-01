@@ -64,7 +64,7 @@ instructionVectorBoolRemove :: State -> State
 instructionVectorBoolRemove state = instructionVectorRemove state bool vectorBool
 
 instructionVectorBoolIterate :: State -> State
-instructionVectorBoolIterate state = instructionVectorIterate state bool vectorBool GeneVectorBool instructionVectorBoolIterate
+instructionVectorBoolIterate state = instructionVectorIterate state bool vectorBool GeneVectorBool instructionVectorBoolIterate "instructionVectorBoolIterate"
 
 instructionVectorBoolPop :: State -> State
 instructionVectorBoolPop state = instructionPop state vectorBool
