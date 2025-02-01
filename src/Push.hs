@@ -61,7 +61,7 @@ interpretExec state@(State {_exec = e : es}) =
     (GeneVectorBool val) -> interpretExec (state & exec .~ es & vectorBool .~ val : view vectorBool state)
     (GeneVectorString val) -> interpretExec (state & exec .~ es & vectorString .~ val : view vectorString state)
     (GeneVectorChar val) -> interpretExec (state & exec .~ es & vectorChar .~ val : view vectorChar state)
-    (StateFunc func) -> interpretExec $ func state {_exec = es}
+    (StateFunc (func, _)) -> interpretExec $ func state {_exec = es}
     (Block block) -> interpretExec (state {_exec = block ++ es})
     (PlaceInput val) -> interpretExec (state {_exec = (view input state Map.! val) : es})
     Close -> undefined -- This should be removed later. Will be converted to Blocks in the Plushy -> Exec stack process
