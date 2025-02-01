@@ -4,6 +4,7 @@ module LearnQuickCheck where
 
 import Test.QuickCheck
 import Data.List (sort)
+import Control.Monad
 
 qsort :: Ord a => [a] -> [a]
 qsort = sort
@@ -109,26 +110,46 @@ prop_bananas f =
   applyFun f "banana" == applyFun f "elephant" ||
   applyFun f "monkey" == applyFun f "elephant"
 
-main :: IO ()
-main = do
-  quickCheck prop_dist35
-  quickCheck prop_dist_self
-  quickCheck prop_dist_symmetric
-  -- Roundtrip tests
-  quickCheck prop_insert_delete
-  -- Equivalent tests
-  quickCheck prop_qsort_sort
-  -- quickCheck prop_qsort_sort'
-  -- Algebraic tests
-  quickCheck prop_vAdd_commutative
-  quickCheck prop_vAdd_associative
-  quickCheck prop_vAdd_neutral_left
-  quickCheck prop_vAdd_neutral_right
-  -- Testing with different distributions
-  quickCheck prop_replicate
-  quickCheck prop_insert_sorted
-  -- Quantified Properties
-  quickCheck prop_insert_sorted'
-  -- Testing properties of functions
-  quickCheck prop_filter
-  quickCheck prop_bananas
+-- main :: IO ()
+-- main = do
+--   quickCheck prop_dist35
+--   quickCheck prop_dist_self
+--   quickCheck prop_dist_symmetric
+--   -- Roundtrip tests
+--   quickCheck prop_insert_delete
+--   -- Equivalent tests
+--   quickCheck prop_qsort_sort
+--   -- quickCheck prop_qsort_sort'
+--   -- Algebraic tests
+--   quickCheck prop_vAdd_commutative
+--   quickCheck prop_vAdd_associative
+--   quickCheck prop_vAdd_neutral_left
+--   quickCheck prop_vAdd_neutral_right
+--   -- Testing with different distributions
+--   quickCheck prop_replicate
+--   quickCheck prop_insert_sorted
+--   -- Quantified Properties
+--   quickCheck prop_insert_sorted'
+--   -- Testing properties of functions
+--   quickCheck prop_filter
+--   quickCheck prop_bananas
+
+-- This next section is from the Practical Property Testing video on youtube
+-- by FP Complete Corporation
+
+genSuit, genVal :: Gen Char
+genSuit = elements "HDCS"
+genVal = elements "123456789JQK"
+
+-- Applicative so can do this
+genCard :: Gen (Char, Char)
+genCard = (,) <$> genSuit <*> genVal
+
+-- Monad so can do this
+genCards :: Gen [(Char, Char)]
+genCards = do
+  l <- arbitrary
+  replicateM l genCard
+
+genListOf15Ints :: Gen [Int]
+genListOf15Ints = resize 15 $ sized $ \n -> replicateM n arbitrary
