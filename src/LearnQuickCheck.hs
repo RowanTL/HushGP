@@ -153,3 +153,38 @@ genCards = do
 
 genListOf15Ints :: Gen [Int]
 genListOf15Ints = resize 15 $ sized $ \n -> replicateM n arbitrary
+
+-- Next section covers this. QuickCheck with custom data declarations
+-- http://geekyplatypus.com/y-u-have-no-code-samples-quickcheck/
+
+data Point = Pt Int Int
+
+instance Show Point where
+  show (Pt x y) = "{" ++ show x ++ "," ++ show y ++ "}"
+
+instance Arbitrary Point where
+  arbitrary = do
+    x <- arbitrary
+    -- y <- arbitrary
+    -- return $ Pt x y
+    -- could do 
+    Pt x <$> arbitrary
+
+data Set a = Set [a]
+
+instance (Show a) => Show (Set a) where
+  show s = showSet s where
+    showSet (Set []) = "{}"
+    showSet (Set (x:xs)) = "{" <> show x <> showSubSet xs <> "}" where
+      showSubSet [] = ""
+      showSubSet (ix:ixs) = "," <> show ix <> showSubSet ixs
+
+instance (Arbitrary a) => Arbitrary (Set a) where
+  arbitrary = do Set <$> arbitrary
+              -- list <- arbitrary
+              -- return $ Set list
+
+-- sample $ (arbitrary :: Gen (Set Int))
+
+-- This link also seems interesting
+-- https://devtut.github.io/haskell/quickcheck.html

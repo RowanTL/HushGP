@@ -119,4 +119,5 @@ test-suite HushGP-test
     -- Test dependencies.
     build-depends:
         base,
-        HushGP
+        HushGP,
+        QuickCheck
