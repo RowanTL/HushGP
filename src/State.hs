@@ -23,7 +23,7 @@ data Gene
   | GeneVectorBool [Bool]
   | GeneVectorString [String]
   | GeneVectorChar [Char]
-  | StateFunc (State -> State)
+  | StateFunc (State -> State, String) -- The string stores the name of the function
   | PlaceInput String
   | Close
   | Block [Gene]
@@ -42,7 +42,7 @@ instance Eq Gene where
   GeneVectorString xs == GeneVectorString ys = xs == ys
   GeneVectorChar xs == GeneVectorChar ys = xs == ys
   Close == Close = True
-  StateFunc _ == StateFunc _ = True -- This line is probably not the best thing to do
+  StateFunc (_, nameX) == StateFunc (_, nameY) = nameX == nameY
   Block x == Block y = x == y
   _ == _ = False
 
@@ -52,7 +52,7 @@ instance Show Gene where
   show (GeneBool x) = "Bool: " <> show x
   show (GeneString x) = "String: " <> x
   show (GeneChar x) = "Char: " <> show x
-  show (StateFunc x) = "Func: " <> show x
+  show (StateFunc (_, funcName)) = "Func: " <> funcName
   show (PlaceInput x) = "In: " <> show x
   show (GeneVectorInt xs) = "Int Vec: " <> show xs
   show (GeneVectorFloat xs) = "Float Vec: " <> show xs
@@ -101,10 +101,6 @@ data State = State
   }
   deriving (Show, Eq, Generic)
 
--- This needs to be updated later
-instance Show (State -> State) where
-  show _ = "unnamed"
-
 instance Arbitrary State where
   arbitrary = do
     arbExec <- arbitrary
@@ -122,7 +118,6 @@ instance Arbitrary State where
     arbParameter <- arbitrary
     -- arbInput <- arbitrary
     State arbExec arbCode arbInt arbFloat arbBool arbString arbChar arbVectorInt arbVectorFloat arbVectorBool arbVectorString arbVectorChar arbParameter <$> arbitrary
-
 -- Thanks hlint lol
 
 instance CoArbitrary State
