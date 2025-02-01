@@ -2,11 +2,11 @@ module LearnQuickCheck where
 
 -- https://jesper.sikanda.be/posts/quickcheck-intro.html
 
-import Test.QuickCheck
-import Data.List (sort)
 import Control.Monad
+import Data.List (sort)
+import Test.QuickCheck
 
-qsort :: Ord a => [a] -> [a]
+qsort :: (Ord a) => [a] -> [a]
 qsort = sort
 
 distance :: Int -> Int -> Int
@@ -27,8 +27,8 @@ bad_distance x y = y - x
 prop_dist_symmetric_fail :: Int -> Int -> Bool
 prop_dist_symmetric_fail x y = bad_distance x y == bad_distance y x
 
-sorted :: Ord a => [a] -> Bool
-sorted (x:y:ys) = x <= y && sorted (y:ys)
+sorted :: (Ord a) => [a] -> Bool
+sorted (x : y : ys) = x <= y && sorted (y : ys)
 sorted _ = True
 
 prop_sorted :: [Int] -> Bool
@@ -37,13 +37,15 @@ prop_sorted xs = sorted xs
 -- roundtrip property
 insert :: Int -> [Int] -> [Int]
 insert x [] = [x]
-insert x (y:ys) | x <= y    = x:y:ys
-                | otherwise = y:insert x ys
+insert x (y : ys)
+  | x <= y = x : y : ys
+  | otherwise = y : insert x ys
 
 delete :: Int -> [Int] -> [Int]
 delete x [] = []
-delete x (y:ys) | x == y    = ys
-                | otherwise = y:delete x ys
+delete x (y : ys)
+  | x == y = ys
+  | otherwise = y : delete x ys
 
 prop_insert_delete :: [Int] -> Int -> Bool
 prop_insert_delete xs x = delete x (insert x xs) == xs
@@ -53,24 +55,24 @@ prop_qsort_sort :: [Int] -> Bool
 prop_qsort_sort xs = qsort xs == sort xs
 
 -- can test this in ghci with verboseCheck
-prop_qsort_sort' :: Ord a => [a] -> Bool
+prop_qsort_sort' :: (Ord a) => [a] -> Bool
 prop_qsort_sort' xs = qsort xs == sort xs
 
 -- Algebraic Laws
-vAdd :: (Int, Int) -> (Int, Int) -> (Int, Int)  
+vAdd :: (Int, Int) -> (Int, Int) -> (Int, Int)
 vAdd tup0 tup1 = (fst tup0 + fst tup1, snd tup0 + snd tup1)
 
-prop_vAdd_commutative :: (Int,Int) -> (Int,Int) -> Bool
+prop_vAdd_commutative :: (Int, Int) -> (Int, Int) -> Bool
 prop_vAdd_commutative v w = vAdd v w == vAdd w v
 
-prop_vAdd_associative :: (Int,Int) -> (Int,Int) -> (Int,Int) -> Bool
+prop_vAdd_associative :: (Int, Int) -> (Int, Int) -> (Int, Int) -> Bool
 prop_vAdd_associative u v w = vAdd (vAdd u v) w == vAdd u (vAdd v w)
 
-prop_vAdd_neutral_left :: (Int,Int) -> Bool
-prop_vAdd_neutral_left u = vAdd (0,0) u == u
+prop_vAdd_neutral_left :: (Int, Int) -> Bool
+prop_vAdd_neutral_left u = vAdd (0, 0) u == u
 
-prop_vAdd_neutral_right :: (Int,Int) -> Bool
-prop_vAdd_neutral_right u = vAdd u (0,0) == u
+prop_vAdd_neutral_right :: (Int, Int) -> Bool
+prop_vAdd_neutral_right u = vAdd u (0, 0) == u
 
 prop_qsort_idempotent :: [Int] -> Bool
 prop_qsort_idempotent xs = qsort (qsort xs) == qsort xs
@@ -80,7 +82,7 @@ prop_qsort_idempotent xs = qsort (qsort xs) == qsort xs
 -- prop_replicate n x i = replicate n x !! i == x
 
 prop_replicate :: Int -> Int -> Int -> Property
-prop_replicate n x i = 
+prop_replicate n x i =
   (i >= 0 && i < n) ==> replicate n (x :: Int) !! i == x
 
 prop_insert_sorted :: Int -> [Int] -> Property
@@ -92,23 +94,22 @@ prop_insert_sorted' x = forAll orderedList (\xs -> sorted (insert x xs))
 
 -- Testing properties of functions
 prop_filter :: Fun Int Bool -> [Int] -> Property
-prop_filter p xs = 
-      -- Filter elements not satisfying p.
-  let ys = [ x | x <- xs , applyFun p x ]
-      -- If any elements are left...  
-  in  ys /= [] ==>          
-        -- ...generate a random index i...               
-        forAll (choose (0,length ys-1))
-          -- ...and test if p (ys!!i) holds.    
-          (\i -> applyFun p (ys!!i))
-
-
+prop_filter p xs =
+  -- Filter elements not satisfying p.
+  let ys = [x | x <- xs, applyFun p x]
+   in -- If any elements are left...
+      ys /= [] ==>
+        -- ...generate a random index i...
+        forAll
+          (choose (0, length ys - 1))
+          -- ...and test if p (ys!!i) holds.
+          (\i -> applyFun p (ys !! i))
 
 prop_bananas :: Fun String Int -> Bool
-prop_bananas f = 
-  applyFun f "banana" == applyFun f "monkey" ||
-  applyFun f "banana" == applyFun f "elephant" ||
-  applyFun f "monkey" == applyFun f "elephant"
+prop_bananas f =
+  applyFun f "banana" == applyFun f "monkey"
+    || applyFun f "banana" == applyFun f "elephant"
+    || applyFun f "monkey" == applyFun f "elephant"
 
 -- main :: IO ()
 -- main = do
@@ -167,22 +168,25 @@ instance Arbitrary Point where
     x <- arbitrary
     -- y <- arbitrary
     -- return $ Pt x y
-    -- could do 
+    -- could do
     Pt x <$> arbitrary
 
 data Set a = Set [a]
 
 instance (Show a) => Show (Set a) where
-  show s = showSet s where
-    showSet (Set []) = "{}"
-    showSet (Set (x:xs)) = "{" <> show x <> showSubSet xs <> "}" where
-      showSubSet [] = ""
-      showSubSet (ix:ixs) = "," <> show ix <> showSubSet ixs
+  show s = showSet s
+    where
+      showSet (Set []) = "{}"
+      showSet (Set (x : xs)) = "{" <> show x <> showSubSet xs <> "}"
+        where
+          showSubSet [] = ""
+          showSubSet (ix : ixs) = "," <> show ix <> showSubSet ixs
 
 instance (Arbitrary a) => Arbitrary (Set a) where
   arbitrary = do Set <$> arbitrary
-              -- list <- arbitrary
-              -- return $ Set list
+
+-- list <- arbitrary
+-- return $ Set list
 
 -- sample $ (arbitrary :: Gen (Set Int))
 

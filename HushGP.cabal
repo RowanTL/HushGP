@@ -120,4 +120,6 @@ test-suite HushGP-test
     build-depends:
         base,
         HushGP,
-        QuickCheck
+        QuickCheck,
+        lens
+
