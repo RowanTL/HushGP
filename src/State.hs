@@ -4,7 +4,6 @@ module State where
 
 import Control.Lens hiding (elements)
 import Data.Map qualified as Map
-import GHC.Generics
 
 -- The exec stack must store heterogenous types,
 -- and we must be able to detect that type at runtime.
@@ -75,7 +74,7 @@ data State = State
     _parameter :: [Gene],
     _input :: Map.Map String Gene
   }
-  deriving (Show, Eq, Generic)
+  deriving (Show, Eq)
 
 emptyState :: State
 emptyState =
