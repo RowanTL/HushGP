@@ -1,3 +1,7 @@
+# Notes about this branch
+
+This branch is abandoned. I'm going to switch my efforts to learning [tasty](https://hackage.haskell.org/package/tasty).
+
 # HushGP
 A PushGP implementation in Haskell
 
