@@ -1,4 +1,3 @@
-{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE TemplateHaskell #-}
 
 module State where
@@ -6,7 +5,6 @@ module State where
 import Control.Lens hiding (elements)
 import Data.Map qualified as Map
 import GHC.Generics
-import Test.QuickCheck
 
 -- The exec stack must store heterogenous types,
 -- and we must be able to detect that type at runtime.
@@ -27,7 +25,6 @@ data Gene
   | PlaceInput String
   | Close
   | Block [Gene]
-  deriving (Generic)
 
 instance Eq Gene where
   GeneInt x == GeneInt y = x == y
@@ -62,27 +59,6 @@ instance Show Gene where
   show Close = "Close"
   show (Block xs) = "Block: " <> show xs
 
-instance CoArbitrary Gene
-
-instance Arbitrary Gene where
-  arbitrary =
-    oneof
-      [ GeneInt <$> arbitrary,
-        GeneFloat <$> arbitrary,
-        GeneBool <$> arbitrary,
-        GeneString <$> arbitrary,
-        GeneChar <$> arbitrary,
-        StateFunc <$> arbitrary,
-        PlaceInput <$> arbitrary,
-        GeneVectorInt <$> arbitrary,
-        GeneVectorFloat <$> arbitrary,
-        GeneVectorBool <$> arbitrary,
-        GeneVectorString <$> arbitrary,
-        GeneVectorChar <$> arbitrary,
-        Block <$> arbitrary,
-        return Close
-      ]
-
 data State = State
   { _exec :: [Gene],
     _code :: [Gene],
@@ -100,27 +76,6 @@ data State = State
     _input :: Map.Map String Gene
   }
   deriving (Show, Eq, Generic)
-
-instance Arbitrary State where
-  arbitrary = do
-    arbExec <- arbitrary
-    arbCode <- arbitrary
-    arbInt <- arbitrary
-    arbFloat <- arbitrary
-    arbBool <- arbitrary
-    arbString <- arbitrary
-    arbChar <- arbitrary
-    arbVectorInt <- arbitrary
-    arbVectorFloat <- arbitrary
-    arbVectorBool <- arbitrary
-    arbVectorString <- arbitrary
-    arbVectorChar <- arbitrary
-    arbParameter <- arbitrary
-    -- arbInput <- arbitrary
-    State arbExec arbCode arbInt arbFloat arbBool arbString arbChar arbVectorInt arbVectorFloat arbVectorBool arbVectorString arbVectorChar arbParameter <$> arbitrary
--- Thanks hlint lol
-
-instance CoArbitrary State
 
 emptyState :: State
 emptyState =

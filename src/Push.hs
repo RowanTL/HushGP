@@ -2,8 +2,7 @@ module Push where
 
 import Control.Lens
 import Data.Map qualified as Map
--- import Instructions.IntInstructions
--- import Instructions.ExecInstructions
+
 import State
 
 -- import Debug.Trace (trace, traceStack)

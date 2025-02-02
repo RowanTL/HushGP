@@ -52,7 +52,6 @@ library
                     , Instructions.VectorStringInstructions
                     , Instructions.VectorLogicalInstructions
                     , Instructions.VectorCharInstructions
-                    , LearnQuickCheck
 
     -- Modules included in this library but not exported.
     -- other-modules:
@@ -62,7 +61,7 @@ library
 
     -- Other library packages from which modules are imported.
     build-depends:
-        base, containers, lens, split, QuickCheck
+        base, containers, lens, split
 
     -- Directories containing source files.
     hs-source-dirs:   src
@@ -120,6 +119,5 @@ test-suite HushGP-test
     build-depends:
         base,
         HushGP,
-        QuickCheck,
         lens
 
