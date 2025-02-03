@@ -52,6 +52,9 @@ library
                     , Instructions.VectorStringInstructions
                     , Instructions.VectorLogicalInstructions
                     , Instructions.VectorCharInstructions
+                    , PushTests
+                    , PushTests.IntTests
+                    , PushTests.GenericTests
 
     -- Modules included in this library but not exported.
     -- other-modules:
@@ -61,7 +64,7 @@ library
 
     -- Other library packages from which modules are imported.
     build-depends:
-        base, containers, lens, split
+        base, containers, lens, split, QuickCheck
 
     -- Directories containing source files.
     hs-source-dirs:   src
@@ -101,7 +104,7 @@ test-suite HushGP-test
     default-language: GHC2021
 
     -- Modules included in this executable, other than Main.
-    -- other-modules: MainOld.hs
+    -- other-modules: 
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
@@ -119,5 +122,34 @@ test-suite HushGP-test
     build-depends:
         base,
         HushGP,
-        lens
+        lens,
+        QuickCheck
+
+test-suite HushGP-test-old
+    -- Import common warning flags.
+    import:           warnings
+
+    -- Base language which the package is written in.
+    default-language: GHC2021
+
+    -- Modules included in this executable, other than Main.
+    -- other-modules: 
+
+    -- LANGUAGE extensions used by modules in this package.
+    -- other-extensions:
+
+    -- The interface type and version of the test suite.
+    type:             exitcode-stdio-1.0
+
+    -- Directories containing source files.
+    hs-source-dirs:   test
+
+    -- The entrypoint to the test suite.
+    main-is:          MainOld.hs
+
+    -- Test dependencies.
+    build-depends:
+        base,
+        HushGP,
+        lens,
 

@@ -29,7 +29,7 @@ instructionFloatDiv state@(State {_float = (f1 : f2 : fs)}) = state {_float = if
 instructionFloatDiv state = state
 
 instructionFloatMod :: State -> State
-instructionFloatMod state@(State {_float = (f1 : f2 : fs)}) = state {_float = f2 `mod'` f1 : fs}
+instructionFloatMod state@(State {_float = (f1 : f2 : fs)}) = state {_float = if f1 /= 0 then f2 `mod'` f1 : fs else f1 : f2 : fs}
 instructionFloatMod state = state
 
 instructionFloatMin :: State -> State

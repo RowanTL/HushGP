@@ -28,3 +28,6 @@ import Instructions.VectorFloatInstructions
 import Instructions.VectorIntInstructions
 import Instructions.VectorLogicalInstructions
 import Instructions.VectorStringInstructions
+
+-- Will eventually add a list of all instrucitons in this file
+-- Use template haskell for this?

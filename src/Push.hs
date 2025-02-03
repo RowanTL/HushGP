@@ -66,4 +66,22 @@ interpretExec state@(State {_exec = e : es}) =
     Close -> undefined -- This should be removed later. Will be converted to Blocks in the Plushy -> Exec stack process
 interpretExec state = state
 
+-- interpretOneStep :: State -> State
+-- interpretOneStep state@(State {_exec = e : es}) = 
+--   case e of
+--     (GeneInt val) -> state & exec .~ es & int .~ val : view int state
+--     (GeneFloat val) -> state & exec .~ es & float .~ val : view float state
+--     (GeneBool val) -> state & exec .~ es & bool .~ val : view bool state
+--     (GeneString val) -> state & exec .~ es & string .~ val : view string state
+--     (GeneChar val) -> state & exec .~ es & char .~ val : view char state
+--     (GeneVectorInt val) -> state & exec .~ es & vectorInt .~ val : view vectorInt state
+--     (GeneVectorFloat val) -> state & exec .~ es & vectorFloat .~ val : view vectorFloat state
+--     (GeneVectorBool val) -> state & exec .~ es & vectorBool .~ val : view vectorBool state
+--     (GeneVectorString val) -> state & exec .~ es & vectorString .~ val : view vectorString state
+--     (GeneVectorChar val) -> state & exec .~ es & vectorChar .~ val : view vectorChar state
+--     (StateFunc (func, _)) -> func state {_exec = es}
+--     (Block block) ->  (state {_exec = block ++ es})
+--     (PlaceInput val) ->  (state {_exec = (view input state Map.! val) : es})
+--     Close -> undefined
+-- interpretOneStep state = state
 -- Need to make interpretExec strict, right?

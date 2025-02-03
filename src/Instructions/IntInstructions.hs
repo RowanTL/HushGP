@@ -29,7 +29,7 @@ instructionIntDiv state@(State {_int = (i1 : i2 : is)}) = state {_int = if i1 /=
 instructionIntDiv state = state
 
 instructionIntMod :: State -> State
-instructionIntMod state@(State {_int = (i1 : i2 : is)}) = state {_int = i2 `mod` i1 : is}
+instructionIntMod state@(State {_int = (i1 : i2 : is)}) = state {_int = if i1 /= 0 then (i2 `mod` i1) : is else i1 : i2 : is}
 instructionIntMod state = state
 
 instructionIntMin :: State -> State
