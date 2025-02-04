@@ -2,7 +2,6 @@ module Push where
 
 import Control.Lens
 import Data.Map qualified as Map
-
 import State
 
 -- import Debug.Trace (trace, traceStack)
@@ -67,7 +66,7 @@ interpretExec state@(State {_exec = e : es}) =
 interpretExec state = state
 
 -- interpretOneStep :: State -> State
--- interpretOneStep state@(State {_exec = e : es}) = 
+-- interpretOneStep state@(State {_exec = e : es}) =
 --   case e of
 --     (GeneInt val) -> state & exec .~ es & int .~ val : view int state
 --     (GeneFloat val) -> state & exec .~ es & float .~ val : view float state

@@ -100,12 +100,13 @@ instructionIsEmpty state@(State {_bool = bs}) accessor = state{_bool = null (vie
 
 -- I might be able to move some of the int stack error checking
 -- to the integer call. For now this may be a tad inefficient.
-instructionDupN :: forall a. State -> Lens' State [a] -> State
+instructionDupN :: forall a. Show a => State -> Lens' State [a] -> State
 instructionDupN state accessor = 
   case uncons (view int state) of
     Just (i1,is) ->
       case uncons (view accessor state{_int = is}) of
-        Just (a1,as) -> instructionDupNHelper i1 a1 accessor (state{_int = is} & accessor .~ as)
+        Just (a1,as) -> 
+          instructionDupNHelper i1 a1 accessor (state{_int = is} & accessor .~ as)
         _ -> state
     _ -> state
   where

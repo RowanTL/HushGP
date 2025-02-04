@@ -1,6 +1,6 @@
-module PushTests 
-  ( module PushTests.GenericTests
-  , module PushTests.IntTests
+module PushTests
+  ( module PushTests.GenericTests,
+    module PushTests.IntTests,
   )
 where
 
