@@ -10,3 +10,4 @@
 
 ## PushGP TODO
 - [ ] Implement a Plushy genome translator
+  - [ ] Need to make this reproducable too (Check pysh json files)
