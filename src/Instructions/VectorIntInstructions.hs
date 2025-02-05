@@ -2,6 +2,9 @@ module Instructions.VectorIntInstructions where
 
 import Instructions.GenericInstructions
 import State
+import Data.List (maximumBy, group, sort)
+import Data.Ord (comparing)
+import Numeric.LinearAlgebra (vector, norm_2)
 
 instructionVectorIntConcat :: State -> State
 instructionVectorIntConcat state = instructionConcat state vectorInt
@@ -104,3 +107,120 @@ instructionVectorIntShove state = instructionShove state vectorChar
 
 instructionVectorIntShoveDup :: State -> State
 instructionVectorIntShoveDup state = instructionShoveDup state vectorChar
+
+instructionVectorIntMean :: State -> State
+instructionVectorIntMean state@(State {_vectorInt = ivs, _float = fs}) =
+  case ivs of
+    (iv:ivs') -> state {_vectorInt = ivs', _float = mean iv : fs}
+    []        -> state  -- Do nothing if _vectorInt is empty
+  where
+    mean [] = 0
+    mean xs = fromIntegral (sum xs) / fromIntegral (length xs)
+
+instructionVectorIntMax :: State -> State
+instructionVectorIntMax state@(State {_vectorInt = ivs, _int = is}) =
+  case ivs of
+    (iv:ivs') -> state {_vectorInt = ivs', _int = maximum iv : is}
+    []        -> state
+
+instructionVectorIntMin :: State -> State
+instructionVectorIntMin state@(State {_vectorInt = ivs, _int = is}) =
+  case ivs of
+    (iv:ivs') -> state {_vectorInt = ivs', _int = minimum iv : is}
+    []        -> state
+
+instructionVectorIntSum :: State -> State
+instructionVectorIntSum state@(State {_vectorInt = ivs, _int = is}) =
+  case ivs of
+    (iv:ivs') -> state {_vectorInt = ivs', _int = sum iv : is}
+    []        -> state
+
+instructionVectorIntMode :: State -> State
+instructionVectorIntMode state@(State {_vectorInt = ivs, _int = is}) =
+  case ivs of
+    (iv:ivs') -> state {_vectorInt = ivs', _int = mode iv : is}
+    []        -> state
+  where
+    mode [] = 0
+    mode xs = head $ maximumBy (comparing length) (group (sort xs))
+
+instructionVectorIntNorm :: State -> State
+instructionVectorIntNorm state@(State {_vectorInt = ivs, _float = fs}) =
+  case ivs of
+    (iv:ivs') -> state {_vectorInt = ivs', _float = realToFrac (norm (map fromIntegral iv)) : fs}
+    []        -> state
+  where
+    norm xs = norm_2 (vector xs)
+
+instructionVectorIntCummulativeMean :: State -> State
+instructionVectorIntCummulativeMean state@(State {_vectorInt = ivs, _vectorFloat = fvs}) =
+  case ivs of
+    (iv:ivs') -> state {_vectorInt = ivs, _vectorFloat = zipWith (/) (scanl1 (+) (map fromIntegral iv)) [1..] : fvs}
+    []        -> state
+
+instructionVectorIntCummulativeSum :: State -> State
+instructionVectorIntCummulativeSum state@(State {_vectorInt = ivs}) =
+  case ivs of
+    (iv:ivs') -> state {_vectorInt = scanl1 (+) iv : ivs'}
+    []        -> state
+
+instructionVectorIntCummulativeMax :: State -> State
+instructionVectorIntCummulativeMax state@(State {_vectorInt = ivs}) =
+  case ivs of
+    (iv:ivs') -> state {_vectorInt = scanl1 maximum iv : ivs'}
+    []        -> state
+
+instructionVectorIntCummulativeMin :: State -> State
+instructionVectorIntCummulativeMin state@(State {_vectorInt = ivs}) =
+  case ivs of
+    (iv:ivs') -> state {_vectorInt = scanl1 minimum iv : ivs'}
+    []        -> state
+
+instructionVectorIntExp :: State -> State
+instructionVectorIntExp state@(State {_vectorInt = ivs, _vectorFloat = fvs}) =
+  case ivs of
+    (iv:ivs') -> state {_vectorInt = ivs', _vectorFloat = map (exp . fromIntegral) iv : fvs}
+    []        -> state
+
+
+instructionVectorIntLog :: State -> State
+instructionVectorIntLog state@(State {_vectorInt = ivs, _vectorFloat = fvs}) =
+  case ivs of
+    (iv:ivs') -> state {_vectorInt = ivs', _vectorFloat = map (log . fromIntegral) iv : fvs}
+    []        -> state
+
+instructionVectorIntCos :: State -> State
+instructionVectorIntCos state@(State {_vectorInt = ivs, _vectorFloat = fvs}) =
+  case ivs of
+    (iv:ivs') -> state {_vectorInt = ivs', _vectorFloat = map (cos . fromIntegral) iv : fvs}
+    []        -> state
+
+instructionVectorIntSin :: State -> State
+instructionVectorIntSin state@(State {_vectorInt = ivs, _vectorFloat = fvs}) =
+  case ivs of
+    (iv:ivs') -> state {_vectorInt = ivs', _vectorFloat = map (sin . fromIntegral) iv : fvs}
+    []        -> state
+
+instructionVectorIntAbs :: State -> State
+instructionVectorIntAbs state@(State {_vectorInt = ivs}) =
+  case ivs of
+    (iv:ivs') -> state {_vectorInt = map abs iv : ivs'}
+    []        -> state
+
+instructionVectorIntSquare :: State -> State
+instructionVectorIntSquare state@(State {_vectorInt = ivs}) =
+  case ivs of
+    (iv:ivs') -> state {_vectorInt = map (^2) iv : ivs'}
+    []        -> state
+
+instructionVectorIntCube :: State -> State
+instructionVectorIntCube state@(State {_vectorInt = ivs}) =
+  case ivs of
+    (iv:ivs') -> state {_vectorInt = map (^3) iv : ivs'}
+    []        -> state
+
+instructionVectorIntSqrt :: State -> State
+instructionVectorIntSqrt state@(State {_vectorInt = ivs, _vectorFloat = fvs}) =
+  case ivs of
+    (iv:ivs') -> state {_vectorInt = ivs', _vectorFloat = map (sqrt . fromIntegral) iv : fvs}
+    []        -> state

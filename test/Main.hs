@@ -287,6 +287,7 @@ main = do
   vectorIntTestFunc "instructionVectorIntReplaceFirst-2" [[0,1,2,3,4,5,3,5,3]] [GeneInt 99, GeneInt (-2), GeneVectorInt [0,1,2,3,4,5,3,5,3], StateFunc instructionVectorIntReplaceFirst] emptyState
   vectorIntTestFunc "instructionVectorIntRemove" [[0,1,2,4,5,5]] [GeneInt 3, GeneVectorInt [0,1,2,3,4,5,3,5,3], StateFunc instructionVectorIntRemove] emptyState
   intTestFunc "instructionVectorIntIterate" [66] [GeneInt 40, GeneVectorInt [0,1,2,3,4,5,3,5,3], StateFunc instructionVectorIntIterate, StateFunc instructionIntAdd] emptyState
+  floatTestFunc "instructionVectorIntMean" [3.0] [GeneVectorInt [1,2,3,4,5], StateFunc instructionVectorIntMean] emptyState
 
   -- vector float functions
   vectorFloatTestFunc "instructionVectorFloatConcat" [[4.0, 5.0, 6.0, 1.0, 2.0, 3.0]] [GeneVectorFloat [1.0, 2.0, 3.0], GeneVectorFloat [4.0, 5.0, 6.0], StateFunc instructionVectorFloatConcat] emptyState

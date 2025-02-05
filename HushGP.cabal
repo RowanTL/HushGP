@@ -61,7 +61,7 @@ library
 
     -- Other library packages from which modules are imported.
     build-depends:
-        base, containers, lens, split
+        base, containers, lens, split, hmatrix
 
     -- Directories containing source files.
     hs-source-dirs:   src
