@@ -3,7 +3,7 @@ module PushTests.IntTests where
 import State
 import Instructions.IntInstructions
 import PushTests.GenericTests
-import Control.Lens hiding (uncons)
+-- import Control.Lens hiding (uncons)
 import Test.QuickCheck
 
 prop_IntAdd :: State -> Property
@@ -67,3 +67,18 @@ prop_IntSwap = swapTest int instructionIntSwap
 
 prop_IntRot :: State -> Property
 prop_IntRot = rotTest int instructionIntRot
+
+prop_IntFlush :: State -> Property
+prop_IntFlush = flushTest int instructionIntFlush
+
+prop_IntEq :: State -> Property
+prop_IntEq = aab2Test int bool instructionIntEq (==)
+
+prop_IntStackDepth :: State -> Property
+prop_IntStackDepth = stackDepthTest int instructionIntStackDepth
+
+prop_IntYank :: State -> Property
+prop_IntYank = yankTest int instructionIntYank
+
+-- prop_IntYankDup :: State -> Property
+-- prop_IntYankDup = yankDupTest int instructionIntYankDup

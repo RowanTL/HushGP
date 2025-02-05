@@ -4,6 +4,7 @@ import State
 import Control.Lens
 import Debug.Trace
 import Test.QuickCheck
+import Instructions.GenericInstructions
 
 -- The naming scheme:
 -- the letters at the beginning represent what kind of transformation (the word I'm using for a basic function) to the states is happening
@@ -84,3 +85,45 @@ rotTest accessor instruction state =
   case (uncons (view accessor state), uncons (view accessor $ instruction state)) of
     (Just (origx1, origx2 : origx3 : _), Just (modx1, modx2 : modx3 : _)) -> (origx1, origx2, origx3) === (modx2, modx3, modx1)
     _ -> state === instruction state
+
+flushTest :: (Show a, Eq a) => Lens' State [a] -> (State -> State) -> State -> Property
+flushTest accessor instruction state =
+  property $ null $ view accessor $ instruction state
+
+stackDepthTest :: (Show a) => Lens' State [a] -> (State -> State) -> State -> Property
+stackDepthTest accessor instruction state =
+  case uncons (view int $ instruction state) of
+    Just (x1, _) -> x1 === length (view accessor state)
+    _ -> state === instruction state
+
+yankTest :: forall a. (Show a, Eq a) => Lens' State [a] -> (State -> State) -> State -> Property
+yankTest accessor instruction state@(State {_int = i1 : is}) =
+  let
+    myIndex :: Int
+    myIndex = max 0 (min i1 (length (view accessor state{_int = is}) - 1))
+    item :: a
+    item = view accessor state{_int = is} !! myIndex
+  in
+  case (uncons (view accessor $ instruction state), uncons is) of
+    (Just (x1, _), Just (_, _)) -> x1 === item
+    _ -> state === instruction state
+  -- .&&.  -- unsure how to get this functional
+  -- length (view accessor state{_int = is}) === length (view accessor $ instruction state)
+yankTest _ instruction state = state === instruction state
+
+-- Might just make this a unit test
+-- Come back to this later
+-- yankDupTest :: forall a. (Show a, Eq a) => Lens' State [a] -> (State -> State) -> State -> Property
+-- yankDupTest accessor instruction state@(State {_int = i1 : is}) =
+--   let
+--     myIndex :: Int
+--     myIndex = max 0 (min i1 (length (view accessor state{_int = is}) - 1))
+--     item :: a
+--     item = view accessor state{_int = is} !! myIndex
+--   in
+--   case (uncons (view accessor $ instruction state), uncons is) of
+--     (Just (x1, xs), Just (_, _)) -> x1 === item .&&. (x1 : xs) !!  === item
+--     _ -> state === instruction state
+-- yankDupTest _ instruction state = state === instruction state
+
+-- shoveTest

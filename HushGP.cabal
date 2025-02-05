@@ -55,6 +55,7 @@ library
                     , PushTests
                     , PushTests.IntTests
                     , PushTests.GenericTests
+                    , PushTests.UtilTests
 
     -- Modules included in this library but not exported.
     -- other-modules:
