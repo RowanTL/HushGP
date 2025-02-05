@@ -8,6 +8,7 @@ import State
 deleteAt :: Int -> [a] -> [a]
 deleteAt idx xs = take idx xs <> drop 1 (drop idx xs)
 
+-- I could probably just combine these functions
 combineTuple :: a -> ([a], [a]) -> [a]
 combineTuple val tup = fst tup <> [val] <> snd tup
 
@@ -140,13 +141,13 @@ instructionFlush state accessor = state & accessor .~ []
 
 instructionEq :: forall a. Eq a => State -> Lens' State [a] -> State
 instructionEq state accessor =
-  case uncons stackTop of
+  case uncons $ view accessor state of
     Nothing -> state
-    Just (x1, x2 : _) -> state & bool .~ (x1 == x2) : view bool state & accessor .~ drop 2 (view accessor state)
+    Just (x1, x2 : _) -> droppedState & bool .~ (x1 == x2) : view bool droppedState
     Just _ -> state
   where
-    stackTop :: [a]
-    stackTop = take 2 $ view accessor state
+    droppedState :: State
+    droppedState = state & accessor .~ drop 2 (view accessor state)
 
 instructionStackDepth :: State -> Lens' State [a] -> State
 instructionStackDepth state@(State {_int = is}) accessor = state{_int = length (view accessor state) : is}
