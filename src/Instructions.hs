@@ -28,6 +28,34 @@ import Instructions.VectorFloatInstructions
 import Instructions.VectorIntInstructions
 import Instructions.VectorLogicalInstructions
 import Instructions.VectorStringInstructions
+import State
 
--- Will eventually add a list of all instrucitons in this file
--- Use template haskell for this?
+intInstructions :: [Gene]
+intInstructions = [
+    StateFunc (instructionIntFromFloat, "instructionIntFromFloat"),
+    StateFunc (instructionIntFromBool, "instructionIntFromBool"),
+    StateFunc (instructionIntAdd, "instructionIntAdd"),
+    StateFunc (instructionIntSub, "instructionIntSub"),
+    StateFunc (instructionIntMul, "instructionIntMul"),
+    StateFunc (instructionIntDiv, "instructionIntDiv"),
+    StateFunc (instructionIntMod, "instructionIntMod"),
+    StateFunc (instructionIntMin, "instructionIntMin"),
+    StateFunc (instructionIntMax, "instructionIntMax"),
+    StateFunc (instructionIntInc, "instructionIntInc"),
+    StateFunc (instructionIntDec, "instructionIntDec"),
+    StateFunc (instructionIntLT, "instructionIntLT"),
+    StateFunc (instructionIntGT, "instructionIntGT"),
+    StateFunc (instructionIntLTE, "instructionIntLTE"),
+    StateFunc (instructionIntGTE, "instructionIntGTE"),
+    StateFunc (instructionIntDup, "instructionIntDup"),
+    StateFunc (instructionIntPop, "instructionIntPop"),
+    StateFunc (instructionIntDupN, "instructionIntDupN"),
+    StateFunc (instructionIntSwap, "instructionIntSwap"),
+    StateFunc (instructionIntRot, "instructionIntRot"),
+    StateFunc (instructionIntFlush, "instructionIntFlush"),
+    StateFunc (instructionIntEq, "instructionIntEq"),
+    StateFunc (instructionIntYank, "instructionIntYank"),
+    StateFunc (instructionIntYankDup, "instructionIntYankDup"),
+    StateFunc (instructionIntShove, "instructionIntShove"),
+    StateFunc (instructionIntIsEmpty, "instructionIntIsEmpty")
+  ]
