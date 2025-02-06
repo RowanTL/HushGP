@@ -175,7 +175,6 @@ instructionStringStripWhitespace :: State -> State
 instructionStringStripWhitespace state@(State {_string = s1 : ss}) = state{_string = strip s1 : ss}
 instructionStringStripWhitespace state = state
 
--- Need to do uncons to all of the warnings in this mug
 instructionStringFromLens :: Show a => State -> Lens' State [a] -> State
 instructionStringFromLens state@(State {_string = ss}) accessor =
   case uncons (view accessor state) of

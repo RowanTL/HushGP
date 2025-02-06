@@ -66,7 +66,6 @@ codeMember (Block _) (Block _) = False -- Can't compare two lists with `elem`
 codeMember (Block xs) ygene = ygene `elem` xs
 codeMember _ _ = False
 
--- I love list comprehensions
 codeRecursiveSize :: Gene -> Int
 codeRecursiveSize (Block xs) = sum [codeRecursiveSize x + if isBlock x then 1 else 0 | x <- xs]
 codeRecursiveSize _ = 1
@@ -224,11 +223,6 @@ instructionCodeInsert state@(State {_code = c1 : c2 : cs, _int = i1 : is}) =
     state{_code = Block (codeInsertAtPoint [c1] c2 index) : cs, _int = is}
 instructionCodeInsert state = state
 
--- How do I test if two functions are the same??????????
--- This will impact the final case. This implementation can't determine
--- if two functions are the same, so it assumes that they are.
--- Maybe can test for equality by seeing if these two functions affect the current state
--- in the same way.
 instructionCodeFirstPosition :: State -> State
 instructionCodeFirstPosition state@(State {_code = (Block []) : c2 : cs, _int = is}) = state {_code = cs, _int = (if c2 == Block [] then 0 else -1) : is}
 instructionCodeFirstPosition state@(State {_code = (Block c1) : c2 : cs, _int = is}) = state {_code = cs, _int = positionElem c1 c2 : is}
