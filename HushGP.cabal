@@ -35,27 +35,27 @@ library
     import:           warnings
 
     -- Modules exported by the library.
-    exposed-modules:  Push
-                    , GP
-                    , State
-                    , Instructions
-                    , Instructions.IntInstructions
-                    , Instructions.ExecInstructions
-                    , Instructions.FloatInstructions
-                    , Instructions.GenericInstructions
-                    , Instructions.LogicalInstructions
-                    , Instructions.CodeInstructions
-                    , Instructions.StringInstructions
-                    , Instructions.CharInstructions
-                    , Instructions.VectorIntInstructions
-                    , Instructions.VectorFloatInstructions
-                    , Instructions.VectorStringInstructions
-                    , Instructions.VectorLogicalInstructions
-                    , Instructions.VectorCharInstructions
-                    , PushTests
-                    , PushTests.IntTests
-                    , PushTests.GenericTests
-                    , PushTests.UtilTests
+    exposed-modules:  HushGP.Push
+                    , HushGP.GP
+                    , HushGP.State
+                    , HushGP.Instructions
+                    , HushGP.Instructions.IntInstructions
+                    , HushGP.Instructions.ExecInstructions
+                    , HushGP.Instructions.FloatInstructions
+                    , HushGP.Instructions.GenericInstructions
+                    , HushGP.Instructions.BoolInstructions
+                    , HushGP.Instructions.CodeInstructions
+                    , HushGP.Instructions.StringInstructions
+                    , HushGP.Instructions.CharInstructions
+                    , HushGP.Instructions.VectorIntInstructions
+                    , HushGP.Instructions.VectorFloatInstructions
+                    , HushGP.Instructions.VectorStringInstructions
+                    , HushGP.Instructions.VectorBoolInstructions
+                    , HushGP.Instructions.VectorCharInstructions
+                    , HushGP.PushTests
+                    , HushGP.PushTests.IntTests
+                    , HushGP.PushTests.GenericTests
+                    , HushGP.PushTests.UtilTests
 
     -- Modules included in this library but not exported.
     -- other-modules:
