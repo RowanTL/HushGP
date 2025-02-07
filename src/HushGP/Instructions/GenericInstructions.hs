@@ -2,6 +2,8 @@ module HushGP.Instructions.GenericInstructions where
 
 import Control.Lens
 import HushGP.State
+import Data.List (sort, sortBy)
+import Data.Ord
 
 -- import Debug.Trace 
 
@@ -345,4 +347,18 @@ instructionCodeFrom :: State -> Lens' State [a] -> (a -> Gene) -> State
 instructionCodeFrom state@(State {_code = cs}) accessor geneType =
   case uncons (view accessor state) of
     Just (x, xs) -> state{_code = geneType x : cs} & accessor .~ xs
+    _ -> state
+
+-- |A function that sorts the first vector for a vectorType
+instructionVectorSort :: Ord a => Lens' State [[a]] -> State -> State
+instructionVectorSort accessor state =
+  case uncons (view accessor state) of
+    Just (x, xs) -> state & accessor .~ (sort x : xs)
+    _ -> state
+
+-- |A function that sorts the first vector in reverse order for a vectorType
+instructionVectorSortReverse :: Ord a => Lens' State [[a]] -> State -> State
+instructionVectorSortReverse accessor state =
+  case uncons (view accessor state) of
+    Just (x, xs) -> state & accessor .~ (sortBy (comparing Data.Ord.Down) x : xs)
     _ -> state

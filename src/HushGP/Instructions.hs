@@ -209,7 +209,11 @@ allCodeInstructions = map StateFunc [
     (instructionCodeFromVectorString, "instructionCodeFromVectorString"),
     (instructionCodeFromVectorBool, "instructionCodeFromVectorBool"),
     (instructionCodeFromVectorChar, "instructionCodeFromVectorChar"),
-    (instructionCodeFromExec, "instructionCodeFromExec")
+    (instructionCodeFromExec, "instructionCodeFromExec"),
+    (instructionCodeContainer, "instructionCodeContainer"),
+    (instructionCodeDiscrepancy, "instructionCodeDiscrepancy"),
+    (instructionCodeNoOp, "instructionCodeNoOp"),
+    (instructionCodeTailN, "instructionCodeTailN")
   ]
 
 allExecInstructions :: [Gene]
@@ -233,7 +237,10 @@ allExecInstructions = map StateFunc [
     (instructionExecDoTimes, "instructionExecDoTimes"),
     (instructionExecWhile, "instructionExecWhile"),
     (instructionExecDoWhile, "instructionExecDoWhile"),
-    (instructionExecWhen, "instructionExecWhen")
+    (instructionExecWhen, "instructionExecWhen"),
+    (instructionExecK, "instructionExecK"),
+    (instructionExecS, "instructionExecS"),
+    (instructionExecY, "instrucitonExecY")
   ]
 
 allStringInstructions :: [Gene]

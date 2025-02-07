@@ -18,10 +18,25 @@ blockIsNull :: Gene -> Bool
 blockIsNull (Block xs) = null xs
 blockIsNull _ = False
 
--- I think I can abstract the boilerplate base case check for a lot of these
--- with a different function
+-- https://faculty.hampshire.edu/lspector/push3-description.html#Type
+-- CODE.CONTAINER
+findContainer :: Gene -> Gene -> Gene
+findContainer (Block fullA) gene
+  | length fullA <= blockLength gene = Block []
+  | gene `elem` fullA = Block [] -- Not allowed to be top level
+  | any isBlock fullA = findContainer' (filter isBlock fullA) gene
+  | otherwise = Block []
+  where
+    findContainer' :: [Gene] -> Gene -> Gene
+    findContainer' [] _ = Block []
+    findContainer' ((Block x) : xs) g = if g `elem` x then Block x else findContainer' xs g
+    findContainer' _ _ = Block [] -- This should never happen
+findContainer _ _ = Block []
 
--- empty Blocks are a thing but that shouldn't really matter
+countDiscrepancy :: Gene -> Gene -> Int
+countDiscrepancy (Block xs) (Block ys) = sum [if uncurry (==) tup then 0 else 1 | tup <- zip xs ys] + abs (length xs - length ys)
+countDiscrepancy xgene ygene = if xgene == ygene then 1 else 0
+
 extractFirstFromBlock :: Gene -> Gene
 extractFirstFromBlock (Block (x : _)) = x
 extractFirstFromBlock gene = gene
@@ -38,9 +53,8 @@ extractInitFromBlock gene = gene
 
 extractTailFromBlock :: Gene -> Gene
 extractTailFromBlock (Block xs) = Block (drop 1 xs)
-extractTailFromBlock gene = gene
+extractTailFromBlock _ = Block []
 
--- This function took at least 3 hours to program.
 codeAtPoint :: [Gene] -> Int -> Gene
 codeAtPoint (gene : _) 0 = gene
 codeAtPoint [] _ = Block [] -- Should only happen if an empty block is last Gene in the list of Genes
@@ -53,11 +67,9 @@ codeInsertAtPoint [] gene _ = [gene] -- This shouldn't happen (lol)
 codeInsertAtPoint ((Block genes) : oldGenes) gene index = Block (codeInsertAtPoint genes gene (index - 1)) : oldGenes
 codeInsertAtPoint (oldGene : oldGenes) gene index = oldGene : codeInsertAtPoint oldGenes gene (index - 1) 
 
--- This one functions differently than pysh.
--- I like this one because it preserves ordering in the second case
 codeCombine :: Gene -> Gene -> Gene
 codeCombine (Block xs) (Block ys) = Block (xs <> ys)
-codeCombine (Block xs) ygene = Block (xs <> [ygene])
+codeCombine (Block xs) ygene = Block (ygene : xs)
 codeCombine xgene (Block ys) = Block (xgene : ys)
 codeCombine xgene ygene = Block [xgene, ygene]
 
@@ -85,6 +97,7 @@ instructionCodeLength :: State -> State
 instructionCodeLength state@(State {_code = (c : cs), _int = is}) = state {_code = cs, _int = blockLength c : is}
 instructionCodeLength state = state
 
+-- CODE.CAR
 instructionCodeFirst :: State -> State
 instructionCodeFirst state@(State {_code = (c : cs)}) = state {_code = extractFirstFromBlock c : cs}
 instructionCodeFirst state = state
@@ -93,10 +106,21 @@ instructionCodeLast :: State -> State
 instructionCodeLast state@(State {_code = (c : cs)}) = state {_code = extractLastFromBlock c : cs}
 instructionCodeLast state = state
 
+-- CODE.CDR
 -- https://erp12.github.io/pyshgp/html/core_instructions.html#code-rest
 instructionCodeTail :: State -> State
 instructionCodeTail state@(State {_code = (c : cs)}) = state {_code = extractTailFromBlock c : cs}
 instructionCodeTail state = state
+
+-- |Takes the tail of a block starting at an index determined by the int stack
+-- https://faculty.hampshire.edu/lspector/push3-description.html#Type
+-- This is the CODE.NTHCDR command
+instructionCodeTailN :: State -> State
+instructionCodeTailN state@(State {_code = Block bc : cs, _int = i : is}) = state {_code = Block (drop index bc) : cs, _int = is}
+  where
+    index :: Int
+    index = abs i `mod` length bc
+instructionCodeTailN state = state
 
 -- https://erp12.github.io/pyshgp/html/core_instructions.html#code-but-last
 instructionCodeInit :: State -> State
@@ -116,7 +140,7 @@ instructionCodeCombine state@(State {_code = (c1 : c2 : cs)}) = state {_code = c
 instructionCodeCombine state = state
 
 instructionCodeDo :: State -> State
-instructionCodeDo state@(State {_code = (c1 : cs), _exec = es}) = state {_code = cs, _exec = c1: es}
+instructionCodeDo state@(State {_code = c1 : cs, _exec = es}) = state {_code = cs, _exec = c1 : es}
 instructionCodeDo state = state
 
 instructionCodeDoDup :: State -> State
@@ -196,6 +220,9 @@ instructionIsEmptyCodeBlock state@(State {_bool = bs}) = state{_bool = False : b
 instructionCodeSize :: State -> State
 instructionCodeSize state@(State {_code = c1 : cs, _int = is}) = state{_code = cs, _int = codeRecursiveSize c1 : is}
 instructionCodeSize state = state
+
+-- instructionCodeContainer :: State -> State
+-- instructionCodeContainer 
 
 -- There's a bug for this instruction in pysh where the last item in the
 -- top level Block isn't counted, and if passed 0, then the entire codeblock is returned.
@@ -308,3 +335,14 @@ instructionCodeFromVectorChar state = instructionCodeFrom state vectorChar GeneV
 
 instructionCodeFromExec :: State -> State
 instructionCodeFromExec state = instructionCodeFrom state exec id
+
+instructionCodeContainer :: State -> State
+instructionCodeContainer state@(State {_code = c1 : c2 : cs}) = state {_code = findContainer c1 c2 : cs}
+instructionCodeContainer state = state
+
+instructionCodeDiscrepancy :: State -> State
+instructionCodeDiscrepancy state@(State {_code = c1 : c2 : cs, _int = is}) = state {_code = cs, _int = countDiscrepancy c1 c2 : is}
+instructionCodeDiscrepancy state = state
+
+instructionCodeNoOp :: State -> State
+instructionCodeNoOp state = state

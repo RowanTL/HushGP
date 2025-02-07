@@ -104,3 +104,18 @@ instructionExecWhen state@(State {_exec = (_ : es), _bool = (b : bs)}) =
     then state {_exec = es, _bool = bs}
     else state {_bool = bs}
 instructionExecWhen state = state
+
+-- |The K combinator
+instructionExecK :: State -> State
+instructionExecK state@(State {_exec = e1 : _ : es}) = state{_exec = e1 : es}
+instructionExecK state = state
+
+-- |The S combinator
+instructionExecS :: State -> State
+instructionExecS state@(State {_exec = e1 : e2 : e3 : es}) = state{_exec = e1 : e3 : Block [e2, e3] : es}
+instructionExecS state = state
+
+-- |The Y combinator
+instructionExecY :: State -> State
+instructionExecY state@(State {_exec = e1 : es}) = state{_exec = e1 : Block [StateFunc (instructionExecY, "instructionExecY"), e1] : es}
+instructionExecY state = state
