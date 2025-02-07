@@ -12,43 +12,43 @@ instructionExecIf state@(State {_exec = (e1 : e2 : es), _bool = (b : bs)}) =
 instructionExecIf state = state
 
 instructionExecDup :: State -> State
-instructionExecDup state = instructionDup state exec
+instructionExecDup = instructionDup exec
 
 instructionExecDupN :: State -> State
-instructionExecDupN state = instructionDupN state exec
+instructionExecDupN = instructionDupN exec
 
 instructionExecPop :: State -> State
-instructionExecPop state = instructionPop state exec
+instructionExecPop = instructionPop exec
 
 instructionExecSwap :: State -> State
-instructionExecSwap state = instructionSwap state exec
+instructionExecSwap = instructionSwap exec
 
 instructionExecRot :: State -> State
-instructionExecRot state = instructionRot state exec
+instructionExecRot = instructionRot exec
 
 instructionExecFlush :: State -> State
-instructionExecFlush state = instructionFlush state exec
+instructionExecFlush = instructionFlush exec
 
 instructionExecEq :: State -> State
-instructionExecEq state = instructionEq state exec
+instructionExecEq = instructionEq exec
 
 instructionExecStackDepth :: State -> State
-instructionExecStackDepth state = instructionStackDepth state exec
+instructionExecStackDepth = instructionStackDepth exec
 
 instructionExecYank :: State -> State
-instructionExecYank state = instructionYank state exec
+instructionExecYank = instructionYank exec
 
 instructionExecYankDup :: State -> State
-instructionExecYankDup state = instructionYankDup state exec
+instructionExecYankDup = instructionYankDup exec
 
 instructionExecShove :: State -> State
-instructionExecShove state = instructionShove state exec
+instructionExecShove = instructionShove exec
 
 instructionExecShoveDup :: State -> State
-instructionExecShoveDup state = instructionShoveDup state exec
+instructionExecShoveDup = instructionShoveDup exec
 
 instructionExecIsStackEmpty :: State -> State
-instructionExecIsStackEmpty state = instructionIsStackEmpty state exec
+instructionExecIsStackEmpty = instructionIsStackEmpty exec
 
 execDoRange :: Gene
 execDoRange = StateFunc (instructionExecDoRange, "instructionExecDoRange")

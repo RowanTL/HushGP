@@ -13,13 +13,13 @@ instructionCharConcat state@(State {_char = c1 : c2 : cs, _string = ss}) = state
 instructionCharConcat state = state
 
 instructionCharFromFirstChar :: State -> State
-instructionCharFromFirstChar state = instructionVectorFirst state char string
+instructionCharFromFirstChar = instructionVectorFirst char string
 
 instructionCharFromLastChar :: State -> State
-instructionCharFromLastChar state = instructionVectorLast state char string
+instructionCharFromLastChar = instructionVectorLast char string
 
 instructionCharFromNthChar :: State -> State
-instructionCharFromNthChar state = instructionVectorNth state char string
+instructionCharFromNthChar = instructionVectorNth char string
 
 instructionCharIsWhitespace :: State -> State
 instructionCharIsWhitespace state@(State {_char = c1 : cs, _bool = bs}) = state{_char = cs, _bool = (c1 `elem` wschars) : bs}
@@ -50,43 +50,43 @@ instructionCharsFromString state@(State {_char = cs, _string = s1 : ss}) = state
 instructionCharsFromString state = state
 
 instructionCharPop :: State -> State
-instructionCharPop state = instructionPop state char
+instructionCharPop = instructionPop char
 
 instructionCharDup :: State -> State
-instructionCharDup state = instructionDup state char
+instructionCharDup = instructionDup char
 
 instructionCharDupN :: State -> State
-instructionCharDupN state = instructionDupN state char
+instructionCharDupN = instructionDupN char
 
 instructionCharSwap :: State -> State
-instructionCharSwap state = instructionSwap state char
+instructionCharSwap = instructionSwap char
 
 instructionCharRot :: State -> State
-instructionCharRot state = instructionRot state char
+instructionCharRot = instructionRot char
 
 instructionCharFlush :: State -> State
-instructionCharFlush state = instructionFlush state char
+instructionCharFlush = instructionFlush char
 
 instructionCharEq :: State -> State
-instructionCharEq state = instructionEq state char
+instructionCharEq = instructionEq char
 
 instructionCharStackDepth :: State -> State
-instructionCharStackDepth state = instructionStackDepth state char
+instructionCharStackDepth = instructionStackDepth char
 
 instructionCharYank :: State -> State
-instructionCharYank state = instructionYank state char
+instructionCharYank = instructionYank char
 
 instructionCharYankDup :: State -> State
-instructionCharYankDup state = instructionYankDup state char
+instructionCharYankDup = instructionYankDup char
 
 instructionCharIsStackEmpty :: State -> State
-instructionCharIsStackEmpty state = instructionIsStackEmpty state char
+instructionCharIsStackEmpty = instructionIsStackEmpty char
 
 instructionCharShove :: State -> State
-instructionCharShove state = instructionShove state char
+instructionCharShove = instructionShove char
 
 instructionCharShoveDup :: State -> State
-instructionCharShoveDup state = instructionShoveDup state char
+instructionCharShoveDup = instructionShoveDup char
 
 instructionCharDupItems :: State -> State
 instructionCharDupItems = instructionDupItems char

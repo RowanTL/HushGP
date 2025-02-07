@@ -40,43 +40,43 @@ instructionBoolXor :: State -> State
 instructionBoolXor = boolTemplate xor
 
 instructionBoolPop :: State -> State
-instructionBoolPop state = instructionPop state bool
+instructionBoolPop = instructionPop bool
 
 instructionBoolDup :: State -> State
-instructionBoolDup state = instructionDup state bool
+instructionBoolDup = instructionDup bool
 
 instructionBoolDupN :: State -> State
-instructionBoolDupN state = instructionDupN state bool
+instructionBoolDupN = instructionDupN bool
 
 instructionBoolSwap :: State -> State
-instructionBoolSwap state = instructionSwap state bool
+instructionBoolSwap = instructionSwap bool
 
 instructionBoolRot :: State -> State
-instructionBoolRot state = instructionRot state bool
+instructionBoolRot = instructionRot bool
 
 instructionBoolFlush :: State -> State
-instructionBoolFlush state = instructionFlush state bool
+instructionBoolFlush = instructionFlush bool
 
 instructionBoolEq :: State -> State
-instructionBoolEq state = instructionEq state bool
+instructionBoolEq = instructionEq bool
 
 instructionBoolStackDepth :: State -> State
-instructionBoolStackDepth state = instructionStackDepth state bool
+instructionBoolStackDepth = instructionStackDepth bool
 
 instructionBoolYank :: State -> State
-instructionBoolYank state = instructionYank state bool
+instructionBoolYank = instructionYank bool
 
 instructionBoolYankDup :: State -> State
-instructionBoolYankDup state = instructionYankDup state bool
+instructionBoolYankDup = instructionYankDup bool
 
 instructionBoolShove :: State -> State
-instructionBoolShove state = instructionShove state bool
+instructionBoolShove = instructionShove bool
 
 instructionBoolShoveDup :: State -> State
-instructionBoolShoveDup state = instructionShoveDup state bool
+instructionBoolShoveDup = instructionShoveDup bool
 
 instructionBoolIsStackEmpty :: State -> State
-instructionBoolIsStackEmpty state = instructionIsStackEmpty state bool
+instructionBoolIsStackEmpty = instructionIsStackEmpty bool
 
 instructionBoolDupItems :: State -> State
 instructionBoolDupItems = instructionDupItems bool

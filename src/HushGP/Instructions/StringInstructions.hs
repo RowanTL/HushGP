@@ -24,10 +24,10 @@ rstrip :: String -> String
 rstrip = reverse . lstrip . reverse
 
 instructionStringConcat :: State -> State
-instructionStringConcat state = instructionConcat state string
+instructionStringConcat = instructionConcat string
 
 instructionStringSwap :: State -> State
-instructionStringSwap state = instructionSwap state string
+instructionStringSwap = instructionSwap string
 
 instructionStringInsertString :: State -> State
 instructionStringInsertString state@(State{_string = s1 : s2 : ss, _int = i1 : is}) = state {_string = combineTupleList s2 (splitAt i1 s1) : ss, _int = is}
@@ -94,24 +94,24 @@ instructionStringInsertChar state@(State {_string = s1 : ss, _char = c1 : cs, _i
 instructionStringInsertChar state = state
 
 instructionStringContainsChar :: State -> State
-instructionStringContainsChar state = instructionVectorContains state char string
+instructionStringContainsChar = instructionVectorContains char string
 
 instructionStringIndexOfChar :: State -> State
-instructionStringIndexOfChar state = instructionVectorIndexOf state char string
+instructionStringIndexOfChar = instructionVectorIndexOf char string
 
 instructionStringSplitOnChar :: State -> State
 instructionStringSplitOnChar state@(State {_string = s1 : ss, _char = c1 : cs}) = state {_string = reverse $ splitOn [c1] s1 <> ss, _char = cs}
 instructionStringSplitOnChar state = state
 
 instructionStringReplaceFirstChar :: State -> State
-instructionStringReplaceFirstChar state = instructionVectorReplaceFirst state char string
+instructionStringReplaceFirstChar = instructionVectorReplaceFirst char string
 
 instructionStringReplaceNChar :: State -> State
 instructionStringReplaceNChar state@(State {_string = s1 : ss, _char = c1 : c2 : cs, _int = i1 : is}) = state{_string = replace s1 [c1] [c2] (Just i1) : ss, _char = cs, _int = is}
 instructionStringReplaceNChar state = state
 
 instructionStringReplaceAllChar :: State -> State
-instructionStringReplaceAllChar state = instructionVectorReplace state char string
+instructionStringReplaceAllChar = instructionVectorReplace char string
 
 instructionStringRemoveFirstChar :: State -> State
 instructionStringRemoveFirstChar state@(State {_string = s1 : ss, _char = c1 : cs}) = state {_string = replace s1 [c1] "" (Just 1) : ss, _char = cs}
@@ -122,32 +122,32 @@ instructionStringRemoveNChar state@(State {_string = s1 : ss, _char = c1 : cs, _
 instructionStringRemoveNChar state = state
 
 instructionStringRemoveAllChar :: State -> State
-instructionStringRemoveAllChar state = instructionVectorRemove state char string
+instructionStringRemoveAllChar = instructionVectorRemove char string
 
 instructionStringOccurrencesOfChar :: State -> State
-instructionStringOccurrencesOfChar state = instructionVectorOccurrencesOf state char string
+instructionStringOccurrencesOfChar = instructionVectorOccurrencesOf char string
 
 instructionStringReverse :: State -> State
-instructionStringReverse state = instructionReverse state string
+instructionStringReverse = instructionReverse string
 
 instructionStringHead :: State -> State
-instructionStringHead state = instructionTakeN state string
+instructionStringHead = instructionTakeN string
 
 instructionStringTail :: State -> State
 instructionStringTail state@(State {_string = s1 : ss, _int = i1 : is}) = state{_string = takeR (absNum i1 s1) s1 : ss, _int = is}
 instructionStringTail state = state
 
 instructionStringAppendChar :: State -> State
-instructionStringAppendChar state = instructionConj state char string
+instructionStringAppendChar = instructionConj char string
 
 instructionStringConjEndChar :: State -> State
 instructionStringConjEndChar = instructionConjEnd char string
 
 instructionStringRest :: State -> State
-instructionStringRest state = instructionRest state string
+instructionStringRest = instructionRest string
 
 instructionStringButLast :: State -> State
-instructionStringButLast state = instructionButLast state string
+instructionStringButLast = instructionButLast string
 
 instructionStringDrop :: State -> State
 instructionStringDrop state@(State {_string = s1 : ss, _int = i1 : is}) = state{_string = drop (absNum i1 s1) s1 : ss, _int = is}
@@ -158,10 +158,10 @@ instructionStringButLastN state@(State {_string = s1 : ss, _int = i1 : is}) = st
 instructionStringButLastN state = state
 
 instructionStringLength :: State -> State
-instructionStringLength state = instructionLength state string
+instructionStringLength = instructionLength string
 
 instructionStringMakeEmpty :: State -> State
-instructionStringMakeEmpty state = instructionVectorMakeEmpty state string
+instructionStringMakeEmpty = instructionVectorMakeEmpty string
 
 instructionStringIsEmptyString :: State -> State
 instructionStringIsEmptyString state@(State {_string = s1 : ss, _bool = bs}) = state{_string = ss, _bool = null s1 : bs}
@@ -172,7 +172,7 @@ instructionStringRemoveNth state@(State {_string = s1 : ss, _int = i1 : is}) = s
 instructionStringRemoveNth state = state
 
 instructionStringSetNth :: State -> State
-instructionStringSetNth state = instructionVectorSetNth state char string
+instructionStringSetNth = instructionVectorSetNth char string
 
 instructionStringStripWhitespace :: State -> State
 instructionStringStripWhitespace state@(State {_string = s1 : ss}) = state{_string = strip s1 : ss}
@@ -198,40 +198,40 @@ instructionStringFromChar state@(State {_string = ss, _char = c1 : cs}) = state{
 instructionStringFromChar state = state
 
 instructionStringPop :: State -> State
-instructionStringPop state = instructionPop state string
+instructionStringPop = instructionPop string
 
 instructionStringDup :: State -> State
-instructionStringDup state = instructionDup state string
+instructionStringDup = instructionDup string
 
 instructionStringDupN :: State -> State
-instructionStringDupN state = instructionDupN state string
+instructionStringDupN = instructionDupN string
 
 instructionStringRot :: State -> State
-instructionStringRot state = instructionRot state string
+instructionStringRot = instructionRot string
 
 instructionStringFlush :: State -> State
-instructionStringFlush state = instructionFlush state string
+instructionStringFlush = instructionFlush string
 
 instructionStringEq :: State -> State
-instructionStringEq state = instructionEq state string
+instructionStringEq = instructionEq string
 
 instructionStringStackDepth :: State -> State
-instructionStringStackDepth state = instructionStackDepth state string
+instructionStringStackDepth = instructionStackDepth string
 
 instructionStringYank :: State -> State
-instructionStringYank state = instructionYank state string
+instructionStringYank = instructionYank string
 
 instructionStringYankDup :: State -> State
-instructionStringYankDup state = instructionYankDup state string
+instructionStringYankDup = instructionYankDup string
 
 instructionStringIsStackEmpty :: State -> State
-instructionStringIsStackEmpty state = instructionIsStackEmpty state string
+instructionStringIsStackEmpty = instructionIsStackEmpty string
 
 instructionStringShove :: State -> State
-instructionStringShove state = instructionShove state string
+instructionStringShove = instructionShove string
 
 instructionStringShoveDup :: State -> State
-instructionStringShoveDup state = instructionShoveDup state string
+instructionStringShoveDup = instructionShoveDup string
 
 instructionStringSort :: State -> State
 instructionStringSort = instructionVectorSort string

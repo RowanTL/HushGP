@@ -11,7 +11,7 @@
 - [X] Rename Logical to Bool
 - [X] Make int yank, shove, yankdup, and shovedup generic
 - [ ] Write hackage documentation for each function
-- [ ] Refactor all functions to take state as the final parameter
+- [X] Refactor all functions to take state as the final parameter
 - [ ] Standardize the pattern matching parameter names, such as c1 : cs
 - [ ] Write unit/quickcheck tests for all of the instructions
 

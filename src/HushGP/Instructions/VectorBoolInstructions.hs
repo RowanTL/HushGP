@@ -4,106 +4,106 @@ import HushGP.State
 import HushGP.Instructions.GenericInstructions
 
 instructionVectorBoolConcat :: State -> State
-instructionVectorBoolConcat state = instructionConcat state vectorBool
+instructionVectorBoolConcat = instructionConcat vectorBool
 
 instructionVectorBoolConj :: State -> State
-instructionVectorBoolConj state = instructionConj state bool vectorBool
+instructionVectorBoolConj = instructionConj bool vectorBool
 
 instructionVectorBoolTakeN :: State -> State
-instructionVectorBoolTakeN state = instructionTakeN state vectorBool
+instructionVectorBoolTakeN = instructionTakeN vectorBool
 
 instructionVectorBoolSubVector :: State -> State
-instructionVectorBoolSubVector state = instructionSubVector state vectorBool
+instructionVectorBoolSubVector = instructionSubVector vectorBool
 
 instructionVectorBoolFirst :: State -> State
-instructionVectorBoolFirst state = instructionVectorFirst state bool vectorBool
+instructionVectorBoolFirst = instructionVectorFirst bool vectorBool
 
 instructionVectorBoolLast :: State -> State
-instructionVectorBoolLast state = instructionVectorLast state bool vectorBool
+instructionVectorBoolLast = instructionVectorLast bool vectorBool
 
 instructionVectorBoolNth :: State -> State
-instructionVectorBoolNth state = instructionVectorNth state bool vectorBool
+instructionVectorBoolNth = instructionVectorNth bool vectorBool
 
 instructionVectorBoolRest :: State -> State
-instructionVectorBoolRest state = instructionRest state vectorBool
+instructionVectorBoolRest = instructionRest vectorBool
 
 instructionVectorBoolButLast :: State -> State
-instructionVectorBoolButLast state = instructionButLast state vectorBool
+instructionVectorBoolButLast = instructionButLast vectorBool
 
 instructionVectorBoolLength :: State -> State
-instructionVectorBoolLength state = instructionLength state vectorBool
+instructionVectorBoolLength = instructionLength vectorBool
 
 instructionVectorBoolReverse :: State -> State
-instructionVectorBoolReverse state = instructionReverse state vectorBool
+instructionVectorBoolReverse = instructionReverse vectorBool
 
 instructionVectorBoolPushAll :: State -> State
-instructionVectorBoolPushAll state = instructionPushAll state bool vectorBool
+instructionVectorBoolPushAll = instructionPushAll bool vectorBool
 
 instructionVectorBoolMakeEmpty :: State -> State
-instructionVectorBoolMakeEmpty state = instructionVectorMakeEmpty state vectorBool
+instructionVectorBoolMakeEmpty = instructionVectorMakeEmpty vectorBool
 
 instructionVectorBoolIsEmpty :: State -> State
-instructionVectorBoolIsEmpty state = instructionVectorIsEmpty state vectorBool
+instructionVectorBoolIsEmpty = instructionVectorIsEmpty vectorBool
 
 instructionVectorBoolIndexOf :: State -> State
-instructionVectorBoolIndexOf state = instructionVectorIndexOf state bool vectorBool
+instructionVectorBoolIndexOf = instructionVectorIndexOf bool vectorBool
 
 instructionVectorBoolOccurrencesOf :: State -> State
-instructionVectorBoolOccurrencesOf state = instructionVectorOccurrencesOf state bool vectorBool
+instructionVectorBoolOccurrencesOf = instructionVectorOccurrencesOf bool vectorBool
 
 instructionVectorBoolSetNth :: State -> State
-instructionVectorBoolSetNth state = instructionVectorSetNth state bool vectorBool
+instructionVectorBoolSetNth = instructionVectorSetNth bool vectorBool
 
 instructionVectorBoolReplace :: State -> State
-instructionVectorBoolReplace state = instructionVectorReplace state bool vectorBool
+instructionVectorBoolReplace = instructionVectorReplace bool vectorBool
 
 instructionVectorBoolReplaceFirst :: State -> State
-instructionVectorBoolReplaceFirst state = instructionVectorReplaceFirst state bool vectorBool
+instructionVectorBoolReplaceFirst = instructionVectorReplaceFirst bool vectorBool
 
 instructionVectorBoolRemove :: State -> State
-instructionVectorBoolRemove state = instructionVectorRemove state bool vectorBool
+instructionVectorBoolRemove = instructionVectorRemove bool vectorBool
 
 instructionVectorBoolIterate :: State -> State
-instructionVectorBoolIterate state = instructionVectorIterate state bool vectorBool GeneVectorBool instructionVectorBoolIterate "instructionVectorBoolIterate"
+instructionVectorBoolIterate = instructionVectorIterate bool vectorBool GeneVectorBool instructionVectorBoolIterate "instructionVectorBoolIterate"
 
 instructionVectorBoolPop :: State -> State
-instructionVectorBoolPop state = instructionPop state vectorBool
+instructionVectorBoolPop = instructionPop vectorBool
 
 instructionVectorBoolDup :: State -> State
-instructionVectorBoolDup state = instructionDup state vectorBool
+instructionVectorBoolDup = instructionDup vectorBool
 
 instructionVectorBoolDupN :: State -> State
-instructionVectorBoolDupN state = instructionDupN state vectorBool
+instructionVectorBoolDupN = instructionDupN vectorBool
 
 instructionVectorBoolSwap :: State -> State
-instructionVectorBoolSwap state = instructionSwap state vectorBool
+instructionVectorBoolSwap = instructionSwap vectorBool
 
 instructionVectorBoolRot :: State -> State
-instructionVectorBoolRot state = instructionRot state vectorBool
+instructionVectorBoolRot = instructionRot vectorBool
 
 instructionVectorBoolFlush :: State -> State
-instructionVectorBoolFlush state = instructionFlush state vectorBool
+instructionVectorBoolFlush = instructionFlush vectorBool
 
 instructionVectorBoolEq :: State -> State
-instructionVectorBoolEq state = instructionEq state vectorBool
+instructionVectorBoolEq = instructionEq vectorBool
 
 instructionVectorBoolStackDepth :: State -> State
-instructionVectorBoolStackDepth state = instructionStackDepth state vectorBool
+instructionVectorBoolStackDepth = instructionStackDepth vectorBool
 
 instructionVectorBoolYank :: State -> State
-instructionVectorBoolYank state = instructionYank state vectorBool
+instructionVectorBoolYank = instructionYank vectorBool
 
 instructionVectorBoolYankDup :: State -> State
-instructionVectorBoolYankDup state = instructionYankDup state vectorBool
+instructionVectorBoolYankDup = instructionYankDup vectorBool
 
 instructionVectorBoolIsStackEmpty :: State -> State
-instructionVectorBoolIsStackEmpty state = instructionIsStackEmpty state vectorBool
+instructionVectorBoolIsStackEmpty = instructionIsStackEmpty vectorBool
 
 instructionVectorBoolShove :: State -> State
-instructionVectorBoolShove state = instructionShove state vectorBool
+instructionVectorBoolShove = instructionShove vectorBool
 
 instructionVectorBoolShoveDup :: State -> State
-instructionVectorBoolShoveDup state = instructionShoveDup state vectorBool
+instructionVectorBoolShoveDup = instructionShoveDup vectorBool
 
 instructionVectorBoolSort :: State -> State
 instructionVectorBoolSort = instructionVectorSort vectorBool

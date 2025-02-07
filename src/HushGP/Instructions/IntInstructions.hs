@@ -77,43 +77,43 @@ instructionIntGTE state@(State {_int = i1 : i2 : is, _bool = bs}) = state {_int 
 instructionIntGTE state = state
 
 instructionIntDup :: State -> State
-instructionIntDup state = instructionDup state int
+instructionIntDup = instructionDup int
 
 instructionIntPop :: State -> State
-instructionIntPop state = instructionPop state int
+instructionIntPop = instructionPop int
 
 instructionIntDupN :: State -> State
-instructionIntDupN state = instructionDupN state int
+instructionIntDupN = instructionDupN int
 
 instructionIntSwap :: State -> State
-instructionIntSwap state = instructionSwap state int
+instructionIntSwap = instructionSwap int
 
 instructionIntRot :: State -> State
-instructionIntRot state = instructionRot state int
+instructionIntRot = instructionRot int
 
 instructionIntFlush :: State -> State
-instructionIntFlush state = instructionFlush state int
+instructionIntFlush = instructionFlush int
 
 instructionIntEq :: State -> State
-instructionIntEq state = instructionEq state int
+instructionIntEq = instructionEq int
 
 instructionIntStackDepth :: State -> State
-instructionIntStackDepth state = instructionStackDepth state int
+instructionIntStackDepth = instructionStackDepth int
 
 instructionIntYank :: State -> State
-instructionIntYank state = instructionYank state int
+instructionIntYank = instructionYank int
 
 instructionIntYankDup :: State -> State
-instructionIntYankDup state = instructionYankDup state int
+instructionIntYankDup = instructionYankDup int
 
 instructionIntShove :: State -> State
-instructionIntShove state = instructionShove state int
+instructionIntShove = instructionShove int
 
 instructionIntShoveDup :: State -> State
-instructionIntShoveDup state = instructionShoveDup state int
+instructionIntShoveDup = instructionShoveDup int
 
 instructionIntIsStackEmpty :: State -> State
-instructionIntIsStackEmpty state = instructionIsStackEmpty state int
+instructionIntIsStackEmpty = instructionIsStackEmpty int
 
 instructionIntDupItems :: State -> State
 instructionIntDupItems = instructionDupItems int

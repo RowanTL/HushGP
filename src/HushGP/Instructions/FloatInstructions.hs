@@ -77,43 +77,43 @@ instructionFloatGTE state@(State {_float = f1 : f2 : fs, _bool = bs}) = state {_
 instructionFloatGTE state = state
 
 instructionFloatPop :: State -> State
-instructionFloatPop state = instructionPop state float
+instructionFloatPop = instructionPop float
 
 instructionFloatDup :: State -> State
-instructionFloatDup state = instructionDup state float
+instructionFloatDup = instructionDup float
 
 instructionFloatDupN :: State -> State
-instructionFloatDupN state = instructionDupN state float
+instructionFloatDupN = instructionDupN float
 
 instructionFloatSwap :: State -> State
-instructionFloatSwap state = instructionSwap state float
+instructionFloatSwap = instructionSwap float
 
 instructionFloatRot :: State -> State
-instructionFloatRot state = instructionRot state float
+instructionFloatRot = instructionRot float
 
 instructionFloatFlush :: State -> State
-instructionFloatFlush state = instructionFlush state float
+instructionFloatFlush = instructionFlush float
 
 instructionFloatEq :: State -> State
-instructionFloatEq state = instructionEq state float
+instructionFloatEq = instructionEq float
 
 instructionFloatStackDepth :: State -> State
-instructionFloatStackDepth state = instructionStackDepth state float
+instructionFloatStackDepth = instructionStackDepth float
 
 instructionFloatYankDup :: State -> State
-instructionFloatYankDup state = instructionYankDup state float
+instructionFloatYankDup = instructionYankDup float
 
 instructionFloatYank :: State -> State
-instructionFloatYank state = instructionYank state float
+instructionFloatYank = instructionYank float
 
 instructionFloatShoveDup :: State -> State
-instructionFloatShoveDup state = instructionShoveDup state float
+instructionFloatShoveDup = instructionShoveDup float
 
 instructionFloatShove :: State -> State
-instructionFloatShove state = instructionShove state float
+instructionFloatShove = instructionShove float
 
 instructionFloatIsStackEmpty :: State -> State
-instructionFloatIsStackEmpty state = instructionIsStackEmpty state float
+instructionFloatIsStackEmpty = instructionIsStackEmpty float
 
 instructionFloatSin :: State -> State
 instructionFloatSin state@(State {_float = f1 : fs}) = state {_float = sin f1 : fs}

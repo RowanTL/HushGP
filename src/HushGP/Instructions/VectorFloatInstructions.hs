@@ -4,106 +4,106 @@ import HushGP.State
 import HushGP.Instructions.GenericInstructions
 
 instructionVectorFloatConcat :: State -> State
-instructionVectorFloatConcat state = instructionConcat state vectorFloat
+instructionVectorFloatConcat = instructionConcat vectorFloat
 
 instructionVectorFloatConj :: State -> State
-instructionVectorFloatConj state = instructionConj state float vectorFloat
+instructionVectorFloatConj = instructionConj float vectorFloat
 
 instructionVectorFloatTakeN :: State -> State
-instructionVectorFloatTakeN state = instructionTakeN state vectorFloat
+instructionVectorFloatTakeN = instructionTakeN vectorFloat
 
 instructionVectorFloatSubVector :: State -> State
-instructionVectorFloatSubVector state = instructionSubVector state vectorFloat
+instructionVectorFloatSubVector = instructionSubVector vectorFloat
 
 instructionVectorFloatFirst :: State -> State
-instructionVectorFloatFirst state = instructionVectorFirst state float vectorFloat
+instructionVectorFloatFirst = instructionVectorFirst float vectorFloat
 
 instructionVectorFloatLast :: State -> State
-instructionVectorFloatLast state = instructionVectorLast state float vectorFloat
+instructionVectorFloatLast = instructionVectorLast float vectorFloat
 
 instructionVectorFloatNth :: State -> State
-instructionVectorFloatNth state = instructionVectorNth state float vectorFloat
+instructionVectorFloatNth = instructionVectorNth float vectorFloat
 
 instructionVectorFloatRest :: State -> State
-instructionVectorFloatRest state = instructionRest state vectorFloat
+instructionVectorFloatRest = instructionRest vectorFloat
 
 instructionVectorFloatButLast :: State -> State
-instructionVectorFloatButLast state = instructionButLast state vectorFloat
+instructionVectorFloatButLast = instructionButLast vectorFloat
 
 instructionVectorFloatLength :: State -> State
-instructionVectorFloatLength state = instructionLength state vectorFloat
+instructionVectorFloatLength = instructionLength vectorFloat
 
 instructionVectorFloatReverse :: State -> State
-instructionVectorFloatReverse state = instructionReverse state vectorFloat
+instructionVectorFloatReverse = instructionReverse vectorFloat
 
 instructionVectorFloatPushAll :: State -> State
-instructionVectorFloatPushAll state = instructionPushAll state float vectorFloat
+instructionVectorFloatPushAll = instructionPushAll float vectorFloat
 
 instructionVectorFloatMakeEmpty :: State -> State
-instructionVectorFloatMakeEmpty state = instructionVectorMakeEmpty state vectorFloat
+instructionVectorFloatMakeEmpty = instructionVectorMakeEmpty vectorFloat
 
 instructionVectorFloatIsEmpty :: State -> State
-instructionVectorFloatIsEmpty state = instructionVectorIsEmpty state vectorFloat
+instructionVectorFloatIsEmpty = instructionVectorIsEmpty vectorFloat
 
 instructionVectorFloatIndexOf :: State -> State
-instructionVectorFloatIndexOf state = instructionVectorIndexOf state float vectorFloat
+instructionVectorFloatIndexOf = instructionVectorIndexOf float vectorFloat
 
 instructionVectorFloatOccurrencesOf :: State -> State
-instructionVectorFloatOccurrencesOf state = instructionVectorOccurrencesOf state float vectorFloat
+instructionVectorFloatOccurrencesOf = instructionVectorOccurrencesOf float vectorFloat
 
 instructionVectorFloatSetNth :: State -> State
-instructionVectorFloatSetNth state = instructionVectorSetNth state float vectorFloat
+instructionVectorFloatSetNth = instructionVectorSetNth float vectorFloat
 
 instructionVectorFloatReplace :: State -> State
-instructionVectorFloatReplace state = instructionVectorReplace state float vectorFloat
+instructionVectorFloatReplace = instructionVectorReplace float vectorFloat
 
 instructionVectorFloatReplaceFirst :: State -> State
-instructionVectorFloatReplaceFirst state = instructionVectorReplaceFirst state float vectorFloat
+instructionVectorFloatReplaceFirst = instructionVectorReplaceFirst float vectorFloat
 
 instructionVectorFloatRemove :: State -> State
-instructionVectorFloatRemove state = instructionVectorRemove state float vectorFloat
+instructionVectorFloatRemove = instructionVectorRemove float vectorFloat
 
 instructionVectorFloatIterate :: State -> State
-instructionVectorFloatIterate state = instructionVectorIterate state float vectorFloat GeneVectorFloat instructionVectorFloatIterate "instructionVectorFloatIterate"
+instructionVectorFloatIterate = instructionVectorIterate float vectorFloat GeneVectorFloat instructionVectorFloatIterate "instructionVectorFloatIterate"
 
 instructionVectorFloatPop :: State -> State
-instructionVectorFloatPop state = instructionPop state vectorFloat
+instructionVectorFloatPop = instructionPop vectorFloat
 
 instructionVectorFloatDup :: State -> State
-instructionVectorFloatDup state = instructionDup state vectorFloat
+instructionVectorFloatDup = instructionDup vectorFloat
 
 instructionVectorFloatDupN :: State -> State
-instructionVectorFloatDupN state = instructionDupN state vectorFloat
+instructionVectorFloatDupN = instructionDupN vectorFloat
 
 instructionVectorFloatSwap :: State -> State
-instructionVectorFloatSwap state = instructionSwap state vectorFloat
+instructionVectorFloatSwap = instructionSwap vectorFloat
 
 instructionVectorFloatRot :: State -> State
-instructionVectorFloatRot state = instructionRot state vectorFloat
+instructionVectorFloatRot = instructionRot vectorFloat
 
 instructionVectorFloatFlush :: State -> State
-instructionVectorFloatFlush state = instructionFlush state vectorFloat
+instructionVectorFloatFlush = instructionFlush vectorFloat
 
 instructionVectorFloatEq :: State -> State
-instructionVectorFloatEq state = instructionEq state vectorFloat
+instructionVectorFloatEq = instructionEq vectorFloat
 
 instructionVectorFloatStackDepth :: State -> State
-instructionVectorFloatStackDepth state = instructionStackDepth state vectorFloat
+instructionVectorFloatStackDepth = instructionStackDepth vectorFloat
 
 instructionVectorFloatYank :: State -> State
-instructionVectorFloatYank state = instructionYank state vectorFloat
+instructionVectorFloatYank = instructionYank vectorFloat
 
 instructionVectorFloatYankDup :: State -> State
-instructionVectorFloatYankDup state = instructionYankDup state vectorFloat
+instructionVectorFloatYankDup = instructionYankDup vectorFloat
 
 instructionVectorFloatIsStackEmpty :: State -> State
-instructionVectorFloatIsStackEmpty state = instructionIsStackEmpty state vectorFloat
+instructionVectorFloatIsStackEmpty = instructionIsStackEmpty vectorFloat
 
 instructionVectorFloatShove :: State -> State
-instructionVectorFloatShove state = instructionShove state vectorFloat
+instructionVectorFloatShove = instructionShove vectorFloat
 
 instructionVectorFloatShoveDup :: State -> State
-instructionVectorFloatShoveDup state = instructionShoveDup state vectorFloat
+instructionVectorFloatShoveDup = instructionShoveDup vectorFloat
 
 instructionVectorFloatSort :: State -> State
 instructionVectorFloatSort = instructionVectorSort vectorFloat

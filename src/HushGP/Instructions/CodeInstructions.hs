@@ -83,7 +83,7 @@ codeRecursiveSize (Block xs) = sum [codeRecursiveSize x + if isBlock x then 1 el
 codeRecursiveSize _ = 1
 
 instructionCodePop :: State -> State
-instructionCodePop state = instructionPop state code
+instructionCodePop = instructionPop code
 
 instructionCodeIsCodeBlock :: State -> State
 instructionCodeIsCodeBlock state@(State {_code = (c : cs), _bool = bs}) = state {_code = cs, _bool = isBlock c : bs}
@@ -221,9 +221,6 @@ instructionCodeSize :: State -> State
 instructionCodeSize state@(State {_code = c1 : cs, _int = is}) = state{_code = cs, _int = codeRecursiveSize c1 : is}
 instructionCodeSize state = state
 
--- instructionCodeContainer :: State -> State
--- instructionCodeContainer 
-
 -- There's a bug for this instruction in pysh where the last item in the
 -- top level Block isn't counted, and if passed 0, then the entire codeblock is returned.
 -- I designed this function differently so 0 returns the 0th element, and the last item
@@ -268,73 +265,73 @@ instructionCodeReverse state@(State {_code = (Block c1) : cs}) = state {_code = 
 instructionCodeReverse state = state
 
 instructionCodeDup :: State -> State
-instructionCodeDup state = instructionDup state code
+instructionCodeDup = instructionDup code
 
 instructionCodeDupN :: State -> State
-instructionCodeDupN state = instructionDupN state code
+instructionCodeDupN = instructionDupN code
 
 instructionCodeSwap :: State -> State
-instructionCodeSwap state = instructionSwap state code
+instructionCodeSwap = instructionSwap code
 
 instructionCodeRot :: State -> State
-instructionCodeRot state = instructionRot state code
+instructionCodeRot = instructionRot code
 
 instructionCodeFlush :: State -> State
-instructionCodeFlush state = instructionFlush state code
+instructionCodeFlush = instructionFlush code
 
 instructionCodeEq :: State -> State
-instructionCodeEq state = instructionEq state code
+instructionCodeEq = instructionEq code
 
 instructionCodeStackDepth :: State -> State
-instructionCodeStackDepth state = instructionStackDepth state code
+instructionCodeStackDepth = instructionStackDepth code
 
 instructionCodeYank :: State -> State
-instructionCodeYank state = instructionYank state code
+instructionCodeYank = instructionYank code
 
 instructionCodeYankDup :: State -> State
-instructionCodeYankDup state = instructionYankDup state code
+instructionCodeYankDup = instructionYankDup code
 
 instructionCodeIsStackEmpty :: State -> State
-instructionCodeIsStackEmpty state = instructionIsStackEmpty state code
+instructionCodeIsStackEmpty = instructionIsStackEmpty code
 
 instructionCodeShove :: State -> State
-instructionCodeShove state = instructionShove state code
+instructionCodeShove = instructionShove code
 
 instructionCodeShoveDup :: State -> State
-instructionCodeShoveDup state = instructionShoveDup state code
+instructionCodeShoveDup = instructionShoveDup code
 
 instructionCodeFromBool :: State -> State
-instructionCodeFromBool state = instructionCodeFrom state bool GeneBool 
+instructionCodeFromBool = instructionCodeFrom bool GeneBool 
 
 instructionCodeFromInt :: State -> State
-instructionCodeFromInt state = instructionCodeFrom state int GeneInt
+instructionCodeFromInt = instructionCodeFrom int GeneInt
 
 instructionCodeFromChar :: State -> State
-instructionCodeFromChar state = instructionCodeFrom state char GeneChar
+instructionCodeFromChar = instructionCodeFrom char GeneChar
 
 instructionCodeFromFloat :: State -> State
-instructionCodeFromFloat state = instructionCodeFrom state float GeneFloat
+instructionCodeFromFloat = instructionCodeFrom float GeneFloat
 
 instructionCodeFromString :: State -> State
-instructionCodeFromString state = instructionCodeFrom state string GeneString
+instructionCodeFromString = instructionCodeFrom string GeneString
 
 instructionCodeFromVectorInt :: State -> State
-instructionCodeFromVectorInt state = instructionCodeFrom state vectorInt GeneVectorInt
+instructionCodeFromVectorInt = instructionCodeFrom vectorInt GeneVectorInt
 
 instructionCodeFromVectorFloat :: State -> State
-instructionCodeFromVectorFloat state = instructionCodeFrom state vectorFloat GeneVectorFloat
+instructionCodeFromVectorFloat = instructionCodeFrom vectorFloat GeneVectorFloat
 
 instructionCodeFromVectorString :: State -> State
-instructionCodeFromVectorString state = instructionCodeFrom state vectorString GeneVectorString
+instructionCodeFromVectorString = instructionCodeFrom vectorString GeneVectorString
 
 instructionCodeFromVectorBool :: State -> State
-instructionCodeFromVectorBool state = instructionCodeFrom state vectorBool GeneVectorBool
+instructionCodeFromVectorBool = instructionCodeFrom vectorBool GeneVectorBool
 
 instructionCodeFromVectorChar :: State -> State
-instructionCodeFromVectorChar state = instructionCodeFrom state vectorChar GeneVectorChar
+instructionCodeFromVectorChar = instructionCodeFrom vectorChar GeneVectorChar
 
 instructionCodeFromExec :: State -> State
-instructionCodeFromExec state = instructionCodeFrom state exec id
+instructionCodeFromExec = instructionCodeFrom exec id
 
 instructionCodeContainer :: State -> State
 instructionCodeContainer state@(State {_code = c1 : c2 : cs}) = state {_code = findContainer c1 c2 : cs}

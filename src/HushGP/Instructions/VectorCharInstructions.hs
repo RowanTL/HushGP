@@ -4,106 +4,106 @@ import HushGP.State
 import HushGP.Instructions.GenericInstructions
 
 instructionVectorCharConcat :: State -> State
-instructionVectorCharConcat state = instructionConcat state vectorChar
+instructionVectorCharConcat = instructionConcat vectorChar
 
 instructionVectorCharConj :: State -> State
-instructionVectorCharConj state = instructionConj state char vectorChar
+instructionVectorCharConj = instructionConj char vectorChar
 
 instructionVectorCharTakeN :: State -> State
-instructionVectorCharTakeN state = instructionTakeN state vectorChar
+instructionVectorCharTakeN = instructionTakeN vectorChar
 
 instructionVectorCharSubVector :: State -> State
-instructionVectorCharSubVector state = instructionSubVector state vectorChar
+instructionVectorCharSubVector = instructionSubVector vectorChar
 
 instructionVectorCharFirst :: State -> State
-instructionVectorCharFirst state = instructionVectorFirst state char vectorChar
+instructionVectorCharFirst = instructionVectorFirst char vectorChar
 
 instructionVectorCharLast :: State -> State
-instructionVectorCharLast state = instructionVectorLast state char vectorChar
+instructionVectorCharLast = instructionVectorLast char vectorChar
 
 instructionVectorCharNth :: State -> State
-instructionVectorCharNth state = instructionVectorNth state char vectorChar
+instructionVectorCharNth = instructionVectorNth char vectorChar
 
 instructionVectorCharRest :: State -> State
-instructionVectorCharRest state = instructionRest state vectorChar
+instructionVectorCharRest = instructionRest vectorChar
 
 instructionVectorCharButLast :: State -> State
-instructionVectorCharButLast state = instructionButLast state vectorChar
+instructionVectorCharButLast = instructionButLast vectorChar
 
 instructionVectorCharLength :: State -> State
-instructionVectorCharLength state = instructionLength state vectorChar
+instructionVectorCharLength = instructionLength vectorChar
 
 instructionVectorCharReverse :: State -> State
-instructionVectorCharReverse state = instructionReverse state vectorChar
+instructionVectorCharReverse = instructionReverse vectorChar
 
 instructionVectorCharPushAll :: State -> State
-instructionVectorCharPushAll state = instructionPushAll state char vectorChar
+instructionVectorCharPushAll = instructionPushAll char vectorChar
 
 instructionVectorCharMakeEmpty :: State -> State
-instructionVectorCharMakeEmpty state = instructionVectorMakeEmpty state vectorChar
+instructionVectorCharMakeEmpty = instructionVectorMakeEmpty vectorChar
 
 instructionVectorCharIsEmpty :: State -> State
-instructionVectorCharIsEmpty state = instructionVectorIsEmpty state vectorChar
+instructionVectorCharIsEmpty = instructionVectorIsEmpty vectorChar
 
 instructionVectorCharIndexOf :: State -> State
-instructionVectorCharIndexOf state = instructionVectorIndexOf state char vectorChar
+instructionVectorCharIndexOf = instructionVectorIndexOf char vectorChar
 
 instructionVectorCharOccurrencesOf :: State -> State
-instructionVectorCharOccurrencesOf state = instructionVectorOccurrencesOf state char vectorChar
+instructionVectorCharOccurrencesOf = instructionVectorOccurrencesOf char vectorChar
 
 instructionVectorCharSetNth :: State -> State
-instructionVectorCharSetNth state = instructionVectorSetNth state char vectorChar
+instructionVectorCharSetNth = instructionVectorSetNth char vectorChar
 
 instructionVectorCharReplace :: State -> State
-instructionVectorCharReplace state = instructionVectorReplace state char vectorChar
+instructionVectorCharReplace = instructionVectorReplace char vectorChar
 
 instructionVectorCharReplaceFirst :: State -> State
-instructionVectorCharReplaceFirst state = instructionVectorReplaceFirst state char vectorChar
+instructionVectorCharReplaceFirst = instructionVectorReplaceFirst char vectorChar
 
 instructionVectorCharRemove :: State -> State
-instructionVectorCharRemove state = instructionVectorRemove state char vectorChar
+instructionVectorCharRemove = instructionVectorRemove char vectorChar
 
 instructionVectorCharIterate :: State -> State
-instructionVectorCharIterate state = instructionVectorIterate state char vectorChar GeneVectorChar instructionVectorCharIterate "instructionVectorCharIterate"
+instructionVectorCharIterate = instructionVectorIterate char vectorChar GeneVectorChar instructionVectorCharIterate "instructionVectorCharIterate"
 
 instructionVectorCharPop :: State -> State
-instructionVectorCharPop state = instructionPop state vectorChar
+instructionVectorCharPop = instructionPop vectorChar
 
 instructionVectorCharDup :: State -> State
-instructionVectorCharDup state = instructionDup state vectorChar
+instructionVectorCharDup = instructionDup vectorChar
 
 instructionVectorCharDupN :: State -> State
-instructionVectorCharDupN state = instructionDupN state vectorChar
+instructionVectorCharDupN = instructionDupN vectorChar
 
 instructionVectorCharSwap :: State -> State
-instructionVectorCharSwap state = instructionSwap state vectorChar
+instructionVectorCharSwap = instructionSwap vectorChar
 
 instructionVectorCharRot :: State -> State
-instructionVectorCharRot state = instructionRot state vectorChar
+instructionVectorCharRot = instructionRot vectorChar
 
 instructionVectorCharFlush :: State -> State
-instructionVectorCharFlush state = instructionFlush state vectorChar
+instructionVectorCharFlush = instructionFlush vectorChar
 
 instructionVectorCharEq :: State -> State
-instructionVectorCharEq state = instructionEq state vectorChar
+instructionVectorCharEq = instructionEq vectorChar
 
 instructionVectorCharStackDepth :: State -> State
-instructionVectorCharStackDepth state = instructionStackDepth state vectorChar
+instructionVectorCharStackDepth = instructionStackDepth vectorChar
 
 instructionVectorCharYank :: State -> State
-instructionVectorCharYank state = instructionYank state vectorChar
+instructionVectorCharYank = instructionYank vectorChar
 
 instructionVectorCharYankDup :: State -> State
-instructionVectorCharYankDup state = instructionYankDup state vectorChar
+instructionVectorCharYankDup = instructionYankDup vectorChar
 
 instructionVectorCharIsStackEmpty :: State -> State
-instructionVectorCharIsStackEmpty state = instructionIsStackEmpty state vectorChar
+instructionVectorCharIsStackEmpty = instructionIsStackEmpty vectorChar
 
 instructionVectorCharShove :: State -> State
-instructionVectorCharShove state = instructionShove state vectorChar
+instructionVectorCharShove = instructionShove vectorChar
 
 instructionVectorCharShoveDup :: State -> State
-instructionVectorCharShoveDup state = instructionShoveDup state vectorChar
+instructionVectorCharShoveDup = instructionShoveDup vectorChar
 
 instructionVectorCharSort :: State -> State
 instructionVectorCharSort = instructionVectorSort vectorChar
