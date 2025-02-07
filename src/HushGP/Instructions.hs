@@ -316,7 +316,8 @@ allStringInstructions = map StateFunc [
     (instructionStringSort, "instructionStringSort"),
     (instructionStringSortReverse, "instructionStringSortReverse"),
     (instructionStringDupItems, "instructionStringDupItems"),
-    (instructionStringParseToChar, "instructionStringParseToChar")
+    (instructionStringParseToChar, "instructionStringParseToChar"),
+    (instructionStringSubString, "instructionStringSubString")
   ]
 
 allVectorIntInstructions :: [Gene]

@@ -315,8 +315,8 @@ instructionVectorOccurrencesOf primAccessor vectorAccessor state =
     (Just (v1, vs), Just (p1, ps)) -> (state & vectorAccessor .~ vs & primAccessor .~ ps) & int .~ (amtOccurences v1 [p1] : view int (state & vectorAccessor .~ vs & primAccessor .~ ps))
     _ -> state
 
--- | This function parses the primitives of a vector type and pushes split up onto their
--- respective stack
+-- | This function parses the primitives of a vector type and pushes that vector split into
+-- lists of size one onto the respective vector stack.
 instructionVectorParseToPrim :: Lens' State [[a]] -> State -> State
 instructionVectorParseToPrim accessor state =
   case uncons (view accessor state) of

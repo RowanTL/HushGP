@@ -244,3 +244,6 @@ instructionStringDupItems = instructionDupItems string
 
 instructionStringParseToChar :: State -> State
 instructionStringParseToChar = instructionVectorParseToPrim string
+
+instructionStringSubString :: State -> State
+instructionStringSubString = instructionSubVector string

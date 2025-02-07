@@ -6,18 +6,25 @@ import HushGP.Instructions.GenericInstructions
 import HushGP.Instructions.IntInstructions
 -- import Debug.Trace
 
+-- |Utility function: Checks to see if a gene is a code block.
+-- If it is a block, returns true, else returns false
 isBlock :: Gene -> Bool
 isBlock (Block _) = True
 isBlock _ = False
 
+-- |Utility function: Returns the length of the passed block.
+-- If the gene isn't a block, returns 1
 blockLength :: Gene -> Int
 blockLength (Block bxs) = length bxs
 blockLength _ = 1
 
+-- |Utility function: Returns true if the passed block is empty, false is not.
+-- If the passed gene is not a block, returns false
 blockIsNull :: Gene -> Bool
 blockIsNull (Block bxs) = null bxs
 blockIsNull _ = False
 
+-- |Utility Function: A helper function for instructionCodeContainer. The full description is there.
 -- https://faculty.hampshire.edu/lspector/push3-description.html#Type
 -- CODE.CONTAINER
 findContainer :: Gene -> Gene -> Gene
@@ -33,6 +40,7 @@ findContainer (Block fullA) gene
     findContainer' _ _ = Block [] -- This should never happen
 findContainer _ _ = Block []
 
+-- |Utility Function: A helper function for instructionCodeDiscrepancy. The full description is there.
 countDiscrepancy :: Gene -> Gene -> Int
 countDiscrepancy (Block xs) (Block ys) = sum [if uncurry (==) tup then 0 else 1 | tup <- zip xs ys] + abs (length xs - length ys)
 countDiscrepancy xgene ygene = if xgene == ygene then 1 else 0
@@ -333,10 +341,22 @@ instructionCodeFromVectorChar = instructionCodeFrom vectorChar GeneVectorChar
 instructionCodeFromExec :: State -> State
 instructionCodeFromExec = instructionCodeFrom exec id
 
+-- |Pushes the "container" of the second code stack item within 
+-- the first code stack item onto the code stack. If second item contains the first 
+-- anywhere (i.e. in any nested list) then the container is the smallest sub-list that 
+-- contains but is not equal to the first instance. For example, if the top piece of code 
+-- is "( B ( C ( A ) ) ( D ( A ) ) )" and the second piece of code is "( A )" then 
+-- this pushes ( C ( A ) ). Pushes an empty list if there is no such container. 
 instructionCodeContainer :: State -> State
 instructionCodeContainer state@(State {_code = c1 : c2 : cs}) = state {_code = findContainer c1 c2 : cs}
 instructionCodeContainer state = state
 
+-- |Pushes a measure of the discrepancy between the top two CODE stack items onto the INTEGER stack. This will be zero if the top two items 
+-- are equivalent, and will be higher the 'more different' the items are from one another. The calculation is as follows:
+-- 1. Construct a list of all of the unique items in both of the lists (where uniqueness is determined by equalp). Sub-lists and atoms all count as items.
+-- 2. Initialize the result to zero.
+-- 3. For each unique item increment the result by the difference between the number of occurrences of the item in the two pieces of code.
+-- 4. Push the result. 
 instructionCodeDiscrepancy :: State -> State
 instructionCodeDiscrepancy state@(State {_code = c1 : c2 : cs, _int = is}) = state {_code = cs, _int = countDiscrepancy c1 c2 : is}
 instructionCodeDiscrepancy state = state
