@@ -140,6 +140,9 @@ instructionStringTail state = state
 instructionStringAppendChar :: State -> State
 instructionStringAppendChar state = instructionConj state char string
 
+instructionStringConjEndChar :: State -> State
+instructionStringConjEndChar = instructionConjEnd char string
+
 instructionStringRest :: State -> State
 instructionStringRest state = instructionRest state string
 
@@ -229,3 +232,15 @@ instructionStringShove state = instructionShove state string
 
 instructionStringShoveDup :: State -> State
 instructionStringShoveDup state = instructionShoveDup state string
+
+instructionStringSort :: State -> State
+instructionStringSort = instructionVectorSort string
+
+instructionStringSortReverse :: State -> State
+instructionStringSortReverse = instructionVectorSortReverse string
+
+instructionStringDupItems :: State -> State
+instructionStringDupItems = instructionDupItems string
+
+instructionStringParseToChar :: State -> State
+instructionStringParseToChar = instructionVectorParseToPrim string

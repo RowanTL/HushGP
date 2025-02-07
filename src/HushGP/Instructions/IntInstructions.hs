@@ -2,6 +2,7 @@ module HushGP.Instructions.IntInstructions where
 
 import HushGP.State
 import HushGP.Instructions.GenericInstructions
+import Data.Char
 -- import Debug.Trace
 
 instructionIntFromFloat :: State -> State
@@ -11,6 +12,17 @@ instructionIntFromFloat state = state
 instructionIntFromBool :: State -> State
 instructionIntFromBool state@(State {_bool = (b : bs), _int = is}) = state {_bool = bs, _int = (if b then 1 else 0) : is}
 instructionIntFromBool state = state
+
+instructionIntFromChar :: State -> State
+instructionIntFromChar state@(State {_char = c : cs, _int = is}) = state {_char = cs, _int = ord c : is}
+instructionIntFromChar state = state
+
+instructionIntFromString :: State -> State
+instructionIntFromString state@(State {_string = s1 : ss, _int = is}) =
+  if all isDigit s1
+  then state{_string = ss, _int = read @Int s1 : is}
+  else state
+instructionIntFromString state = state
 
 instructionIntAdd :: State -> State
 instructionIntAdd state@(State {_int = (i1 : i2 : is)}) = state {_int = i2 + i1 : is}
@@ -102,3 +114,6 @@ instructionIntShoveDup state = instructionShoveDup state int
 
 instructionIntIsEmpty :: State -> State
 instructionIntIsEmpty state = instructionIsEmpty state int
+
+instructionIntDupItems :: State -> State
+instructionIntDupItems = instructionDupItems int

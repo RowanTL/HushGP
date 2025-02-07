@@ -3,7 +3,7 @@
 ## Push Language TODO
 
 - [ ] Make all vector functions applicable to string functions and vice versa
-- [ ] Implement all functions as seen in propeller
+- [X] Implement all functions as seen in propeller
 - [X] Implement all functions as seen in the specification
 - [ ] Implement Linear Algebra functions as specified in the previous papers
 - [X] Add a function to sort a vector forward and backwards
@@ -12,7 +12,7 @@
 - [X] Make int yank, shove, yankdup, and shovedup generic
 - [ ] Write hackage documentation for each function
 - [ ] Refactor all functions to take state as the final parameter
-- [ ] Standardize the pattern matching parameters
+- [ ] Standardize the pattern matching parameter names, such as c1 : cs
 - [ ] Write unit/quickcheck tests for all of the instructions
 
 ## PushGP TODO

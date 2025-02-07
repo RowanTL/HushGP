@@ -70,7 +70,10 @@ allIntInstructions = map StateFunc [
     (instructionIntYank, "instructionIntYank"),
     (instructionIntYankDup, "instructionIntYankDup"),
     (instructionIntShove, "instructionIntShove"),
-    (instructionIntIsEmpty, "instructionIntIsEmpty")
+    (instructionIntIsEmpty, "instructionIntIsEmpty"),
+    (instructionIntFromChar, "instructionIntFromChar"),
+    (instructionIntFromString, "instructionIntFromString"),
+    (instructionIntDupItems, "instructionIntDupItems")
   ]
 
 allFloatInstructions :: [Gene]
@@ -100,7 +103,10 @@ allFloatInstructions = map StateFunc [
     (instructionFloatYank, "instructionFloatYank"),
     (instructionFloatYankDup, "instructionFloatYankDup"),
     (instructionFloatShove, "instructionFloatShove"),
-    (instructionFloatIsEmpty, "instructionFloatIsEmpty")
+    (instructionFloatIsEmpty, "instructionFloatIsEmpty"),
+    (instructionFloatFromChar, "instructionFloatFromChar"),
+    (instructionFloatFromString, "instructionFloatFromString"),
+    (instructionFloatDupItems, "instructionFloatDupItems")
   ]
 
 allBoolInstructions :: [Gene]
@@ -124,7 +130,8 @@ allBoolInstructions = map StateFunc [
     (instructionBoolYankDup, "instructionBoolYankDup"),
     (instructionBoolShove, "instructionBoolShove"),
     (instructionBoolShoveDup, "instructionBoolShoveDup"),
-    (instructionBoolIsEmpty, "instructionBoolIsEmpty")
+    (instructionBoolIsEmpty, "instructionBoolIsEmpty"),
+    (instructionBoolDupItems, "instructionBoolDupItems")
   ]
 
 allCharInstructions :: [Gene]
@@ -152,7 +159,8 @@ allCharInstructions = map StateFunc [
     (instructionCharYankDup, "instructionCharYankDup"),
     (instructionCharShove, "instructionCharShove"),
     (instructionCharShoveDup, "instructionCharShoveDup"),
-    (instructionCharIsEmpty, "instructionCharIsEmpty")  
+    (instructionCharIsEmpty, "instructionCharIsEmpty"),
+    (instructionCharDupItems, "instructionCharDupItems")
   ]
 
 allCodeInstructions :: [Gene]
@@ -213,7 +221,8 @@ allCodeInstructions = map StateFunc [
     (instructionCodeContainer, "instructionCodeContainer"),
     (instructionCodeDiscrepancy, "instructionCodeDiscrepancy"),
     (instructionCodeNoOp, "instructionCodeNoOp"),
-    (instructionCodeTailN, "instructionCodeTailN")
+    (instructionCodeTailN, "instructionCodeTailN"),
+    (instructionCodeDupItems, "instructionCodeDupItems")
   ]
 
 allExecInstructions :: [Gene]
@@ -240,7 +249,8 @@ allExecInstructions = map StateFunc [
     (instructionExecWhen, "instructionExecWhen"),
     (instructionExecK, "instructionExecK"),
     (instructionExecS, "instructionExecS"),
-    (instructionExecY, "instrucitonExecY")
+    (instructionExecY, "instrucitonExecY"),
+    (instructionExecDupItems, "instructionExecDupItems")
   ]
 
 allStringInstructions :: [Gene]
@@ -302,7 +312,11 @@ allStringInstructions = map StateFunc [
     (instructionStringYankDup, "instructionStringYankDup"),
     (instructionStringShove, "instructionStringShove"),
     (instructionStringShoveDup, "instructionStringShoveDup"),
-    (instructionStringIsEmpty, "instructionStringIsEmpty")
+    (instructionStringIsEmpty, "instructionStringIsEmpty"),
+    (instructionStringSort, "instructionStringSort"),
+    (instructionStringSortReverse, "instructionStringSortReverse"),
+    (instructionStringDupItems, "instructionStringDupItems"),
+    (instructionStringParseToChar, "instructionStringParseToChar")
   ]
 
 allVectorIntInstructions :: [Gene]
@@ -340,7 +354,10 @@ allVectorIntInstructions = map StateFunc [
     (instructionVectorIntYankDup, "instructionVectorIntYankDup"),
     (instructionVectorIntShove, "instructionVectorIntShove"),
     (instructionVectorIntShoveDup, "instructionVectorIntShoveDup"),
-    (instructionVectorIntStackIsEmpty, "instructionVectorIntStackIsEmpty")
+    (instructionVectorIntStackIsEmpty, "instructionVectorIntStackIsEmpty"),
+    (instructionVectorIntSort, "instructionVectorIntSort"),
+    (instructionVectorIntSortReverse, "instructionVectorIntSortReverse"),
+    (instructionVectorIntDupItems, "instructionVectorIntDupItems")
   ]
 
 allVectorFloatInstructions :: [Gene]
@@ -378,7 +395,10 @@ allVectorFloatInstructions = map StateFunc [
     (instructionVectorFloatYankDup, "instructionVectorFloatYankDup"),
     (instructionVectorFloatShove, "instructionVectorFloatShove"),
     (instructionVectorFloatShoveDup, "instructionVectorFloatShoveDup"),
-    (instructionVectorFloatStackIsEmpty, "instructionVectorFloatStackIsEmpty")
+    (instructionVectorFloatStackIsEmpty, "instructionVectorFloatStackIsEmpty"),
+    (instructionVectorFloatSort, "instructionVectorFloatSort"),
+    (instructionVectorFloatSortReverse, "instructionVectorFloatSortReverse"),
+    (instructionVectorFloatDupItems, "instructionVectorFloatDupItems")
   ]
 
 allVectorCharInstructions :: [Gene]
@@ -416,7 +436,10 @@ allVectorCharInstructions = map StateFunc [
     (instructionVectorCharYankDup, "instructionVectorCharYankDup"),
     (instructionVectorCharShove, "instructionVectorCharShove"),
     (instructionVectorCharShoveDup, "instructionVectorCharShoveDup"),
-    (instructionVectorCharStackIsEmpty, "instructionVectorCharStackIsEmpty")
+    (instructionVectorCharStackIsEmpty, "instructionVectorCharStackIsEmpty"),
+    (instructionVectorCharSort, "instructionVectorCharSort"),
+    (instructionVectorCharSortReverse, "instructionVectorCharSortReverse"),
+    (instructionVectorCharDupItems, "instructionVectorCharDupItems")
   ]
 
 allVectorStringInstructions :: [Gene]
@@ -454,7 +477,10 @@ allVectorStringInstructions = map StateFunc [
     (instructionVectorStringYankDup, "instructionVectorStringYankDup"),
     (instructionVectorStringShove, "instructionVectorStringShove"),
     (instructionVectorStringShoveDup, "instructionVectorStringShoveDup"),
-    (instructionVectorStringStackIsEmpty, "instructionVectorStringStackIsEmpty")
+    (instructionVectorStringStackIsEmpty, "instructionVectorStringStackIsEmpty"),
+    (instructionVectorStringSort, "instructionVectorStringSort"),
+    (instructionVectorStringSortReverse, "instructionVectorStringSortReverse"),
+    (instructionVectorStringDupItems, "instructionVectorStringDupItems")
   ]
 
 allVectorBoolInstructions :: [Gene]
@@ -492,7 +518,10 @@ allVectorBoolInstructions = map StateFunc [
     (instructionVectorBoolYankDup, "instructionVectorBoolYankDup"),
     (instructionVectorBoolShove, "instructionVectorBoolShove"),
     (instructionVectorBoolShoveDup, "instructionVectorBoolShoveDup"),
-    (instructionVectorBoolStackIsEmpty, "instructionVectorBoolStackIsEmpty")
+    (instructionVectorBoolStackIsEmpty, "instructionVectorBoolStackIsEmpty"),
+    (instructionVectorBoolSort, "instructionVectorBoolSort"),
+    (instructionVectorBoolSortReverse, "instructionVectorBoolSortReverse"),
+    (instructionVectorBoolDupItems, "instructionVectorBoolDupItems")
   ]
 
 allInstructions :: [Gene]

@@ -77,3 +77,6 @@ instructionBoolShoveDup state = instructionShoveDup state bool
 
 instructionBoolIsEmpty :: State -> State
 instructionBoolIsEmpty state = instructionIsEmpty state bool
+
+instructionBoolDupItems :: State -> State
+instructionBoolDupItems = instructionDupItems bool

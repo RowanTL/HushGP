@@ -346,3 +346,6 @@ instructionCodeDiscrepancy state = state
 
 instructionCodeNoOp :: State -> State
 instructionCodeNoOp state = state
+
+instructionCodeDupItems :: State -> State
+instructionCodeDupItems = instructionDupItems code

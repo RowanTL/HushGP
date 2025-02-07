@@ -3,6 +3,7 @@ module HushGP.Instructions.FloatInstructions where
 import Data.Fixed (mod')
 import HushGP.Instructions.GenericInstructions
 import HushGP.State
+import Data.Char
 
 instructionFloatFromInt :: State -> State
 instructionFloatFromInt state@(State {_float = fs, _int = (i : is)}) = state {_float = (fromIntegral i :: Float) : fs, _int = is}
@@ -11,6 +12,17 @@ instructionFloatFromInt state = state
 instructionFloatFromBool :: State -> State
 instructionFloatFromBool state@(State {_bool = (b : bs), _float = fs}) = state {_bool = bs, _float = (if b then 1.0 else 0.0) : fs}
 instructionFloatFromBool state = state
+
+instructionFloatFromChar :: State -> State
+instructionFloatFromChar state@(State {_char = c : cs, _float = fs}) = state {_char = cs, _float = (fromIntegral (ord c) :: Float) : fs}
+instructionFloatFromChar state = state
+
+instructionFloatFromString :: State -> State
+instructionFloatFromString state@(State {_string = s1 : ss, _float = fs}) =
+  if all isDigit s1
+  then state{_string = ss, _float = read @Float s1 : fs}
+  else state
+instructionFloatFromString state = state
 
 instructionFloatAdd :: State -> State
 instructionFloatAdd state@(State {_float = (f1 : f2 : fs)}) = state {_float = f2 + f1 : fs}
@@ -114,3 +126,6 @@ instructionFloatCos state = state
 instructionFloatTan :: State -> State
 instructionFloatTan state@(State {_float = f1 : fs}) = state {_float = tan f1 : fs}
 instructionFloatTan state = state
+
+instructionFloatDupItems :: State -> State
+instructionFloatDupItems = instructionDupItems float

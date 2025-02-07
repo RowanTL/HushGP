@@ -119,3 +119,6 @@ instructionExecS state = state
 instructionExecY :: State -> State
 instructionExecY state@(State {_exec = e1 : es}) = state{_exec = e1 : Block [StateFunc (instructionExecY, "instructionExecY"), e1] : es}
 instructionExecY state = state
+
+instructionExecDupItems :: State -> State
+instructionExecDupItems = instructionDupItems exec

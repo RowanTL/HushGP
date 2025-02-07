@@ -104,3 +104,12 @@ instructionVectorCharShove state = instructionShove state vectorChar
 
 instructionVectorCharShoveDup :: State -> State
 instructionVectorCharShoveDup state = instructionShoveDup state vectorChar
+
+instructionVectorCharSort :: State -> State
+instructionVectorCharSort = instructionVectorSort vectorChar
+
+instructionVectorCharSortReverse :: State -> State
+instructionVectorCharSortReverse = instructionVectorSortReverse vectorChar
+
+instructionVectorCharDupItems :: State -> State
+instructionVectorCharDupItems = instructionDupItems vectorChar

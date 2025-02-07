@@ -87,3 +87,6 @@ instructionCharShove state = instructionShove state char
 
 instructionCharShoveDup :: State -> State
 instructionCharShoveDup state = instructionShoveDup state char
+
+instructionCharDupItems :: State -> State
+instructionCharDupItems = instructionDupItems char

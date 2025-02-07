@@ -4,6 +4,7 @@ import Control.Lens
 import HushGP.State
 import Data.List (sort, sortBy)
 import Data.Ord
+import Data.List.Split
 
 -- import Debug.Trace 
 
@@ -103,7 +104,7 @@ instructionIsEmpty state@(State {_bool = bs}) accessor = state{_bool = null (vie
 
 -- I might be able to move some of the int stack error checking
 -- to the integer call. For now this may be a tad inefficient.
-instructionDupN :: forall a. Show a => State -> Lens' State [a] -> State
+instructionDupN :: forall a. State -> Lens' State [a] -> State
 instructionDupN state accessor = 
   case uncons (view int state) of
     Just (i1,is) ->
@@ -118,6 +119,15 @@ instructionDupN state accessor =
       if count > 0
       then instructionDupNHelper (count - 1) instruction internalAccessor (internalState & accessor .~ (instruction : view accessor internalState))
       else internalState
+
+-- |Duplicates the top N items on a stack. If n <= 0 nothing happens
+-- TODO: Will need to implement a max stack items at some point
+instructionDupItems :: Lens' State [a] -> State -> State
+instructionDupItems accessor state@(State {_int = i1 : is}) =
+  if i1 <= 0
+  then state{_int = is}
+  else state{_int = is} & accessor .~ (take i1 (view accessor state{_int = is}) <> view accessor state{_int = is})
+instructionDupItems _ state = state
 
 instructionSwap :: State -> Lens' State [a] -> State
 instructionSwap state accessor =
@@ -205,6 +215,12 @@ instructionConj :: State -> Lens' State [a] -> Lens' State [[a]] -> State
 instructionConj state primAccessor vectorAccessor =
   case (uncons (view primAccessor state), uncons (view vectorAccessor state)) of
     (Just (p1,ps), Just (v1,vs)) -> state & primAccessor .~ ps & vectorAccessor .~ ((p1 : v1) : vs)
+    _ -> state
+
+instructionConjEnd :: Lens' State [a] -> Lens' State [[a]] -> State -> State
+instructionConjEnd primAccessor vectorAccessor state = 
+  case (uncons (view primAccessor state), uncons (view vectorAccessor state)) of
+    (Just (p1,ps), Just (v1,vs)) -> state & primAccessor .~ ps & vectorAccessor .~ ((v1 <> [p1]) : vs)
     _ -> state
 
 -- v for vector, vs for vectorstack (also applicable to strings)
@@ -304,6 +320,14 @@ instructionVectorOccurrencesOf :: Eq a => State -> Lens' State [a] -> Lens' Stat
 instructionVectorOccurrencesOf state primAccessor vectorAccessor = 
   case (uncons (view vectorAccessor state), uncons (view primAccessor state)) of
     (Just (v1, vs), Just (p1, ps)) -> (state & vectorAccessor .~ vs & primAccessor .~ ps) & int .~ (amtOccurences v1 [p1] : view int (state & vectorAccessor .~ vs & primAccessor .~ ps))
+    _ -> state
+
+-- | This function parses the primitives of a vector type and pushes split up onto their
+-- respective stack
+instructionVectorParseToPrim :: Lens' State [[a]] -> State -> State
+instructionVectorParseToPrim accessor state =
+  case uncons (view accessor state) of
+    Just (x1, xs) -> state & accessor .~ (chunksOf 1 x1 <> xs)
     _ -> state
 
 instructionVectorSetNth :: State -> Lens' State [a] -> Lens' State [[a]] -> State

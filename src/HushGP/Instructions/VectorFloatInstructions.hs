@@ -104,3 +104,12 @@ instructionVectorFloatShove state = instructionShove state vectorFloat
 
 instructionVectorFloatShoveDup :: State -> State
 instructionVectorFloatShoveDup state = instructionShoveDup state vectorFloat
+
+instructionVectorFloatSort :: State -> State
+instructionVectorFloatSort = instructionVectorSort vectorFloat
+
+instructionVectorFloatSortReverse :: State -> State
+instructionVectorFloatSortReverse = instructionVectorSortReverse vectorFloat
+
+instructionVectorFloatDupItems :: State -> State
+instructionVectorFloatDupItems = instructionDupItems vectorFloat
