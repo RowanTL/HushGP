@@ -182,7 +182,7 @@ instructionStringFromLens :: Show a => State -> Lens' State [a] -> State
 instructionStringFromLens state@(State {_string = ss}) accessor =
   case uncons (view accessor state) of
     Nothing -> state
-    Just (x,_) -> state{_string = show x : ss}
+    Just (x1,_) -> state{_string = show x1 : ss}
 
 instructionStringFromBool :: State -> State
 instructionStringFromBool state = instructionStringFromLens state bool

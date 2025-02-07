@@ -12,7 +12,7 @@
 - [X] Make int yank, shove, yankdup, and shovedup generic
 - [ ] Write hackage documentation for each function
 - [X] Refactor all functions to take state as the final parameter
-- [ ] Standardize the pattern matching parameter names, such as c1 : cs
+- [X] Standardize the pattern matching parameter names, such as c1 : cs
 - [ ] Write unit/quickcheck tests for all of the instructions
 
 ## PushGP TODO

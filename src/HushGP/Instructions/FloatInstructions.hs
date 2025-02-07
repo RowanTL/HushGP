@@ -6,15 +6,15 @@ import HushGP.State
 import Data.Char
 
 instructionFloatFromInt :: State -> State
-instructionFloatFromInt state@(State {_float = fs, _int = (i : is)}) = state {_float = (fromIntegral i :: Float) : fs, _int = is}
+instructionFloatFromInt state@(State {_float = fs, _int = i1 : is}) = state {_float = (fromIntegral i1 :: Float) : fs, _int = is}
 instructionFloatFromInt state = state
 
 instructionFloatFromBool :: State -> State
-instructionFloatFromBool state@(State {_bool = (b : bs), _float = fs}) = state {_bool = bs, _float = (if b then 1.0 else 0.0) : fs}
+instructionFloatFromBool state@(State {_bool = b1 : bs, _float = fs}) = state {_bool = bs, _float = (if b1 then 1.0 else 0.0) : fs}
 instructionFloatFromBool state = state
 
 instructionFloatFromChar :: State -> State
-instructionFloatFromChar state@(State {_char = c : cs, _float = fs}) = state {_char = cs, _float = (fromIntegral (ord c) :: Float) : fs}
+instructionFloatFromChar state@(State {_char = c1 : cs, _float = fs}) = state {_char = cs, _float = (fromIntegral (ord c1) :: Float) : fs}
 instructionFloatFromChar state = state
 
 instructionFloatFromString :: State -> State
@@ -25,39 +25,39 @@ instructionFloatFromString state@(State {_string = s1 : ss, _float = fs}) =
 instructionFloatFromString state = state
 
 instructionFloatAdd :: State -> State
-instructionFloatAdd state@(State {_float = (f1 : f2 : fs)}) = state {_float = f2 + f1 : fs}
+instructionFloatAdd state@(State {_float = f1 : f2 : fs}) = state {_float = f2 + f1 : fs}
 instructionFloatAdd state = state
 
 instructionFloatSub :: State -> State
-instructionFloatSub state@(State {_float = (f1 : f2 : fs)}) = state {_float = f2 - f1 : fs}
+instructionFloatSub state@(State {_float = f1 : f2 : fs}) = state {_float = f2 - f1 : fs}
 instructionFloatSub state = state
 
 instructionFloatMul :: State -> State
-instructionFloatMul state@(State {_float = (f1 : f2 : fs)}) = state {_float = f2 * f1 : fs}
+instructionFloatMul state@(State {_float = f1 : f2 : fs}) = state {_float = f2 * f1 : fs}
 instructionFloatMul state = state
 
 instructionFloatDiv :: State -> State
-instructionFloatDiv state@(State {_float = (f1 : f2 : fs)}) = state {_float = if f1 /= 0 then f2 / f1 : fs else f1 : f2 : fs}
+instructionFloatDiv state@(State {_float = f1 : f2 : fs}) = state {_float = if f1 /= 0 then f2 / f1 : fs else f1 : f2 : fs}
 instructionFloatDiv state = state
 
 instructionFloatMod :: State -> State
-instructionFloatMod state@(State {_float = (f1 : f2 : fs)}) = state {_float = if f1 /= 0 then f2 `mod'` f1 : fs else f1 : f2 : fs}
+instructionFloatMod state@(State {_float = f1 : f2 : fs}) = state {_float = if f1 /= 0 then f2 `mod'` f1 : fs else f1 : f2 : fs}
 instructionFloatMod state = state
 
 instructionFloatMin :: State -> State
-instructionFloatMin state@(State {_float = (f1 : f2 : fs)}) = state {_float = min f1 f2 : fs}
+instructionFloatMin state@(State {_float = f1 : f2 : fs}) = state {_float = min f1 f2 : fs}
 instructionFloatMin state = state
 
 instructionFloatMax :: State -> State
-instructionFloatMax state@(State {_float = (f1 : f2 : fs)}) = state {_float = max f1 f2 : fs}
+instructionFloatMax state@(State {_float = f1 : f2 : fs}) = state {_float = max f1 f2 : fs}
 instructionFloatMax state = state
 
 instructionFloatInc :: State -> State
-instructionFloatInc state@(State {_float = (f1 : fs)}) = state {_float = f1 + 1 : fs}
+instructionFloatInc state@(State {_float = f1 : fs}) = state {_float = f1 + 1 : fs}
 instructionFloatInc state = state
 
 instructionFloatDec :: State -> State
-instructionFloatDec state@(State {_float = (f1 : fs)}) = state {_float = f1 - 1 : fs}
+instructionFloatDec state@(State {_float = f1 : fs}) = state {_float = f1 - 1 : fs}
 instructionFloatDec state = state
 
 instructionFloatLT :: State -> State

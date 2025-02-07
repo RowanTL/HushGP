@@ -5,8 +5,8 @@ import HushGP.Instructions.IntInstructions
 import HushGP.Instructions.GenericInstructions
 
 instructionExecIf :: State -> State
-instructionExecIf state@(State {_exec = (e1 : e2 : es), _bool = (b : bs)}) =
-  if b
+instructionExecIf state@(State {_exec = e1 : e2 : es, _bool = b1 : bs}) =
+  if b1
     then state {_exec = e1 : es, _bool = bs}
     else state {_exec = e2 : es, _bool = bs}
 instructionExecIf state = state
@@ -54,7 +54,7 @@ execDoRange :: Gene
 execDoRange = StateFunc (instructionExecDoRange, "instructionExecDoRange")
 
 instructionExecDoRange :: State -> State
-instructionExecDoRange state@(State {_exec = (e1 : es), _int = (i0 : i1 : is)}) =
+instructionExecDoRange state@(State {_exec = e1 : es, _int = i0 : i1 : is}) =
   if increment i0 i1 /= 0
     then state {_exec = e1 : Block [GeneInt (i1 + increment i0 i1), GeneInt i0, execDoRange, e1] : es, _int = i1 : is}
     else state {_exec = e1 : es, _int = i1 : is}
@@ -67,40 +67,40 @@ instructionExecDoRange state@(State {_exec = (e1 : es), _int = (i0 : i1 : is)}) 
 instructionExecDoRange state = state
 
 instructionExecDoCount :: State -> State
-instructionExecDoCount state@(State {_exec = (e : es), _int = (i : is)}) =
-  if i < 1
+instructionExecDoCount state@(State {_exec = e1 : es, _int = i1 : is}) =
+  if i1 < 1
     then state
-    else state {_exec = Block [GeneInt 0, GeneInt $ i - 1, execDoRange, e] : es, _int = is}
+    else state {_exec = Block [GeneInt 0, GeneInt $ i1 - 1, execDoRange, e1] : es, _int = is}
 instructionExecDoCount state = state
 
 instructionExecDoTimes :: State -> State
-instructionExecDoTimes state@(State {_exec = (e : es), _int = (i : is)}) =
-  if i < 1
+instructionExecDoTimes state@(State {_exec = e1 : es, _int = i1 : is}) =
+  if i1 < 1
     then state
-    else state {_exec = Block [GeneInt 0, GeneInt $ i - 1, execDoRange, Block [StateFunc (instructionIntPop, "instructionIntPop"), e]] : es, _int = is}
+    else state {_exec = Block [GeneInt 0, GeneInt $ i1 - 1, execDoRange, Block [StateFunc (instructionIntPop, "instructionIntPop"), e1]] : es, _int = is}
 instructionExecDoTimes state = state
 
 execWhile :: Gene
 execWhile = StateFunc (instructionExecWhile, "instructionExecWhile")
 
 instructionExecWhile :: State -> State
-instructionExecWhile state@(State {_exec = (_ : es), _bool = []}) =
+instructionExecWhile state@(State {_exec = _ : es, _bool = []}) =
   state {_exec = es}
-instructionExecWhile state@(State {_exec = alles@(e : es), _bool = (b : bs)}) =
-  if b
-    then state {_exec = e : execWhile : alles, _bool = bs}
+instructionExecWhile state@(State {_exec = alles@(e1 : es), _bool = b1 : bs}) =
+  if b1
+    then state {_exec = e1 : execWhile : alles, _bool = bs}
     else state {_exec = es}
 instructionExecWhile state = state
 
 instructionExecDoWhile :: State -> State
-instructionExecDoWhile state@(State {_exec = alles@(e : _)}) =
-  state {_exec = e : execWhile : alles}
+instructionExecDoWhile state@(State {_exec = alles@(e1 : _)}) =
+  state {_exec = e1 : execWhile : alles}
 instructionExecDoWhile state = state
 
 -- Eats the _boolean no matter what
 instructionExecWhen :: State -> State
-instructionExecWhen state@(State {_exec = (_ : es), _bool = (b : bs)}) =
-  if not b
+instructionExecWhen state@(State {_exec = _ : es, _bool = b1 : bs}) =
+  if not b1
     then state {_exec = es, _bool = bs}
     else state {_bool = bs}
 instructionExecWhen state = state

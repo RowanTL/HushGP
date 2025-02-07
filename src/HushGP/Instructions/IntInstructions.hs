@@ -6,15 +6,15 @@ import Data.Char
 -- import Debug.Trace
 
 instructionIntFromFloat :: State -> State
-instructionIntFromFloat state@(State {_float = (f : fs), _int = is}) = state {_float = fs, _int = floor f : is}
+instructionIntFromFloat state@(State {_float = f1 : fs, _int = is}) = state {_float = fs, _int = floor f1 : is}
 instructionIntFromFloat state = state
 
 instructionIntFromBool :: State -> State
-instructionIntFromBool state@(State {_bool = (b : bs), _int = is}) = state {_bool = bs, _int = (if b then 1 else 0) : is}
+instructionIntFromBool state@(State {_bool = b1 : bs, _int = is}) = state {_bool = bs, _int = (if b1 then 1 else 0) : is}
 instructionIntFromBool state = state
 
 instructionIntFromChar :: State -> State
-instructionIntFromChar state@(State {_char = c : cs, _int = is}) = state {_char = cs, _int = ord c : is}
+instructionIntFromChar state@(State {_char = c1 : cs, _int = is}) = state {_char = cs, _int = ord c1 : is}
 instructionIntFromChar state = state
 
 instructionIntFromString :: State -> State
@@ -25,39 +25,39 @@ instructionIntFromString state@(State {_string = s1 : ss, _int = is}) =
 instructionIntFromString state = state
 
 instructionIntAdd :: State -> State
-instructionIntAdd state@(State {_int = (i1 : i2 : is)}) = state {_int = i2 + i1 : is}
+instructionIntAdd state@(State {_int = i1 : i2 : is}) = state {_int = i2 + i1 : is}
 instructionIntAdd state = state
 
 instructionIntSub :: State -> State
-instructionIntSub state@(State {_int = (i1 : i2 : is)}) = state {_int = i2 - i1 : is}
+instructionIntSub state@(State {_int = i1 : i2 : is}) = state {_int = i2 - i1 : is}
 instructionIntSub state = state
 
 instructionIntMul :: State -> State
-instructionIntMul state@(State {_int = (i1 : i2 : is)}) = state {_int = i2 * i1 : is}
+instructionIntMul state@(State {_int = i1 : i2 : is}) = state {_int = i2 * i1 : is}
 instructionIntMul state = state
 
 instructionIntDiv :: State -> State
-instructionIntDiv state@(State {_int = (i1 : i2 : is)}) = state {_int = if i1 /= 0 then (i2 `div` i1) : is else i1 : i2 : is}
+instructionIntDiv state@(State {_int = i1 : i2 : is}) = state {_int = if i1 /= 0 then (i2 `div` i1) : is else i1 : i2 : is}
 instructionIntDiv state = state
 
 instructionIntMod :: State -> State
-instructionIntMod state@(State {_int = (i1 : i2 : is)}) = state {_int = if i1 /= 0 then (i2 `mod` i1) : is else i1 : i2 : is}
+instructionIntMod state@(State {_int = i1 : i2 : is}) = state {_int = if i1 /= 0 then (i2 `mod` i1) : is else i1 : i2 : is}
 instructionIntMod state = state
 
 instructionIntMin :: State -> State
-instructionIntMin state@(State {_int = (i1 : i2 : is)}) = state {_int = min i1 i2 : is}
+instructionIntMin state@(State {_int = i1 : i2 : is}) = state {_int = min i1 i2 : is}
 instructionIntMin state = state
 
 instructionIntMax :: State -> State
-instructionIntMax state@(State {_int = (i1 : i2 : is)}) = state {_int = max i1 i2 : is}
+instructionIntMax state@(State {_int = i1 : i2 : is}) = state {_int = max i1 i2 : is}
 instructionIntMax state = state
 
 instructionIntInc :: State -> State
-instructionIntInc state@(State {_int = (i1 : is)}) = state {_int = i1 + 1 : is}
+instructionIntInc state@(State {_int = i1 : is}) = state {_int = i1 + 1 : is}
 instructionIntInc state = state
 
 instructionIntDec :: State -> State
-instructionIntDec state@(State {_int = (i1 : is)}) = state {_int = i1 - 1 : is}
+instructionIntDec state@(State {_int = i1 : is}) = state {_int = i1 - 1 : is}
 instructionIntDec state = state
 
 instructionIntLT :: State -> State

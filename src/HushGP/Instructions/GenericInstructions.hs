@@ -91,7 +91,7 @@ instructionDup :: Lens' State [a] -> State  -> State
 instructionDup accessor state =
   case uncons (view accessor state) of
     Nothing -> state
-    Just (x,_) -> state & accessor .~ x : view accessor state
+    Just (x1,_) -> state & accessor .~ x1 : view accessor state
 
 instructionPop :: Lens' State [a] -> State -> State
 instructionPop accessor state = state & accessor .~ drop 1 (view accessor state)
@@ -117,7 +117,7 @@ instructionDupN accessor state =
       then instructionDupNHelper (count - 1) instruction internalAccessor (internalState & accessor .~ (instruction : view accessor internalState))
       else internalState
 
--- |Duplicates the top N items on a stack. If n <= 0 nothing happens
+-- |Duplicates the top N items on a stack. If n <= 0, nothing happens
 -- TODO: Will need to implement a max stack items at some point
 instructionDupItems :: Lens' State [a] -> State -> State
 instructionDupItems accessor state@(State {_int = i1 : is}) =
@@ -162,17 +162,17 @@ instructionStackDepth :: Lens' State [a] -> State -> State
 instructionStackDepth accessor state@(State {_int = is}) = state{_int = length (view accessor state) : is}
 
 instructionYankDup :: Lens' State [a] -> State -> State
-instructionYankDup accessor state@(State {_int = i : is}) = 
+instructionYankDup accessor state@(State {_int = i1 : is}) = 
   if notEmptyStack accessor state
-  then state{_int = is} & accessor .~ (view accessor state{_int = is} !! max 0 (min i (length (view accessor state{_int = is}) - 1))) : view accessor state{_int = is}
+  then state{_int = is} & accessor .~ (view accessor state{_int = is} !! max 0 (min i1 (length (view accessor state{_int = is}) - 1))) : view accessor state{_int = is}
   else state
 instructionYankDup  _ state = state
 
 instructionYank :: forall a. Lens' State [a] -> State -> State
-instructionYank accessor state@(State {_int = i : is}) =
+instructionYank accessor state@(State {_int = i1 : is}) =
   let
     myIndex :: Int
-    myIndex = max 0 (min i (length (view accessor state{_int = is}) - 1))
+    myIndex = max 0 (min i1 (length (view accessor state{_int = is}) - 1))
     item :: a
     item = view accessor state{_int = is} !! myIndex
     deletedState :: State
@@ -185,9 +185,9 @@ instructionYank _ state = state
 -- the duplicated index matters whether or not it's present in the stack at the moment of calculation.
 -- I'm not going to keep this behavior. Check out interpysh examples for how pysh handles it.
 instructionShoveDup :: Lens' State [a] -> State -> State
-instructionShoveDup accessor state@(State {_int = i : is}) =
+instructionShoveDup accessor state@(State {_int = i1 : is}) =
   case uncons (view accessor state{_int = is}) of
-    Just (x,_) -> state{_int = is} & accessor .~ combineTuple x (splitAt (max 0 (min i (length (view accessor state{_int = is}) - 1))) (view accessor state{_int = is}))
+    Just (x,_) -> state{_int = is} & accessor .~ combineTuple x (splitAt (max 0 (min i1 (length (view accessor state{_int = is}) - 1))) (view accessor state{_int = is}))
     _ -> state
 instructionShoveDup _ state = state
 

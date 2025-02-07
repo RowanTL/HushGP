@@ -11,11 +11,11 @@ isBlock (Block _) = True
 isBlock _ = False
 
 blockLength :: Gene -> Int
-blockLength (Block xs) = length xs
+blockLength (Block bxs) = length bxs
 blockLength _ = 1
 
 blockIsNull :: Gene -> Bool
-blockIsNull (Block xs) = null xs
+blockIsNull (Block bxs) = null bxs
 blockIsNull _ = False
 
 -- https://faculty.hampshire.edu/lspector/push3-description.html#Type
@@ -29,7 +29,7 @@ findContainer (Block fullA) gene
   where
     findContainer' :: [Gene] -> Gene -> Gene
     findContainer' [] _ = Block []
-    findContainer' ((Block x) : xs) g = if g `elem` x then Block x else findContainer' xs g
+    findContainer' ((Block bx1) : bxs) g = if g `elem` bx1 then Block bx1 else findContainer' bxs g
     findContainer' _ _ = Block [] -- This should never happen
 findContainer _ _ = Block []
 
@@ -38,21 +38,21 @@ countDiscrepancy (Block xs) (Block ys) = sum [if uncurry (==) tup then 0 else 1 
 countDiscrepancy xgene ygene = if xgene == ygene then 1 else 0
 
 extractFirstFromBlock :: Gene -> Gene
-extractFirstFromBlock (Block (x : _)) = x
+extractFirstFromBlock (Block (bx1 : _)) = bx1
 extractFirstFromBlock gene = gene
 
 extractLastFromBlock :: Gene -> Gene
 extractLastFromBlock (Block []) = Block []
-extractLastFromBlock (Block xs) = last xs
+extractLastFromBlock (Block bxs) = last bxs
 extractLastFromBlock gene = gene
 
 extractInitFromBlock :: Gene -> Gene
 extractInitFromBlock (Block []) = Block []
-extractInitFromBlock (Block xs) = Block (init xs)
+extractInitFromBlock (Block bxs) = Block (init bxs)
 extractInitFromBlock gene = gene
 
 extractTailFromBlock :: Gene -> Gene
-extractTailFromBlock (Block xs) = Block (drop 1 xs)
+extractTailFromBlock (Block bxs) = Block (drop 1 bxs)
 extractTailFromBlock _ = Block []
 
 codeAtPoint :: [Gene] -> Int -> Gene
@@ -68,48 +68,48 @@ codeInsertAtPoint ((Block genes) : oldGenes) gene index = Block (codeInsertAtPoi
 codeInsertAtPoint (oldGene : oldGenes) gene index = oldGene : codeInsertAtPoint oldGenes gene (index - 1) 
 
 codeCombine :: Gene -> Gene -> Gene
-codeCombine (Block xs) (Block ys) = Block (xs <> ys)
-codeCombine (Block xs) ygene = Block (ygene : xs)
-codeCombine xgene (Block ys) = Block (xgene : ys)
+codeCombine (Block bxs) (Block bys) = Block (bxs <> bys)
+codeCombine (Block bxs) ygene = Block (ygene : bxs)
+codeCombine xgene (Block bys) = Block (xgene : bys)
 codeCombine xgene ygene = Block [xgene, ygene]
 
 codeMember :: Gene -> Gene -> Bool
-codeMember (Block _) (Block _) = False -- Can't compare two lists with `elem`
-codeMember (Block xs) ygene = ygene `elem` xs
+codeMember (Block bxs) (Block bys) = findSubA bxs bys /= (-1)
+codeMember (Block bxs) ygene = ygene `elem` bxs
 codeMember _ _ = False
 
 codeRecursiveSize :: Gene -> Int
-codeRecursiveSize (Block xs) = sum [codeRecursiveSize x + if isBlock x then 1 else 0 | x <- xs]
+codeRecursiveSize (Block bxs) = sum [codeRecursiveSize x + if isBlock x then 1 else 0 | x <- bxs]
 codeRecursiveSize _ = 1
 
 instructionCodePop :: State -> State
 instructionCodePop = instructionPop code
 
 instructionCodeIsCodeBlock :: State -> State
-instructionCodeIsCodeBlock state@(State {_code = (c : cs), _bool = bs}) = state {_code = cs, _bool = isBlock c : bs}
+instructionCodeIsCodeBlock state@(State {_code = c1 : cs, _bool = bs}) = state {_code = cs, _bool = isBlock c1 : bs}
 instructionCodeIsCodeBlock state = state
 
 instructionCodeIsSingular :: State -> State
-instructionCodeIsSingular state@(State {_code = (c : cs), _bool = bs}) = state {_code = cs, _bool = not (isBlock c) : bs}
+instructionCodeIsSingular state@(State {_code = c1 : cs, _bool = bs}) = state {_code = cs, _bool = not (isBlock c1) : bs}
 instructionCodeIsSingular state = state
 
 instructionCodeLength :: State -> State
-instructionCodeLength state@(State {_code = (c : cs), _int = is}) = state {_code = cs, _int = blockLength c : is}
+instructionCodeLength state@(State {_code = c1 : cs, _int = is}) = state {_code = cs, _int = blockLength c1 : is}
 instructionCodeLength state = state
 
 -- CODE.CAR
 instructionCodeFirst :: State -> State
-instructionCodeFirst state@(State {_code = (c : cs)}) = state {_code = extractFirstFromBlock c : cs}
+instructionCodeFirst state@(State {_code = c1 : cs}) = state {_code = extractFirstFromBlock c1 : cs}
 instructionCodeFirst state = state
 
 instructionCodeLast :: State -> State
-instructionCodeLast state@(State {_code = (c : cs)}) = state {_code = extractLastFromBlock c : cs}
+instructionCodeLast state@(State {_code = c1 : cs}) = state {_code = extractLastFromBlock c1 : cs}
 instructionCodeLast state = state
 
 -- CODE.CDR
 -- https://erp12.github.io/pyshgp/html/core_instructions.html#code-rest
 instructionCodeTail :: State -> State
-instructionCodeTail state@(State {_code = (c : cs)}) = state {_code = extractTailFromBlock c : cs}
+instructionCodeTail state@(State {_code = c1 : cs}) = state {_code = extractTailFromBlock c1 : cs}
 instructionCodeTail state = state
 
 -- |Takes the tail of a block starting at an index determined by the int stack
@@ -124,19 +124,19 @@ instructionCodeTailN state = state
 
 -- https://erp12.github.io/pyshgp/html/core_instructions.html#code-but-last
 instructionCodeInit :: State -> State
-instructionCodeInit state@(State {_code = (c : cs)}) = state {_code = extractInitFromBlock c : cs}
+instructionCodeInit state@(State {_code = c1 : cs}) = state {_code = extractInitFromBlock c1 : cs}
 instructionCodeInit state = state
 
 instructionCodeWrap :: State -> State
-instructionCodeWrap state@(State {_code = (c : cs)}) = state {_code = Block [c] : cs}
+instructionCodeWrap state@(State {_code = c1 : cs}) = state {_code = Block [c1] : cs}
 instructionCodeWrap state = state
 
 instructionCodeList :: State -> State
-instructionCodeList state@(State {_code = (c1 : c2 : cs)}) = state {_code = Block [c1, c2] : cs}
+instructionCodeList state@(State {_code = c1 : c2 : cs}) = state {_code = Block [c1, c2] : cs}
 instructionCodeList state = state
 
 instructionCodeCombine :: State -> State
-instructionCodeCombine state@(State {_code = (c1 : c2 : cs)}) = state {_code = codeCombine c1 c2 : cs}
+instructionCodeCombine state@(State {_code = c1 : c2 : cs}) = state {_code = codeCombine c1 c2 : cs}
 instructionCodeCombine state = state
 
 instructionCodeDo :: State -> State
@@ -144,7 +144,7 @@ instructionCodeDo state@(State {_code = c1 : cs, _exec = es}) = state {_code = c
 instructionCodeDo state = state
 
 instructionCodeDoDup :: State -> State
-instructionCodeDoDup state@(State {_code = (c1 : cs), _exec = es}) = state {_code = c1 : cs, _exec = c1 : es}
+instructionCodeDoDup state@(State {_code = c1 : cs, _exec = es}) = state {_code = c1 : cs, _exec = c1 : es}
 instructionCodeDoDup state = state
 
 -- https://erp12.github.io/pyshgp/html/core_instructions.html#code-do-then-pop
@@ -159,7 +159,7 @@ codeDoRange :: Gene
 codeDoRange = StateFunc (instructionCodeDoRange, "instructionCodeDoRange")
 
 instructionCodeDoRange :: State -> State
-instructionCodeDoRange state@(State {_code = (c1 : cs), _int = (i0 : i1 : is), _exec = es}) =
+instructionCodeDoRange state@(State {_code = c1 : cs, _int = i0 : i1 : is, _exec = es}) =
   if increment i0 i1 /= 0
     then state {_exec = c1 : Block [GeneInt (i1 + increment i0 i1), GeneInt i0, codeFromExec, c1, codeDoRange] : es, _int = i1 : is, _code = cs}
     else state {_exec = c1: es, _int = i1 : is, _code = cs}
@@ -172,42 +172,42 @@ instructionCodeDoRange state@(State {_code = (c1 : cs), _int = (i0 : i1 : is), _
 instructionCodeDoRange state = state
 
 instructionCodeDoCount :: State -> State
-instructionCodeDoCount state@(State {_code = (c : cs), _int = (i : is), _exec = es}) =
-  if i < 1
+instructionCodeDoCount state@(State {_code = c : cs, _int = i1 : is, _exec = es}) =
+  if i1 < 1
     then state
-    else state {_code = cs, _int = is, _exec = Block [GeneInt 0, GeneInt $ i - 1, codeFromExec, c, codeDoRange] : es}
+    else state {_code = cs, _int = is, _exec = Block [GeneInt 0, GeneInt $ i1 - 1, codeFromExec, c, codeDoRange] : es}
 instructionCodeDoCount state = state
 
 instructionCodeDoTimes :: State -> State
-instructionCodeDoTimes state@(State {_code = (c : cs), _int = (i : is), _exec = es}) =
-  if i < 1
+instructionCodeDoTimes state@(State {_code = c : cs, _int = i1 : is, _exec = es}) =
+  if i1 < 1
     then state
-    else state {_code = cs, _int = is, _exec = Block [GeneInt 0, GeneInt $ i - 1, codeFromExec, Block [StateFunc (instructionIntPop, "instructionIntPop"), c], codeDoRange] : es}
+    else state {_code = cs, _int = is, _exec = Block [GeneInt 0, GeneInt $ i1 - 1, codeFromExec, Block [StateFunc (instructionIntPop, "instructionIntPop"), c], codeDoRange] : es}
 instructionCodeDoTimes state = state
 
 instructionCodeIf :: State -> State
-instructionCodeIf state@(State {_code = (c1 : c2 : cs), _bool = (b1 : bs), _exec = es}) = state{_code = cs, _bool = bs, _exec = (if b1 then c1 else c2) : es}
+instructionCodeIf state@(State {_code = c1 : c2 : cs, _bool = b1 : bs, _exec = es}) = state{_code = cs, _bool = bs, _exec = (if b1 then c1 else c2) : es}
 instructionCodeIf state = state
 
 instructionCodeWhen :: State -> State
-instructionCodeWhen state@(State {_code = (c1 : cs), _bool = (b1 : bs), _exec = es}) = state{_code = cs, _bool = bs, _exec = if b1 then c1 : es else es}
+instructionCodeWhen state@(State {_code = c1 : cs, _bool = b1 : bs, _exec = es}) = state{_code = cs, _bool = bs, _exec = if b1 then c1 : es else es}
 instructionCodeWhen state = state
 
 instructionCodeMember :: State -> State
-instructionCodeMember state@(State {_code = (c1 : c2 : cs), _bool = bs}) = state{_code = cs, _bool = codeMember c1 c2 : bs}
+instructionCodeMember state@(State {_code = c1 : c2 : cs, _bool = bs}) = state{_code = cs, _bool = codeMember c1 c2 : bs}
 instructionCodeMember state = state
 
 -- This one doesn't count the recursive Blocks while instructionCodeExtract does
 -- https://erp12.github.io/pyshgp/html/core_instructions.html#code-nth
 instructionCodeN :: State -> State
-instructionCodeN state@(State {_code = ((Block c1) : cs), _int = (i1 : is)}) =
+instructionCodeN state@(State {_code = (Block c1) : cs, _int = i1 : is}) =
   if not $ null c1
     then state {_code = c1 !! index : cs, _int = is}
     else state
   where
     index :: Int
     index = abs i1 `mod` length c1
-instructionCodeN state@(State {_code = (c1 : cs), _int = _ : is}) = state {_code = c1 : cs, _int = is}
+instructionCodeN state@(State {_code = c1 : cs, _int = _ : is}) = state {_code = c1 : cs, _int = is}
 instructionCodeN state = state
 
 instructionMakeEmptyCodeBlock :: State -> State
@@ -226,7 +226,7 @@ instructionCodeSize state = state
 -- I designed this function differently so 0 returns the 0th element, and the last item
 -- in the codeblock can be returned.
 instructionCodeExtract :: State -> State
-instructionCodeExtract state@(State {_code = (block@(Block c1) : cs), _int = i1 : is}) =
+instructionCodeExtract state@(State {_code = block@(Block c1) : cs, _int = i1 : is}) =
   let
     index = abs i1 `mod` codeRecursiveSize block
   in
@@ -235,7 +235,7 @@ instructionCodeExtract state@(State {_code = cs, _int = _ : is}) = state{_code =
 instructionCodeExtract state = state
 
 instructionCodeInsert :: State -> State
-instructionCodeInsert state@(State {_code = (block@(Block c1) : c2 : cs), _int = i1 : is}) =
+instructionCodeInsert state@(State {_code = block@(Block c1) : c2 : cs, _int = i1 : is}) =
   let
     index = abs i1 `mod` codeRecursiveSize block
   in
