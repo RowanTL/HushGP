@@ -96,8 +96,8 @@ instructionVectorFloatYank state = instructionYank state vectorFloat
 instructionVectorFloatYankDup :: State -> State
 instructionVectorFloatYankDup state = instructionYankDup state vectorFloat
 
-instructionVectorFloatStackIsEmpty :: State -> State
-instructionVectorFloatStackIsEmpty state = instructionIsEmpty state vectorFloat
+instructionVectorFloatIsStackEmpty :: State -> State
+instructionVectorFloatIsStackEmpty state = instructionIsStackEmpty state vectorFloat
 
 instructionVectorFloatShove :: State -> State
 instructionVectorFloatShove state = instructionShove state vectorFloat

@@ -7,7 +7,7 @@
 - [X] Implement all functions as seen in the specification
 - [ ] Implement Linear Algebra functions as specified in the previous papers
 - [X] Add a function to sort a vector forward and backwards
-- [ ] Disambiguate isEmpty and stackIsEmpty
+- [X] Disambiguate isEmpty and stackIsEmpty
 - [X] Rename Logical to Bool
 - [X] Make int yank, shove, yankdup, and shovedup generic
 - [ ] Write hackage documentation for each function

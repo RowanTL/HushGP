@@ -294,8 +294,8 @@ instructionCodeYank state = instructionYank state code
 instructionCodeYankDup :: State -> State
 instructionCodeYankDup state = instructionYankDup state code
 
-instructionCodeStackIsEmpty :: State -> State
-instructionCodeStackIsEmpty state = instructionIsEmpty state code
+instructionCodeIsStackEmpty :: State -> State
+instructionCodeIsStackEmpty state = instructionIsStackEmpty state code
 
 instructionCodeShove :: State -> State
 instructionCodeShove state = instructionShove state code

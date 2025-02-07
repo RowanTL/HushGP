@@ -112,8 +112,8 @@ instructionFloatShoveDup state = instructionShoveDup state float
 instructionFloatShove :: State -> State
 instructionFloatShove state = instructionShove state float
 
-instructionFloatIsEmpty :: State -> State
-instructionFloatIsEmpty state = instructionIsEmpty state float
+instructionFloatIsStackEmpty :: State -> State
+instructionFloatIsStackEmpty state = instructionIsStackEmpty state float
 
 instructionFloatSin :: State -> State
 instructionFloatSin state@(State {_float = f1 : fs}) = state {_float = sin f1 : fs}

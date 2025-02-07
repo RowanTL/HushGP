@@ -47,8 +47,8 @@ instructionExecShove state = instructionShove state exec
 instructionExecShoveDup :: State -> State
 instructionExecShoveDup state = instructionShoveDup state exec
 
-instructionExecIsEmpty :: State -> State
-instructionExecIsEmpty state = instructionIsEmpty state exec
+instructionExecIsStackEmpty :: State -> State
+instructionExecIsStackEmpty state = instructionIsStackEmpty state exec
 
 execDoRange :: Gene
 execDoRange = StateFunc (instructionExecDoRange, "instructionExecDoRange")

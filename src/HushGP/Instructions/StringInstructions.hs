@@ -224,8 +224,8 @@ instructionStringYank state = instructionYank state string
 instructionStringYankDup :: State -> State
 instructionStringYankDup state = instructionYankDup state string
 
-instructionStringIsEmpty :: State -> State
-instructionStringIsEmpty state = instructionIsEmpty state string
+instructionStringIsStackEmpty :: State -> State
+instructionStringIsStackEmpty state = instructionIsStackEmpty state string
 
 instructionStringShove :: State -> State
 instructionStringShove state = instructionShove state string

@@ -70,7 +70,7 @@ allIntInstructions = map StateFunc [
     (instructionIntYank, "instructionIntYank"),
     (instructionIntYankDup, "instructionIntYankDup"),
     (instructionIntShove, "instructionIntShove"),
-    (instructionIntIsEmpty, "instructionIntIsEmpty"),
+    (instructionIntIsStackEmpty, "instructionIntIsStackEmpty"),
     (instructionIntFromChar, "instructionIntFromChar"),
     (instructionIntFromString, "instructionIntFromString"),
     (instructionIntDupItems, "instructionIntDupItems")
@@ -103,7 +103,7 @@ allFloatInstructions = map StateFunc [
     (instructionFloatYank, "instructionFloatYank"),
     (instructionFloatYankDup, "instructionFloatYankDup"),
     (instructionFloatShove, "instructionFloatShove"),
-    (instructionFloatIsEmpty, "instructionFloatIsEmpty"),
+    (instructionFloatIsStackEmpty, "instructionFloatIsStackEmpty"),
     (instructionFloatFromChar, "instructionFloatFromChar"),
     (instructionFloatFromString, "instructionFloatFromString"),
     (instructionFloatDupItems, "instructionFloatDupItems")
@@ -130,7 +130,7 @@ allBoolInstructions = map StateFunc [
     (instructionBoolYankDup, "instructionBoolYankDup"),
     (instructionBoolShove, "instructionBoolShove"),
     (instructionBoolShoveDup, "instructionBoolShoveDup"),
-    (instructionBoolIsEmpty, "instructionBoolIsEmpty"),
+    (instructionBoolIsStackEmpty, "instructionBoolIsStackEmpty"),
     (instructionBoolDupItems, "instructionBoolDupItems")
   ]
 
@@ -159,7 +159,7 @@ allCharInstructions = map StateFunc [
     (instructionCharYankDup, "instructionCharYankDup"),
     (instructionCharShove, "instructionCharShove"),
     (instructionCharShoveDup, "instructionCharShoveDup"),
-    (instructionCharIsEmpty, "instructionCharIsEmpty"),
+    (instructionCharIsStackEmpty, "instructionCharIsStackEmpty"),
     (instructionCharDupItems, "instructionCharDupItems")
   ]
 
@@ -206,7 +206,7 @@ allCodeInstructions = map StateFunc [
     (instructionCodeYankDup, "instructionCodeYankDup"),
     (instructionCodeShove, "instructionCodeShove"),
     (instructionCodeShoveDup, "instructionCodeShoveDup"),
-    (instructionCodeStackIsEmpty, "instructionCodeStackIsEmpty"),
+    (instructionCodeIsStackEmpty, "instructionCodeIsStackEmpty"),
     (instructionCodeFromBool, "instructionCodeFromBool"),
     (instructionCodeFromInt, "instructionCodeFromInt"),
     (instructionCodeFromChar, "instructionCodeFromChar"),
@@ -240,7 +240,7 @@ allExecInstructions = map StateFunc [
     (instructionExecYankDup, "instructionExecYankDup"),
     (instructionExecShove, "instructionExecShove"),
     (instructionExecShoveDup, "instructionExecShoveDup"),
-    (instructionExecIsEmpty, "instructionExecIsEmpty"),
+    (instructionExecIsStackEmpty, "instructionExecIsStackEmpty"),
     (instructionExecDoRange, "instructionExecDoRange"),
     (instructionExecDoCount, "instructionExecDoCount"),
     (instructionExecDoTimes, "instructionExecDoTimes"),
@@ -312,7 +312,7 @@ allStringInstructions = map StateFunc [
     (instructionStringYankDup, "instructionStringYankDup"),
     (instructionStringShove, "instructionStringShove"),
     (instructionStringShoveDup, "instructionStringShoveDup"),
-    (instructionStringIsEmpty, "instructionStringIsEmpty"),
+    (instructionStringIsStackEmpty, "instructionStringIsStackEmpty"),
     (instructionStringSort, "instructionStringSort"),
     (instructionStringSortReverse, "instructionStringSortReverse"),
     (instructionStringDupItems, "instructionStringDupItems"),
@@ -354,7 +354,7 @@ allVectorIntInstructions = map StateFunc [
     (instructionVectorIntYankDup, "instructionVectorIntYankDup"),
     (instructionVectorIntShove, "instructionVectorIntShove"),
     (instructionVectorIntShoveDup, "instructionVectorIntShoveDup"),
-    (instructionVectorIntStackIsEmpty, "instructionVectorIntStackIsEmpty"),
+    (instructionVectorIntIsStackEmpty, "instructionVectorIntIsStackEmpty"),
     (instructionVectorIntSort, "instructionVectorIntSort"),
     (instructionVectorIntSortReverse, "instructionVectorIntSortReverse"),
     (instructionVectorIntDupItems, "instructionVectorIntDupItems")
@@ -395,7 +395,7 @@ allVectorFloatInstructions = map StateFunc [
     (instructionVectorFloatYankDup, "instructionVectorFloatYankDup"),
     (instructionVectorFloatShove, "instructionVectorFloatShove"),
     (instructionVectorFloatShoveDup, "instructionVectorFloatShoveDup"),
-    (instructionVectorFloatStackIsEmpty, "instructionVectorFloatStackIsEmpty"),
+    (instructionVectorFloatIsStackEmpty, "instructionVectorFloatIsStackEmpty"),
     (instructionVectorFloatSort, "instructionVectorFloatSort"),
     (instructionVectorFloatSortReverse, "instructionVectorFloatSortReverse"),
     (instructionVectorFloatDupItems, "instructionVectorFloatDupItems")
@@ -436,7 +436,7 @@ allVectorCharInstructions = map StateFunc [
     (instructionVectorCharYankDup, "instructionVectorCharYankDup"),
     (instructionVectorCharShove, "instructionVectorCharShove"),
     (instructionVectorCharShoveDup, "instructionVectorCharShoveDup"),
-    (instructionVectorCharStackIsEmpty, "instructionVectorCharStackIsEmpty"),
+    (instructionVectorCharIsStackEmpty, "instructionVectorCharIsStackEmpty"),
     (instructionVectorCharSort, "instructionVectorCharSort"),
     (instructionVectorCharSortReverse, "instructionVectorCharSortReverse"),
     (instructionVectorCharDupItems, "instructionVectorCharDupItems")
@@ -477,7 +477,7 @@ allVectorStringInstructions = map StateFunc [
     (instructionVectorStringYankDup, "instructionVectorStringYankDup"),
     (instructionVectorStringShove, "instructionVectorStringShove"),
     (instructionVectorStringShoveDup, "instructionVectorStringShoveDup"),
-    (instructionVectorStringStackIsEmpty, "instructionVectorStringStackIsEmpty"),
+    (instructionVectorStringIsStackEmpty, "instructionVectorStringIsStackEmpty"),
     (instructionVectorStringSort, "instructionVectorStringSort"),
     (instructionVectorStringSortReverse, "instructionVectorStringSortReverse"),
     (instructionVectorStringDupItems, "instructionVectorStringDupItems")
@@ -518,7 +518,7 @@ allVectorBoolInstructions = map StateFunc [
     (instructionVectorBoolYankDup, "instructionVectorBoolYankDup"),
     (instructionVectorBoolShove, "instructionVectorBoolShove"),
     (instructionVectorBoolShoveDup, "instructionVectorBoolShoveDup"),
-    (instructionVectorBoolStackIsEmpty, "instructionVectorBoolStackIsEmpty"),
+    (instructionVectorBoolIsStackEmpty, "instructionVectorBoolIsStackEmpty"),
     (instructionVectorBoolSort, "instructionVectorBoolSort"),
     (instructionVectorBoolSortReverse, "instructionVectorBoolSortReverse"),
     (instructionVectorBoolDupItems, "instructionVectorBoolDupItems")

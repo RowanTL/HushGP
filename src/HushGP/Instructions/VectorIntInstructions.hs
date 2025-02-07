@@ -96,8 +96,8 @@ instructionVectorIntYank state = instructionYank state vectorChar
 instructionVectorIntYankDup :: State -> State
 instructionVectorIntYankDup state = instructionYankDup state vectorChar
 
-instructionVectorIntStackIsEmpty :: State -> State
-instructionVectorIntStackIsEmpty state = instructionIsEmpty state vectorChar
+instructionVectorIntIsStackEmpty :: State -> State
+instructionVectorIntIsStackEmpty state = instructionIsStackEmpty state vectorChar
 
 instructionVectorIntShove :: State -> State
 instructionVectorIntShove state = instructionShove state vectorChar

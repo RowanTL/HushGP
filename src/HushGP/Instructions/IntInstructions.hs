@@ -112,8 +112,8 @@ instructionIntShove state = instructionShove state int
 instructionIntShoveDup :: State -> State
 instructionIntShoveDup state = instructionShoveDup state int
 
-instructionIntIsEmpty :: State -> State
-instructionIntIsEmpty state = instructionIsEmpty state int
+instructionIntIsStackEmpty :: State -> State
+instructionIntIsStackEmpty state = instructionIsStackEmpty state int
 
 instructionIntDupItems :: State -> State
 instructionIntDupItems = instructionDupItems int

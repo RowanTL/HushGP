@@ -96,8 +96,8 @@ instructionDup state accessor =
 instructionPop :: State -> Lens' State [a] -> State
 instructionPop state accessor = state & accessor .~ drop 1 (view accessor state)
 
-instructionIsEmpty :: State -> Lens' State [a] -> State
-instructionIsEmpty state@(State {_bool = bs}) accessor = state{_bool = null (view accessor state) : bs}
+instructionIsStackEmpty :: State -> Lens' State [a] -> State
+instructionIsStackEmpty state@(State {_bool = bs}) accessor = state{_bool = null (view accessor state) : bs}
 
 -- instructionPop :: State -> Lens' State [a] -> State
 -- instructionPop state accessor = if notEmptyStack state accessor then instructionPop state accessor else state
