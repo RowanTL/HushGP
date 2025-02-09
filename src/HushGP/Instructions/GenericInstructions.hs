@@ -266,6 +266,8 @@ instructionTakeN accessor state@(State {_int = i1 : is}) =
     _ -> state
 instructionTakeN _ state = state
 
+-- |Takes the sublist of the top vector based on a passed lens. Check out the
+-- subList documentation for information on how this works.
 instructionSubVector :: Lens' State [[a]] -> State -> State
 instructionSubVector accessor state@(State {_int = i1 : i2 : is}) =
   case uncons (view accessor state) of
@@ -273,6 +275,8 @@ instructionSubVector accessor state@(State {_int = i1 : i2 : is}) =
     _ -> state
 instructionSubVector _ state = state
 
+-- |Based on two lenses, one of a primitive type and the next of a vector type, 
+-- Takes the first item from the top vector and places it onto the passed primitive stack.
 instructionVectorFirst :: Lens' State [a] -> Lens' State [[a]] -> State -> State
 instructionVectorFirst primAccessor vectorAccessor state =
   case uncons (view vectorAccessor state) of
@@ -282,6 +286,8 @@ instructionVectorFirst primAccessor vectorAccessor state =
         _ -> state
     _ -> state
 
+-- |Based on two lenses, one of a primitive type and the next of a vector type, 
+-- Takes the last item from the top vector and places it onto the passed primitive stack.
 instructionVectorLast :: Lens' State [a] -> Lens' State [[a]] -> State -> State
 instructionVectorLast primAccessor vectorAccessor state =
   case uncons (view vectorAccessor state) of
@@ -291,6 +297,9 @@ instructionVectorLast primAccessor vectorAccessor state =
         _ -> state
     _ -> state
 
+-- |Based on two lenses, one of a primitive type and the next of a vector type,
+-- Takes the Nth item from the top vector and places it onto the passed primitive stack
+-- based on an int from the int stack.
 instructionVectorNth :: Lens' State [a] -> Lens' State [[a]] -> State -> State
 instructionVectorNth primAccessor vectorAccessor state@(State {_int = i1 : is}) =
   case uncons (view vectorAccessor state) of
@@ -298,97 +307,133 @@ instructionVectorNth primAccessor vectorAccessor state@(State {_int = i1 : is}) 
     _ -> state
 instructionVectorNth _ _ state= state
 
+-- |Takes the top vector, removes the first item of said vector, and pushes the result back to top
+-- of the stack, based on a lens.
 instructionRest :: Lens' State [[a]] -> State -> State
 instructionRest accessor state =
   case uncons (view accessor state) of
     Just (v1, vs) -> state & accessor .~ (drop 1 v1 : vs)
     _ -> state
 
+-- |Takes the top vector, removes the last item of said vector, and pushes the result back to top
+-- of the stack, based on a lens.
 instructionButLast :: Lens' State [[a]] -> State -> State
 instructionButLast accessor state =
   case uncons (view accessor state) of
     Just (v1, vs) -> state & accessor .~ (safeInit v1 : vs)
     _ -> state
 
+-- |Takes the top vector, pushes the length of that vector to the int stack, based on a lens.
 instructionLength :: Lens' State [[a]] -> State -> State
 instructionLength accessor state@(State {_int = is}) =
   case uncons (view accessor state) of
     Just (v1, vs) -> state{_int = length v1 : is} & accessor .~ vs
     _ -> state
 
+-- |Takes the top vector, reverses it, based on a lens.
 instructionReverse :: Lens' State [[a]] -> State -> State
 instructionReverse accessor state =
   case uncons (view accessor state) of
     Just (v1, vs) -> state & accessor .~ (reverse v1 : vs)
     _ -> state
 
+-- |Based on two lenses, one of a primitive type and the next of a vector type,
+-- takes the vector and individually pushes its indicies to the passed primitive stack.
 instructionPushAll :: Lens' State [a] -> Lens' State [[a]] -> State -> State
 instructionPushAll primAccessor vectorAccessor state =
   case uncons (view vectorAccessor state) of
     Just (v1, vs) -> state & vectorAccessor .~ vs & primAccessor .~ (v1 <> view primAccessor state)
     _ -> state
 
+-- |Based on a vector lens, makes an empty vector and pushes it to the passed stack.
 instructionVectorMakeEmpty :: Lens' State [[a]] -> State -> State
 instructionVectorMakeEmpty accessor state = state & accessor .~ ([] : view accessor state)
 
+-- |Based on a vector lens, checks if the top vector is empty. If so, pushes True to the
+-- bool stack. If not, pushes False.
 instructionVectorIsEmpty :: Lens' State [[a]] -> State -> State
 instructionVectorIsEmpty accessor state@(State {_bool = bs}) =
   case uncons (view accessor state) of
     Just (v1, vs) -> state{_bool = null v1 : bs} & accessor .~ vs
     _ -> state
 
+-- |Based on two lenses, one of a primitive type and the next of a vector type,
+-- If the vector on the top of the vector stack contains the top item on the primitive stack,
+-- pushes True to the bool stack. Pushes False otherwise.
 instructionVectorContains :: Eq a => Lens' State [a] -> Lens' State [[a]] -> State -> State
 instructionVectorContains primAccessor vectorAccessor state@(State {_bool = bs}) =
   case (uncons (view vectorAccessor state), uncons (view primAccessor state)) of
     (Just (v1, vs), Just (p1, ps)) -> state{_bool = (findSubA v1 [p1] /= -1) : bs} & vectorAccessor .~ vs & primAccessor .~ ps
     _ -> state
 
--- I couldn't think of a better way of doing this
+-- |Based on two lenses, one of a primitive type and the next of a vector type,
+-- finds the first index of the top item in the primitive stack inside of the
+-- top vector from the vector stack and pushes the result to the int stack.
 instructionVectorIndexOf :: Eq a => Lens' State [a] -> Lens' State [[a]] -> State -> State
 instructionVectorIndexOf primAccessor vectorAccessor state =
   case (uncons (view vectorAccessor state), uncons (view primAccessor state)) of
     (Just (v1, vs), Just (p1, ps)) -> (state & vectorAccessor .~ vs & primAccessor .~ ps) & int .~ (findSubA v1 [p1] : view int (state & vectorAccessor .~ vs & primAccessor .~ ps))
     _ -> state
 
+-- |Based on two lenses, one of a primitive type and the next of a vector type,
+-- finds the amount of times the top item in the primitive stack occurs inside of the
+-- top vector from the vector stack and pushes the result to the int stack.
 instructionVectorOccurrencesOf :: Eq a => Lens' State [a] -> Lens' State [[a]] -> State -> State
 instructionVectorOccurrencesOf primAccessor vectorAccessor state = 
   case (uncons (view vectorAccessor state), uncons (view primAccessor state)) of
     (Just (v1, vs), Just (p1, ps)) -> (state & vectorAccessor .~ vs & primAccessor .~ ps) & int .~ (amtOccurences v1 [p1] : view int (state & vectorAccessor .~ vs & primAccessor .~ ps))
     _ -> state
 
--- | This function parses the primitives of a vector type and pushes that vector split into
--- lists of size one onto the respective vector stack.
+-- |This function parses the primitives inside a vector type and pushes that vector split into
+-- lists of size one onto the respective vector stack. Based on a vector lens.
 instructionVectorParseToPrim :: Lens' State [[a]] -> State -> State
 instructionVectorParseToPrim accessor state =
   case uncons (view accessor state) of
     Just (x1, xs) -> state & accessor .~ (chunksOf 1 x1 <> xs)
     _ -> state
 
+-- |Based on two lenses, one of a primitive type and the next of a vector type,
+-- Sets the Nth index inside of the top vector from the vector stack to the top value
+-- from the primitive stack. N is based on an int from the top of the int stack.
 instructionVectorSetNth :: Lens' State [a] -> Lens' State [[a]] -> State -> State
 instructionVectorSetNth primAccessor vectorAccessor state@(State {_int = i1 : is}) =
   case (uncons (view vectorAccessor state{_int = is}), uncons (view primAccessor state{_int = is})) of
     (Just (v1, vs), Just (p1, ps)) -> state{_int = is} & vectorAccessor .~ (replaceAt (absNum i1 v1) p1 v1 : vs) & primAccessor .~ ps
     _ -> state
 instructionVectorSetNth _ _ state = state
-    
+
+-- |Based on two lenses, one of a primitive type and the next of a vector type,
+-- replaces all occurrences inside of the top vector from the vector stack with two values from
+-- the primitive stack. The top of the primitive stack is the old value to be replaced. The second item
+-- in the primitive stack is the new value to replace the old one.
 instructionVectorReplace :: Eq a => Lens' State [a] -> Lens' State [[a]] -> State -> State
 instructionVectorReplace primAccessor vectorAccessor state =
   case (uncons (view vectorAccessor state), uncons (view primAccessor state)) of
     (Just (v1, vs), Just (p1, p2 : ps)) -> state & vectorAccessor .~ (replace v1 [p1] [p2] Nothing : vs) & primAccessor .~ ps
     _ -> state
 
+-- |Based on two lenses, one of a primitive type and the next of a vector type,
+-- replaces the first occurrence inside of the top vector from the vector stack with two values from
+-- the primitive stack. The top of the primitive stack is the old value to be replaced. The second item
+-- in the primitive stack is the new value to replace the old one.
 instructionVectorReplaceFirst :: Eq a => Lens' State [a] -> Lens' State [[a]] -> State -> State
 instructionVectorReplaceFirst primAccessor vectorAccessor state =
   case (uncons (view vectorAccessor state), uncons (view primAccessor state)) of
     (Just (v1, vs), Just (p1, p2 : ps)) -> state & vectorAccessor .~ (replace v1 [p1] [p2] (Just 1) : vs) & primAccessor .~ ps
     _ -> state
 
+-- |Based on two lenses, one of a primitive type and the next of a vector type,
+-- removes all occurrences inside of the top vector from the vector stack where the top
+-- item from the primitive stack equals a primitive inside of the vector stack.
 instructionVectorRemove :: Eq a => Lens' State [a] -> Lens' State [[a]] -> State -> State
 instructionVectorRemove primAccessor vectorAccessor state =
   case (uncons (view vectorAccessor state), uncons (view primAccessor state)) of
     (Just (v1, vs), Just (p1, ps)) -> state & vectorAccessor .~ (replace v1 [p1] [] Nothing : vs) & primAccessor .~ ps
     _ -> state
   
+-- |Based on two lenses, one of a primitive type and the next of a vector type,
+-- removes the first occurrence inside of the top vector from the vector stack where the top
+-- item from the primitive stack equals a primitive inside of the vector stack.
 instructionVectorIterate :: Lens' State [a] -> Lens' State [[a]] -> ([a] -> Gene) -> (State -> State) -> String -> State -> State
 instructionVectorIterate primAccessor vectorAccessor vectorType typeIterateFunction typeIterateFunctionName state@(State {_exec = e1 : es}) =
   case uncons (view vectorAccessor state) of
@@ -401,21 +446,22 @@ instructionVectorIterate primAccessor vectorAccessor vectorType typeIterateFunct
     _ -> state
 instructionVectorIterate _ _ _ _ _ state = state
 
--- |Moves a type from a stack and places it onto the code stack.
+-- |Moves a type from a stack and places it onto the code stack. Based on a primitive stack.
+-- The (a -> Gene) is something like GeneBool or GeneInt for example.
 instructionCodeFrom :: Lens' State [a] -> (a -> Gene) -> State -> State
 instructionCodeFrom accessor geneType state@(State {_code = cs}) =
   case uncons (view accessor state) of
     Just (x, xs) -> state{_code = geneType x : cs} & accessor .~ xs
     _ -> state
 
--- |Sorts the first vector for a vectorType
+-- |Sorts the top vector in a vector stack, based on a vector lens.
 instructionVectorSort :: Ord a => Lens' State [[a]] -> State -> State
 instructionVectorSort accessor state =
   case uncons (view accessor state) of
     Just (x, xs) -> state & accessor .~ (sort x : xs)
     _ -> state
 
--- |Sorts the first vector in reverse order for a vectorType
+-- |Sorts the top vector in a vector stack in reverse order for a vectorType, based on a vector lens.
 instructionVectorSortReverse :: Ord a => Lens' State [[a]] -> State -> State
 instructionVectorSortReverse accessor state =
   case uncons (view accessor state) of
