@@ -45,82 +45,104 @@ countDiscrepancy :: Gene -> Gene -> Int
 countDiscrepancy (Block xs) (Block ys) = sum [if uncurry (==) tup then 0 else 1 | tup <- zip xs ys] + abs (length xs - length ys)
 countDiscrepancy xgene ygene = if xgene == ygene then 1 else 0
 
+-- |Utility Function: Extracts the first gene from a block. Returns itself if not a block
 extractFirstFromBlock :: Gene -> Gene
 extractFirstFromBlock (Block (bx1 : _)) = bx1
 extractFirstFromBlock gene = gene
 
+-- |Utility Function: Returns the last gene from a block, [] if the block is empty, and itself if not a block
 extractLastFromBlock :: Gene -> Gene
 extractLastFromBlock (Block []) = Block []
 extractLastFromBlock (Block bxs) = last bxs
 extractLastFromBlock gene = gene
 
+-- |Utility Function: Calls init on a block. If the block is empty, returns []. If gene isn't a block, returns itself
 extractInitFromBlock :: Gene -> Gene
-extractInitFromBlock (Block []) = Block []
-extractInitFromBlock (Block bxs) = Block (init bxs)
+extractInitFromBlock (Block bxs) = Block (safeInit bxs)
 extractInitFromBlock gene = gene
 
+-- |Utility Function: Calls `drop 1` on a block. If gene isn't a block, returns itself
 extractTailFromBlock :: Gene -> Gene
 extractTailFromBlock (Block bxs) = Block (drop 1 bxs)
 extractTailFromBlock _ = Block []
 
+-- |Utility Function: Extracts the code at a point in the genome. Recurses into a nested Block if found. The
+-- point is based on an int.
 codeAtPoint :: [Gene] -> Int -> Gene
 codeAtPoint (gene : _) 0 = gene
 codeAtPoint [] _ = Block [] -- Should only happen if an empty block is last Gene in the list of Genes
 codeAtPoint ((Block nestedGenes) : genes) index = codeAtPoint (nestedGenes <> genes) (index - 1)
 codeAtPoint (_ : genes) index = codeAtPoint genes (index - 1)
 
+-- |Utility Function: Inserts code at a point in the genome. Recurses into a block if found. The point is based
+-- on an integer
 codeInsertAtPoint :: [Gene] -> Gene -> Int -> [Gene]
 codeInsertAtPoint oldGenes gene 0 = gene : oldGenes
 codeInsertAtPoint [] gene _ = [gene] -- This shouldn't happen (lol)
 codeInsertAtPoint ((Block genes) : oldGenes) gene index = Block (codeInsertAtPoint genes gene (index - 1)) : oldGenes
 codeInsertAtPoint (oldGene : oldGenes) gene index = oldGene : codeInsertAtPoint oldGenes gene (index - 1) 
 
+-- |Utility Function: Combines two genes together into a block.
 codeCombine :: Gene -> Gene -> Gene
 codeCombine (Block bxs) (Block bys) = Block (bxs <> bys)
 codeCombine (Block bxs) ygene = Block (ygene : bxs)
 codeCombine xgene (Block bys) = Block (xgene : bys)
 codeCombine xgene ygene = Block [xgene, ygene]
 
+-- |Utility Function: Determines if the second gene is a member of the first gene.
+-- If the first gene is a Block and the second gene is also a Block, does a sublist search for the second block in the first block.
+-- if the first gene is a Block and the second gene is not, the block is searched for the second gene.
+-- If neither of the genes are blocks, returns False.
 codeMember :: Gene -> Gene -> Bool
 codeMember (Block bxs) (Block bys) = findSubA bxs bys /= (-1)
 codeMember (Block bxs) ygene = ygene `elem` bxs
 codeMember _ _ = False
 
+-- |Utility Function: Calculates the size of a Block including counting the nested Blocks recursively
 codeRecursiveSize :: Gene -> Int
 codeRecursiveSize (Block bxs) = sum [codeRecursiveSize x + if isBlock x then 1 else 0 | x <- bxs]
 codeRecursiveSize _ = 1
 
+-- |Pops the top of the code stack
 instructionCodePop :: State -> State
 instructionCodePop = instructionPop code
 
+-- |Checks if the top code item is a Block
 instructionCodeIsCodeBlock :: State -> State
 instructionCodeIsCodeBlock state@(State {_code = c1 : cs, _bool = bs}) = state {_code = cs, _bool = isBlock c1 : bs}
 instructionCodeIsCodeBlock state = state
 
+-- |Checks if the top code item is not a Block
 instructionCodeIsSingular :: State -> State
 instructionCodeIsSingular state@(State {_code = c1 : cs, _bool = bs}) = state {_code = cs, _bool = not (isBlock c1) : bs}
 instructionCodeIsSingular state = state
 
+-- |Checks the length of the top code item. If item is a block, counts the size, if not, returns 1
 instructionCodeLength :: State -> State
 instructionCodeLength state@(State {_code = c1 : cs, _int = is}) = state {_code = cs, _int = blockLength c1 : is}
 instructionCodeLength state = state
 
 -- CODE.CAR
+-- |If the top item on the code stack is a Block, extracts the first item and places it onto the code stack. Acts as a NoOp otherwise.
 instructionCodeFirst :: State -> State
 instructionCodeFirst state@(State {_code = c1 : cs}) = state {_code = extractFirstFromBlock c1 : cs}
 instructionCodeFirst state = state
 
+-- |If the top item on the code stack is a Block, extracts the last item and places it onto the code stack. Acts as a NoOp otherwise.
 instructionCodeLast :: State -> State
 instructionCodeLast state@(State {_code = c1 : cs}) = state {_code = extractLastFromBlock c1 : cs}
 instructionCodeLast state = state
 
+-- |If the top item on the code stack is a Block, extracts the tail of said Block and places it onto the code stace. Acts as a NoOp otherwise.
 -- CODE.CDR
 -- https://erp12.github.io/pyshgp/html/core_instructions.html#code-rest
 instructionCodeTail :: State -> State
 instructionCodeTail state@(State {_code = c1 : cs}) = state {_code = extractTailFromBlock c1 : cs}
 instructionCodeTail state = state
 
--- |Takes the tail of a block starting at an index determined by the int stack
+-- |If the top item on the code stack is a Block, takes the tail of said block starting at an index determined by the int stack
+-- and pushes the result to the code stack.
+-- Acts as a NoOp if not a Block.
 -- https://faculty.hampshire.edu/lspector/push3-description.html#Type
 -- This is the CODE.NTHCDR command
 instructionCodeTailN :: State -> State
@@ -130,42 +152,55 @@ instructionCodeTailN state@(State {_code = Block bc : cs, _int = i : is}) = stat
     index = abs i `mod` length bc
 instructionCodeTailN state = state
 
+-- |If the top item on the code stack is a Block, takes the init of said Block and places the result on top of the code stack.
+-- Acts as a NoOp otherwise
 -- https://erp12.github.io/pyshgp/html/core_instructions.html#code-but-last
 instructionCodeInit :: State -> State
 instructionCodeInit state@(State {_code = c1 : cs}) = state {_code = extractInitFromBlock c1 : cs}
 instructionCodeInit state = state
 
+-- |Wraps the top item in the code stack in a Block no matter the type.
 instructionCodeWrap :: State -> State
 instructionCodeWrap state@(State {_code = c1 : cs}) = state {_code = Block [c1] : cs}
 instructionCodeWrap state = state
 
+-- |Wraps the top two items in the code stack in a Block no matter the type.
 instructionCodeList :: State -> State
 instructionCodeList state@(State {_code = c1 : c2 : cs}) = state {_code = Block [c1, c2] : cs}
 instructionCodeList state = state
 
+-- |Combines the top two items on the code stack based on whether they are a block or not.
+-- Check out the codeCombine utility function for how this works.
 instructionCodeCombine :: State -> State
 instructionCodeCombine state@(State {_code = c1 : c2 : cs}) = state {_code = codeCombine c1 c2 : cs}
 instructionCodeCombine state = state
 
+-- |Moves the top item from the code stack to the exec stack
 instructionCodeDo :: State -> State
 instructionCodeDo state@(State {_code = c1 : cs, _exec = es}) = state {_code = cs, _exec = c1 : es}
 instructionCodeDo state = state
 
+-- |Moves the top item from the code stack to the exec stack, doesn't delete the original item from the code stack.
 instructionCodeDoDup :: State -> State
 instructionCodeDoDup state@(State {_code = c1 : cs, _exec = es}) = state {_code = c1 : cs, _exec = c1 : es}
 instructionCodeDoDup state = state
 
+-- |Places the top code item onto the exec stack (doesn't delete it from the code stack), then places an instructionCodePop onto
+-- the exec stack.
 -- https://erp12.github.io/pyshgp/html/core_instructions.html#code-do-then-pop
 instructionCodeDoThenPop :: State -> State
 instructionCodeDoThenPop state@(State {_code = c1 : _, _exec = es}) = state {_exec = c1 : StateFunc (instructionCodePop, "instructionCodePop") : es}
 instructionCodeDoThenPop state = state
 
+-- |Utility: A shorthand for instrucitonCodeFromExec to make code instructions less bloated
 codeFromExec :: Gene
 codeFromExec = StateFunc (instructionCodeFromExec, "instructionCodeFromExec")
 
+-- |Utility: A shorthand for instructionCodoDoRange to make code instructions less bloated
 codeDoRange :: Gene
 codeDoRange = StateFunc (instructionCodeDoRange, "instructionCodeDoRange")
 
+-- |Evaluates the top item on the code stack for each step along the range i to j. Both i and j are taken from the int stack.
 instructionCodeDoRange :: State -> State
 instructionCodeDoRange state@(State {_code = c1 : cs, _int = i0 : i1 : is, _exec = es}) =
   if increment i0 i1 /= 0
@@ -179,6 +214,7 @@ instructionCodeDoRange state@(State {_code = c1 : cs, _int = i0 : i1 : is, _exec
       | otherwise = 0
 instructionCodeDoRange state = state
 
+-- |Evaluates the top item on the code stack for each step along the range i to j. Both i and j are taken from the int stack.
 instructionCodeDoCount :: State -> State
 instructionCodeDoCount state@(State {_code = c : cs, _int = i1 : is, _exec = es}) =
   if i1 < 1
@@ -186,6 +222,7 @@ instructionCodeDoCount state@(State {_code = c : cs, _int = i1 : is, _exec = es}
     else state {_code = cs, _int = is, _exec = Block [GeneInt 0, GeneInt $ i1 - 1, codeFromExec, c, codeDoRange] : es}
 instructionCodeDoCount state = state
 
+-- |Evaluates the top item on the code stack n times, where n comes from the n comes from the top of the int stack.
 instructionCodeDoTimes :: State -> State
 instructionCodeDoTimes state@(State {_code = c : cs, _int = i1 : is, _exec = es}) =
   if i1 < 1
@@ -193,18 +230,23 @@ instructionCodeDoTimes state@(State {_code = c : cs, _int = i1 : is, _exec = es}
     else state {_code = cs, _int = is, _exec = Block [GeneInt 0, GeneInt $ i1 - 1, codeFromExec, Block [StateFunc (instructionIntPop, "instructionIntPop"), c], codeDoRange] : es}
 instructionCodeDoTimes state = state
 
+-- |If the top boolean is true, execute the top element of the code stack and skip the second. Otherwise, skip the top element of the code stack and execute the second.
 instructionCodeIf :: State -> State
 instructionCodeIf state@(State {_code = c1 : c2 : cs, _bool = b1 : bs, _exec = es}) = state{_code = cs, _bool = bs, _exec = (if b1 then c1 else c2) : es}
 instructionCodeIf state = state
 
+-- |Evalutates the top code item if the top bool is true. Otherwise the top code is popped.
 instructionCodeWhen :: State -> State
 instructionCodeWhen state@(State {_code = c1 : cs, _bool = b1 : bs, _exec = es}) = state{_code = cs, _bool = bs, _exec = if b1 then c1 : es else es}
 instructionCodeWhen state = state
 
+-- |Pushes true to the bool stack if the second to top code item is found within the first code item. Pushes False if not.
 instructionCodeMember :: State -> State
 instructionCodeMember state@(State {_code = c1 : c2 : cs, _bool = bs}) = state{_code = cs, _bool = codeMember c1 c2 : bs}
 instructionCodeMember state = state
 
+-- |Pushes the nth element from a Block onto the code stack based on an index from the int stack.
+-- If the top of the code stack is not a block, the int is still eaten.
 -- This one doesn't count the recursive Blocks while instructionCodeExtract does
 -- https://erp12.github.io/pyshgp/html/core_instructions.html#code-nth
 instructionCodeN :: State -> State
@@ -218,17 +260,24 @@ instructionCodeN state@(State {_code = (Block c1) : cs, _int = i1 : is}) =
 instructionCodeN state@(State {_code = c1 : cs, _int = _ : is}) = state {_code = c1 : cs, _int = is}
 instructionCodeN state = state
 
+-- |Makes an empty Block and pushes it to the top of the code stack.
 instructionMakeEmptyCodeBlock :: State -> State
 instructionMakeEmptyCodeBlock state@(State {_code = cs}) = state {_code = Block [] : cs}
 
+-- |If the top of the code stack is a Block, pushes True to the bool stack if it is and False if it's not.
+-- If the top item of the code stack is not a Block, False gets pushed to the bool stack
 instructionIsEmptyCodeBlock :: State -> State
 instructionIsEmptyCodeBlock state@(State {_code = Block c1 : cs, _bool = bs}) = state{_code = cs, _bool = null c1 : bs}
-instructionIsEmptyCodeBlock state@(State {_bool = bs}) = state{_bool = False : bs}
+instructionIsEmptyCodeBlock state@(State {_code = _ : cs, _bool = bs}) = state{_code = cs, _bool = False : bs}
+instructionIsEmptyCodeBlock state = state
 
+-- |Pushes the size of the top code item to the int stack. If it's a Block, the size is counted recursively. If
+-- it's not a Block, 1 gets pushed to the int stack.
 instructionCodeSize :: State -> State
 instructionCodeSize state@(State {_code = c1 : cs, _int = is}) = state{_code = cs, _int = codeRecursiveSize c1 : is}
 instructionCodeSize state = state
 
+-- |Pushes the size of the top code item recursively counting the nested Blocks.
 -- There's a bug for this instruction in pysh where the last item in the
 -- top level Block isn't counted, and if passed 0, then the entire codeblock is returned.
 -- I designed this function differently so 0 returns the 0th element, and the last item
@@ -242,6 +291,8 @@ instructionCodeExtract state@(State {_code = block@(Block c1) : cs, _int = i1 : 
 instructionCodeExtract state@(State {_code = cs, _int = _ : is}) = state{_code = cs, _int = is}
 instructionCodeExtract state = state
 
+-- |Inserts a code item into a block recursively entering the nested Blocks if needed based on the top
+-- int from the int stack. If the top code item isn't a Block, coerces the top item into a Block.
 instructionCodeInsert :: State -> State
 instructionCodeInsert state@(State {_code = block@(Block c1) : c2 : cs, _int = i1 : is}) =
   let
@@ -255,11 +306,13 @@ instructionCodeInsert state@(State {_code = c1 : c2 : cs, _int = i1 : is}) =
     state{_code = Block (codeInsertAtPoint [c1] c2 index) : cs, _int = is}
 instructionCodeInsert state = state
 
+-- |If the top code item is a Block that is empty, pushes 0 to the int stack if c2 is also an empty Block and -1 if not.
+-- If the top code item is a Block that is not empty, pushes the index found of the second code item if found, -1 if not.
+-- If neither the top code item or second code item are Blocks, checks equality. If equal, pushes 1 to int stack, pushes 0 if not.
 instructionCodeFirstPosition :: State -> State
 instructionCodeFirstPosition state@(State {_code = (Block []) : c2 : cs, _int = is}) = state {_code = cs, _int = (if c2 == Block [] then 0 else -1) : is}
 instructionCodeFirstPosition state@(State {_code = (Block c1) : c2 : cs, _int = is}) = state {_code = cs, _int = positionElem c1 c2 : is}
   where
-    -- This is really not gonna be good for StateFunc
     positionElem :: [Gene] -> Gene -> Int
     positionElem genes gene =
       case elemIndex gene genes of
@@ -268,76 +321,104 @@ instructionCodeFirstPosition state@(State {_code = (Block c1) : c2 : cs, _int = 
 instructionCodeFirstPosition state@(State {_code = c1 : c2 : cs, _int = is}) = state {_code = cs, _int = (if c1 == c2 then 0 else -1) : is}
 instructionCodeFirstPosition state = state
 
+-- |If the top of the code stack is a Block, reverses the elements of the Block. Acts as a NoOp otherwise.
 instructionCodeReverse :: State -> State
 instructionCodeReverse state@(State {_code = (Block c1) : cs}) = state {_code = Block (reverse c1) : cs}
 instructionCodeReverse state = state
 
+-- |Duplicates the top of the code stack.
 instructionCodeDup :: State -> State
 instructionCodeDup = instructionDup code
 
+-- |Duplicates the top of the code stack N times based on the top int.
 instructionCodeDupN :: State -> State
 instructionCodeDupN = instructionDupN code
 
+-- |Swaps the top two code items.
 instructionCodeSwap :: State -> State
 instructionCodeSwap = instructionSwap code
 
+-- |Rotates the top three code items.
 instructionCodeRot :: State -> State
 instructionCodeRot = instructionRot code
 
+-- |Sets the code stack to []
 instructionCodeFlush :: State -> State
 instructionCodeFlush = instructionFlush code
 
+-- |Checks if the top code items are equal. Pushes true to the bool stack if so, False if not.
 instructionCodeEq :: State -> State
 instructionCodeEq = instructionEq code
 
+-- |Pushes the size of the code stack to the int stack.
 instructionCodeStackDepth :: State -> State
 instructionCodeStackDepth = instructionStackDepth code
 
+-- |Moves an item from deep within the code stack to the top of the code stack based on
+-- the top int from the int stack.
 instructionCodeYank :: State -> State
 instructionCodeYank = instructionYank code
 
+-- |Copies an item from deep within the code stack to the top of the code stack based on
+-- the top int from the int stack.
 instructionCodeYankDup :: State -> State
 instructionCodeYankDup = instructionYankDup code
 
+-- |If the code stack is empty, pushes True to bool stack, else False.
 instructionCodeIsStackEmpty :: State -> State
 instructionCodeIsStackEmpty = instructionIsStackEmpty code
 
+-- |Moves an item from the top of the code stack to deep within the code stack based on
+-- the top int from the int stack.
 instructionCodeShove :: State -> State
 instructionCodeShove = instructionShove code
 
+-- |Copies an item from the top of the code stack to deep within the code stack based on
+-- the top int from the int stack.
 instructionCodeShoveDup :: State -> State
 instructionCodeShoveDup = instructionShoveDup code
 
+-- |Takes the top bool from the bool stack and places said GeneBool on the code stack.
 instructionCodeFromBool :: State -> State
 instructionCodeFromBool = instructionCodeFrom bool GeneBool 
 
+-- |Takes the top int from the int stack and places said GeneInt on the code stack.
 instructionCodeFromInt :: State -> State
 instructionCodeFromInt = instructionCodeFrom int GeneInt
 
+-- |Takes the top char from the char stack and places said GeneChar on the code stack.
 instructionCodeFromChar :: State -> State
 instructionCodeFromChar = instructionCodeFrom char GeneChar
 
+-- |Takes the top float from the float stack and places said GeneFloat on the code stack.
 instructionCodeFromFloat :: State -> State
 instructionCodeFromFloat = instructionCodeFrom float GeneFloat
 
+-- |Takes the top string from the string stack and places said GeneString on the code stack.
 instructionCodeFromString :: State -> State
 instructionCodeFromString = instructionCodeFrom string GeneString
 
+-- |Takes the top vectorInt from the vectorInt stack and places said GeneVectorInt on the code stack.
 instructionCodeFromVectorInt :: State -> State
 instructionCodeFromVectorInt = instructionCodeFrom vectorInt GeneVectorInt
 
+-- |Takes the top vectorFloat from the vectorFloat stack and places said GeneVectorFloat on the code stack.
 instructionCodeFromVectorFloat :: State -> State
 instructionCodeFromVectorFloat = instructionCodeFrom vectorFloat GeneVectorFloat
 
+-- |Takes the top vectorString from the vectorString stack and places said GeneVectorString on the code stack.
 instructionCodeFromVectorString :: State -> State
 instructionCodeFromVectorString = instructionCodeFrom vectorString GeneVectorString
 
+-- |Takes the top vectorBool from the vectorBool stack and places said GeneVectorBool on the code stack.
 instructionCodeFromVectorBool :: State -> State
 instructionCodeFromVectorBool = instructionCodeFrom vectorBool GeneVectorBool
 
+-- |Takes the top vectorChar from the vectorChar stack and places said GeneVectorChar on the code stack.
 instructionCodeFromVectorChar :: State -> State
 instructionCodeFromVectorChar = instructionCodeFrom vectorChar GeneVectorChar
 
+-- |Takes the top gene from the exec stack and places a gene on the code stack.
 instructionCodeFromExec :: State -> State
 instructionCodeFromExec = instructionCodeFrom exec id
 
@@ -361,8 +442,10 @@ instructionCodeDiscrepancy :: State -> State
 instructionCodeDiscrepancy state@(State {_code = c1 : c2 : cs, _int = is}) = state {_code = cs, _int = countDiscrepancy c1 c2 : is}
 instructionCodeDiscrepancy state = state
 
+-- |Just a NoOp
 instructionCodeNoOp :: State -> State
 instructionCodeNoOp state = state
 
+-- |Duplicates the top N items of the code stack based on the top of the int stack.
 instructionCodeDupItems :: State -> State
 instructionCodeDupItems = instructionDupItems code

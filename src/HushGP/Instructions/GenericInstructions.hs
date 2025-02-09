@@ -8,22 +8,29 @@ import Data.List.Split
 
 -- import Debug.Trace 
 
+-- |Utility Function: Deletes an item from a list at a specified index.
 deleteAt :: Int -> [a] -> [a]
 deleteAt idx xs = take idx xs <> drop 1 (drop idx xs)
 
--- I could probably just combine these functions
+-- |Utility Function: Combines two tuples containing lists with a value placed between them.
 combineTuple :: a -> ([a], [a]) -> [a]
-combineTuple val tup = fst tup <> [val] <> snd tup
+combineTuple val = combineTupleList [val]
 
+-- |Utility Function: Combines two tuples containing lists with a list placed between them.
 combineTupleList :: [a] -> ([a], [a]) -> [a]
 combineTupleList val tup = fst tup <> val <> snd tup
 
+-- |Utility Function: Inserts a value based on an int at a specified index.
 insertAt :: Int -> a -> [a] -> [a]
 insertAt idx val xs = combineTuple val (splitAt idx xs)
 
+-- |Utility Function: Replaces a value based on an int at a specified index.
 replaceAt :: Int -> a -> [a] -> [a]
 replaceAt idx val xs = deleteAt (idx + 1) (insertAt idx val xs)
 
+-- |Utility Function: Takes two ints as indicies. Sorts them low to high, sets the start to
+-- 0 if the lowest start is less than 0 and the end to the length of the list - 1 if the end
+-- if larger than the list. Grabs the sub list of adjusted indicies.
 subList :: Int -> Int -> [a] -> [a]
 subList idx0 idx1 xs =
   let
@@ -33,7 +40,10 @@ subList idx0 idx1 xs =
   in
     take adjEnd (drop adjStart xs)
 
--- Maybe could've used Data.List.isSubsequenceOf :shrug:
+-- |Utility Function: Finds the index of the second list inside of the first index.
+-- If the sublist passed is larger than the full list, returns -1
+-- If the lists are of equal length, and then contents are equal, returns 0. If not equal, returns -1
+-- Recursively shortens the full list until the sub list is found.
 findSubA :: forall a. Eq a => [a] -> [a] -> Int
 findSubA fullA subA 
   | length fullA < length subA = -1
@@ -47,10 +57,10 @@ findSubA fullA subA
       | sA == take (length sA) fA = subIndex
       | otherwise = findSubA' (drop 1 fA) sA (subIndex + 1)
 
--- The int is the amount of olds to replace with new
--- Just chain findSubA calls lol
--- Nothing means replace all
--- May not be the most efficient method with the findSubA calls
+-- |Utility Function: Replaces a number of instances of old with new in a list.
+-- The Maybe Int is the amount of olds to replace with new. Nothing means replace all.
+-- Just chain findSubA calls.
+-- May not be the most efficient method with the findSubA calls.
 replace :: Eq a => [a] -> [a] -> [a] -> Maybe Int -> [a]
 replace fullA old new (Just amt) =
   if findSubA fullA old /= -1 && amt > 0
@@ -61,7 +71,8 @@ replace fullA old new Nothing =
     then replace (take (findSubA fullA old) fullA <> new <> drop (findSubA fullA old + length old) fullA) old new Nothing
     else fullA
 
--- a rather inefficient search
+-- |Utility Function: Counts the amount of occurrences of a sub list inside
+-- of a larger list.
 amtOccurences :: forall a. Eq a => [a] -> [a] -> Int
 amtOccurences fullA subA = amtOccurences' fullA subA 0
   where
@@ -71,36 +82,47 @@ amtOccurences fullA subA = amtOccurences' fullA subA 0
         then amtOccurences' (replace fA sA mempty (Just 1)) sA (count + 1)
         else count
 
+-- |Utility Function: Takes the last N elements of a list.
 takeR :: Int -> [a] -> [a]
 takeR amt fullA = drop (length fullA - amt) fullA
 
+-- |Utility Function: Drops the last N elements of a list.
 dropR :: Int -> [a] -> [a]
 dropR amt fullA = take (length fullA - amt) fullA
 
+-- |Utility Function: A safe version of init. If the list is empty, returns the empty list.
+-- If the list has items, takes the init of the list.
 safeInit :: [a] -> [a]
 safeInit [] = []
 safeInit xs = init xs
 
+-- |Utility Function: An indexing strategy used in parts of Hush. Takes the absolute value
+-- of the passed number `mod` the length of the passed list.
 absNum :: Integral a => a -> [b] -> Int
 absNum rawNum lst = abs (fromIntegral rawNum) `mod` length lst
 
+-- |Utility Function: Checks to see if a list is empty.
+-- If the list is empty, returns False.
+-- If the list is not empty, returns True.
 notEmptyStack :: Lens' State [a] -> State -> Bool
 notEmptyStack accessor state = not . null $ view accessor state
 
+-- |Duplicates the top of a stack based on a lens.
 instructionDup :: Lens' State [a] -> State  -> State
 instructionDup accessor state =
   case uncons (view accessor state) of
     Nothing -> state
     Just (x1,_) -> state & accessor .~ x1 : view accessor state
 
+-- |Pops the top of the stack based on a lens.
 instructionPop :: Lens' State [a] -> State -> State
 instructionPop accessor state = state & accessor .~ drop 1 (view accessor state)
 
+-- |Pushes True if the lens' stack is empty, False if not.
 instructionIsStackEmpty :: Lens' State [a] -> State -> State
 instructionIsStackEmpty accessor state@(State {_bool = bs}) = state{_bool = null (view accessor state) : bs}
 
--- I might be able to move some of the int stack error checking
--- to the integer call. For now this may be a tad inefficient.
+-- |Duplicates the top of a stack based on a lens and the top of the int stack.
 instructionDupN :: forall a. Lens' State [a] -> State -> State
 instructionDupN accessor state = 
   case uncons (view int state) of
@@ -126,6 +148,7 @@ instructionDupItems accessor state@(State {_int = i1 : is}) =
   else state{_int = is} & accessor .~ (take i1 (view accessor state{_int = is}) <> view accessor state{_int = is})
 instructionDupItems _ state = state
 
+-- |Swaps the top two instructions based on a lens
 instructionSwap :: Lens' State [a] -> State -> State
 instructionSwap accessor state =
   state & accessor .~ swapper (view accessor state)
@@ -134,9 +157,9 @@ instructionSwap accessor state =
     swapper (x1 : x2 : xs) = x2 : x1 : xs
     swapper xs = xs
 
--- Rotates top 3 integers
+-- |Rotates top 3 integers based on a lens.
 -- We could use template haskell to rotate any number of these as
--- an instruction later. Template haskell seems very complicated tho.
+-- an instruction later.
 instructionRot :: Lens' State [a] -> State -> State
 instructionRot accessor state =
   state & accessor .~ rotator (view accessor state)
@@ -145,9 +168,12 @@ instructionRot accessor state =
     rotator (x1 : x2 : x3 : xs) = x3 : x1 : x2 : xs
     rotator xs = xs
 
+-- |Deletes all instructions in a stack based on a lens.
 instructionFlush :: Lens' State [a] -> State -> State
 instructionFlush accessor state = state & accessor .~ []
 
+-- |Checks if the two top instructions are equal based on a lens.
+-- Pushes the result to the bool stack.
 instructionEq :: forall a. Eq a => Lens' State [a] -> State -> State
 instructionEq accessor state =
   case uncons $ view accessor state of
@@ -158,9 +184,12 @@ instructionEq accessor state =
     droppedState :: State
     droppedState = state & accessor .~ drop 2 (view accessor state)
 
+-- |Calculates the stack depth based on a lens and pushes the result to the int stackk.
 instructionStackDepth :: Lens' State [a] -> State -> State
 instructionStackDepth accessor state@(State {_int = is}) = state{_int = length (view accessor state) : is}
 
+-- |Copies an item from deep within a lens' stack to the top of the lens' stack based on
+-- the top int from the int stack.
 instructionYankDup :: Lens' State [a] -> State -> State
 instructionYankDup accessor state@(State {_int = i1 : is}) = 
   if notEmptyStack accessor state
@@ -168,6 +197,8 @@ instructionYankDup accessor state@(State {_int = i1 : is}) =
   else state
 instructionYankDup  _ state = state
 
+-- |Moves an item from deep within a lens' stack to the top of the lens' stack based on
+-- the top int from the int stack.
 instructionYank :: forall a. Lens' State [a] -> State -> State
 instructionYank accessor state@(State {_int = i1 : is}) =
   let
@@ -181,6 +212,8 @@ instructionYank accessor state@(State {_int = i1 : is}) =
   if notEmptyStack accessor state{_int = is} then deletedState & accessor .~ item : view accessor deletedState else state
 instructionYank _ state = state
 
+-- |Copies an item from the top of a lens' stack to deep within the lens' stack based on
+-- the top int from the int stack.
 -- In pysh, instructionShoveDup and instructionShove behave differently when indexing in such a way that
 -- the duplicated index matters whether or not it's present in the stack at the moment of calculation.
 -- I'm not going to keep this behavior. Check out interpysh examples for how pysh handles it.
@@ -191,10 +224,12 @@ instructionShoveDup accessor state@(State {_int = i1 : is}) =
     _ -> state
 instructionShoveDup _ state = state
 
+-- |Moves an item from the top of a lens' stack to deep within the lens' stack based on
+-- the top int from the int stack.
 instructionShove :: Lens' State [a] -> State -> State
 instructionShove accessor state = instructionShoveDup accessor state & accessor .~ drop 1 (view accessor (instructionShoveDup accessor state ))
 
--- not char generic
+-- |Concats two semigroupable items together based on a lens. Not char generic.
 instructionConcat :: Semigroup a => Lens' State [a] -> State -> State
 instructionConcat accessor state =
   case uncons (view accessor state) of
@@ -204,20 +239,26 @@ instructionConcat accessor state =
     droppedState :: State
     droppedState = state & accessor .~ drop 2 (view accessor state)
 
+-- |Based on two lenses, one of a primitive type and the next of a vector type, 
+-- takes the top item of the primitive stack and prepends it to the first vector in
+-- the vector stack if there is one.
 instructionConj :: Lens' State [a] -> Lens' State [[a]] -> State -> State
 instructionConj primAccessor vectorAccessor state =
   case (uncons (view primAccessor state), uncons (view vectorAccessor state)) of
     (Just (p1,ps), Just (v1,vs)) -> state & primAccessor .~ ps & vectorAccessor .~ ((p1 : v1) : vs)
     _ -> state
 
+-- |Based on two lenses, one of a primitive type and the next of a vector type, 
+-- takes the top item of the primitive stack and appends it to the first vector in
+-- the vector stack if there is one.
 instructionConjEnd :: Lens' State [a] -> Lens' State [[a]] -> State -> State
 instructionConjEnd primAccessor vectorAccessor state = 
   case (uncons (view primAccessor state), uncons (view vectorAccessor state)) of
     (Just (p1,ps), Just (v1,vs)) -> state & primAccessor .~ ps & vectorAccessor .~ ((v1 <> [p1]) : vs)
     _ -> state
 
--- v for vector, vs for vectorstack (also applicable to strings)
--- Could abstract this unconsing even further in all functions below
+-- |Takes the first N items from the first vector on the top of a vector stack and
+-- pushes the result to said vector stack.
 instructionTakeN :: Lens' State [[a]] -> State -> State
 instructionTakeN accessor state@(State {_int = i1 : is}) = 
   case uncons (view accessor state) of
@@ -360,20 +401,21 @@ instructionVectorIterate primAccessor vectorAccessor vectorType typeIterateFunct
     _ -> state
 instructionVectorIterate _ _ _ _ _ state = state
 
+-- |Moves a type from a stack and places it onto the code stack.
 instructionCodeFrom :: Lens' State [a] -> (a -> Gene) -> State -> State
 instructionCodeFrom accessor geneType state@(State {_code = cs}) =
   case uncons (view accessor state) of
     Just (x, xs) -> state{_code = geneType x : cs} & accessor .~ xs
     _ -> state
 
--- |A function that sorts the first vector for a vectorType
+-- |Sorts the first vector for a vectorType
 instructionVectorSort :: Ord a => Lens' State [[a]] -> State -> State
 instructionVectorSort accessor state =
   case uncons (view accessor state) of
     Just (x, xs) -> state & accessor .~ (sort x : xs)
     _ -> state
 
--- |A function that sorts the first vector in reverse order for a vectorType
+-- |Sorts the first vector in reverse order for a vectorType
 instructionVectorSortReverse :: Ord a => Lens' State [[a]] -> State -> State
 instructionVectorSortReverse accessor state =
   case uncons (view accessor state) of
