@@ -15,7 +15,7 @@ instructionFloatFromBool :: State -> State
 instructionFloatFromBool state@(State {_bool = b1 : bs, _float = fs}) = state {_bool = bs, _float = (if b1 then 1.0 else 0.0) : fs}
 instructionFloatFromBool state = state
 
--- |Takes the top char and converts it to int representation. That int then gets casted to a float.
+-- |Takes the top char and converts it to int representation. That int then gets casted to a float and pushed to the float stack.
 instructionFloatFromChar :: State -> State
 instructionFloatFromChar state@(State {_char = c1 : cs, _float = fs}) = state {_char = cs, _float = (fromIntegral (ord c1) :: Float) : fs}
 instructionFloatFromChar state = state
@@ -23,7 +23,7 @@ instructionFloatFromChar state = state
 -- |Reads the top string and converts it to a float if possible. If not, acts as a NoOp.
 instructionFloatFromString :: State -> State
 instructionFloatFromString state@(State {_string = s1 : ss, _float = fs}) =
-  if all isDigit s1
+  if all (\x -> isDigit x || x == '.') s1 && amtOccurences "." s1 <= 1
   then state{_string = ss, _float = read @Float s1 : fs}
   else state
 instructionFloatFromString state = state
@@ -117,7 +117,8 @@ instructionFloatRot = instructionRot float
 instructionFloatFlush :: State -> State
 instructionFloatFlush = instructionFlush float
 
--- |Checks if the top two floats are equal. Pushes the result to the float stack.
+-- |Checks if the top two floats are equal. Pushes the result to the bool stack.
+-- Might override this later to check for equality in a range rather than exact equality.
 instructionFloatEq :: State -> State
 instructionFloatEq = instructionEq float
 
@@ -130,7 +131,7 @@ instructionFloatStackDepth = instructionStackDepth float
 instructionFloatYankDup :: State -> State
 instructionFloatYankDup = instructionYankDup float
 
--- |Copies an item from deep within the char stack to the top of the char stack based on
+-- |Copies an item from deep within the float stack to the top of the float stack based on
 -- the top int from the int stack.
 instructionFloatYank :: State -> State
 instructionFloatYank = instructionYank float

@@ -346,7 +346,7 @@ instructionCodeRot = instructionRot code
 instructionCodeFlush :: State -> State
 instructionCodeFlush = instructionFlush code
 
--- |Checks if the top code items are equal. Pushes true to the bool stack if so, False if not.
+-- |Checks if the top code items are equal. Pushes True to the bool stack if so, False if not.
 instructionCodeEq :: State -> State
 instructionCodeEq = instructionEq code
 
