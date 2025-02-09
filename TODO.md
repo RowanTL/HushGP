@@ -19,3 +19,5 @@
 ## PushGP TODO
 - [ ] Implement a Plushy genome translator
   - [ ] Need to make this reproducable too (Check pysh json files)
+- [ ] Add Memory
+- [ ] Add history stack(s), like a call stack
