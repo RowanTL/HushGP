@@ -19,10 +19,10 @@ version:            0.1.0.0
 synopsis:           A PushGP implementation in Haskell.
 
 -- The package author(s).
-author:             Taylor
+author:             Rowan Torbitzky-Lane, Taylor
 
 -- An email address to which users can send suggestions, bug reports, and patches.
-maintainer:         behindthebrain@zoho.eu
+maintainer:         rowan.a.tl@protonmail.com
 
 category:           Data
 build-type:         Simple
