@@ -104,3 +104,120 @@ instructionVectorFloatShove state = instructionShove state vectorFloat
 
 instructionVectorFloatShoveDup :: State -> State
 instructionVectorFloatShoveDup state = instructionShoveDup state vectorFloat
+
+instructionVectorFloatMean :: State -> State
+instructionVectorFloatMean state@(State {_vectorFloat = vfs, _float = fs}) =
+  case vfs of
+    (vf:vfs') -> state {_vectorFloat = vfs', _float = mean vf : fs}
+    []        -> state  -- Do nothing if _vectorFloat is empty
+  where
+    mean [] = 0
+    mean xs = sum xs / fromIntegral (length xs)
+
+instructionVectorFloatMax :: State -> State
+instructionVectorFloatMax state@(State {_vectorFloat = vfs, _float = fs}) =
+  case vfs of
+    (vf:vfs') -> state {_vectorFloat = vfs', _float = maximum vf : fs}
+    []        -> state
+
+instructionVectorFloatMin :: State -> State
+instructionVectorFloatMin state@(State {_vectorFloat = vfs, _float = fs}) =
+  case vfs of
+    (vf:vfs') -> state {_vectorFloat = vfs', _float = minimum vf : fs}
+    []        -> state
+
+instructionVectorFloatSum :: State -> State
+instructionVectorFloatSum state@(State {_vectorFloat = vfs, _float = fs}) =
+  case vfs of
+    (vf:vfs') -> state {_vectorFloat = vfs', _float = sum vf : fs}
+    []        -> state
+
+instructionVectorFloatMode :: State -> State
+instructionVectorFloatMode state@(State {_vectorFloat = vfs, _float = fs}) =
+  case vfs of
+    (vf:vfs') -> state {_vectorFloat = vfs', _float = mode vf : fs}
+    []        -> state
+  where
+    mode [] = 0
+    mode xs = head $ maximumBy (comparing length) (group (sort xs))
+
+instructionVectorFloatNorm :: State -> State
+instructionVectorFloatNorm state@(State {_vectorFloat = vfs, _float = fs}) =
+  case vfs of
+    (vf:vfs') -> state {_vectorFloat = vfs', _float = realToFrac (norm vf) : fs}
+    []        -> state
+  where
+    norm xs = norm_2 (vector xs)
+
+instructionVectorFloatCummulativeMean :: State -> State
+instructionVectorFloatCummulativeMean state@(State {_vectorFloat = vfs}) =
+  case vfs of
+    (vf:vfs') -> state {_vectorFloat = zipWith (/) (scanl1 (+) (map fromIntegral vf)) [1..] : vfs'}
+    []        -> state
+
+instructionVectorFloatCummulativeSum :: State -> State
+instructionVectorFloatCummulativeSum state@(State {_vectorFloat = vfs}) =
+  case vfs of
+    (vf:vfs') -> state {_vectorFloat = scanl1 (+) vf : vfs'}
+    []        -> state
+
+instructionVectorFloatCummulativeMax :: State -> State
+instructionVectorFloatCummulativeMax state@(State {_vectorFloat = vfs}) =
+  case vfs of
+    (vf:vfs') -> state {_vectorFloat = scanl1 maximum vf : vfs'}
+    []        -> state
+
+instructionVectorFloatCummulativeMin :: State -> State
+instructionVectorFloatCummulativeMin state@(State {_vectorFloat = vfs}) =
+  case vfs of
+    (vf:vfs') -> state {_vectorFloat = scanl1 minimum vf : vfs'}
+    []        -> state
+
+instructionVectorFloatExp :: State -> State
+instructionVectorFloatExp state@(State {_vectorFloat = vfs}) =
+  case vfs of
+    (vf:vfs') -> state {_vectorFloat = map exp vf : vfs'}
+    []        -> state
+
+
+instructionVectorFloatLog :: State -> State
+instructionVectorFloatLog state@(State {_vectorFloat = vfs}) =
+  case vfs of
+    (vf:vfs') -> state {_vectorFloat = map log vf : vfs'}
+    []        -> state
+
+instructionVectorFloatCos :: State -> State
+instructionVectorFloatCos state@(State {_vectorFloat = vfs}) =
+  case vfs of
+    (vf:vfs') -> state {_vectorFloat = map cos vf : vfs'}
+    []        -> state
+
+instructionVectorFloatSin :: State -> State
+instructionVectorFloatSin state@(State {_vectorFloat = vfs}) =
+  case vfs of
+    (vf:vfs') -> state {_vectorFloat = map sin vf : vfs'}
+    []        -> state
+
+instructionVectorFloatAbs :: State -> State
+instructionVectorFloatAbs state@(State {_vectorFloat = vfs}) =
+  case vfs of
+    (vf:vfs') -> state {_vectorFloat = map abs vf : vfs'}
+    []        -> state
+
+instructionVectorFloatSquare :: State -> State
+instructionVectorFloatSquare state@(State {_vectorFloat = vfs}) =
+  case vfs of
+    (vf:vfs') -> state {_vectorFloat = map (^2) vf : vfs'}
+    []        -> state
+
+instructionVectorFloatCube :: State -> State
+instructionVectorFloatCube state@(State {_vectorFloat = vfs}) =
+  case vfs of
+    (vf:vfs') -> state {_vectorFloat = map (^3) vf : vfs'}
+    []        -> state
+
+instructionVectorFloatSqrt :: State -> State
+instructionVectorFloatSqrt state@(State {_vectorFloat = vfs}) =
+  case vfs of
+    (vf:vfs') -> state {_vectorFloat = map (sqrt . fromIntegral) vf : vfs'}
+    []        -> state
