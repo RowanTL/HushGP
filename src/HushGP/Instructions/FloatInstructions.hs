@@ -126,12 +126,12 @@ instructionFloatEq = instructionEq float
 instructionFloatStackDepth :: State -> State
 instructionFloatStackDepth = instructionStackDepth float
 
--- |Moves an item from deep within the float stack to the top of the float stack based on
+-- |Copies an item from deep within the float stack to the top of the float stack based on
 -- the top int from the int stack.
 instructionFloatYankDup :: State -> State
 instructionFloatYankDup = instructionYankDup float
 
--- |Copies an item from deep within the float stack to the top of the float stack based on
+-- |Moves an item from deep within the float stack to the top of the float stack based on
 -- the top int from the int stack.
 instructionFloatYank :: State -> State
 instructionFloatYank = instructionYank float

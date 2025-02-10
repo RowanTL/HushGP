@@ -4,13 +4,13 @@ import HushGP.State
 import HushGP.Instructions.GenericInstructions
 
 instructionVectorCharConcat :: State -> State
-instructionVectorCharConcat = instructionConcat vectorChar
+instructionVectorCharConcat = instructionVectorConcat vectorChar
 
 instructionVectorCharConj :: State -> State
-instructionVectorCharConj = instructionConj char vectorChar
+instructionVectorCharConj = instructionVectorConj char vectorChar
 
 instructionVectorCharTakeN :: State -> State
-instructionVectorCharTakeN = instructionTakeN vectorChar
+instructionVectorCharTakeN = instructionVectorTakeN vectorChar
 
 instructionVectorCharSubVector :: State -> State
 instructionVectorCharSubVector = instructionSubVector vectorChar
@@ -25,10 +25,10 @@ instructionVectorCharNth :: State -> State
 instructionVectorCharNth = instructionVectorNth char vectorChar
 
 instructionVectorCharRest :: State -> State
-instructionVectorCharRest = instructionRest vectorChar
+instructionVectorCharRest = instructionVectorRest vectorChar
 
 instructionVectorCharButLast :: State -> State
-instructionVectorCharButLast = instructionButLast vectorChar
+instructionVectorCharButLast = instructionVectorButLast vectorChar
 
 instructionVectorCharLength :: State -> State
 instructionVectorCharLength = instructionLength vectorChar
@@ -61,7 +61,7 @@ instructionVectorCharReplaceFirst :: State -> State
 instructionVectorCharReplaceFirst = instructionVectorReplace char vectorChar (Just 1)
 
 instructionVectorCharRemove :: State -> State
-instructionVectorCharRemove = instructionVectorRemove char vectorChar
+instructionVectorCharRemove = instructionVectorRemove char vectorChar Nothing
 
 instructionVectorCharIterate :: State -> State
 instructionVectorCharIterate = instructionVectorIterate char vectorChar GeneVectorChar instructionVectorCharIterate "instructionVectorCharIterate"

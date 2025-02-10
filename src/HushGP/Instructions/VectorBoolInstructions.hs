@@ -4,13 +4,13 @@ import HushGP.State
 import HushGP.Instructions.GenericInstructions
 
 instructionVectorBoolConcat :: State -> State
-instructionVectorBoolConcat = instructionConcat vectorBool
+instructionVectorBoolConcat = instructionVectorConcat vectorBool
 
 instructionVectorBoolConj :: State -> State
-instructionVectorBoolConj = instructionConj bool vectorBool
+instructionVectorBoolConj = instructionVectorConj bool vectorBool
 
 instructionVectorBoolTakeN :: State -> State
-instructionVectorBoolTakeN = instructionTakeN vectorBool
+instructionVectorBoolTakeN = instructionVectorTakeN vectorBool
 
 instructionVectorBoolSubVector :: State -> State
 instructionVectorBoolSubVector = instructionSubVector vectorBool
@@ -25,10 +25,10 @@ instructionVectorBoolNth :: State -> State
 instructionVectorBoolNth = instructionVectorNth bool vectorBool
 
 instructionVectorBoolRest :: State -> State
-instructionVectorBoolRest = instructionRest vectorBool
+instructionVectorBoolRest = instructionVectorRest vectorBool
 
 instructionVectorBoolButLast :: State -> State
-instructionVectorBoolButLast = instructionButLast vectorBool
+instructionVectorBoolButLast = instructionVectorButLast vectorBool
 
 instructionVectorBoolLength :: State -> State
 instructionVectorBoolLength = instructionLength vectorBool
@@ -61,7 +61,7 @@ instructionVectorBoolReplaceFirst :: State -> State
 instructionVectorBoolReplaceFirst = instructionVectorReplace bool vectorBool (Just 1)
 
 instructionVectorBoolRemove :: State -> State
-instructionVectorBoolRemove = instructionVectorRemove bool vectorBool
+instructionVectorBoolRemove = instructionVectorRemove bool vectorBool Nothing
 
 instructionVectorBoolIterate :: State -> State
 instructionVectorBoolIterate = instructionVectorIterate bool vectorBool GeneVectorBool instructionVectorBoolIterate "instructionVectorBoolIterate"

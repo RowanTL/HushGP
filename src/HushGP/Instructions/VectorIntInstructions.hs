@@ -4,13 +4,13 @@ import HushGP.Instructions.GenericInstructions
 import HushGP.State
 
 instructionVectorIntConcat :: State -> State
-instructionVectorIntConcat = instructionConcat vectorInt
+instructionVectorIntConcat = instructionVectorConcat vectorInt
 
 instructionVectorIntConj :: State -> State
-instructionVectorIntConj = instructionConj int vectorInt
+instructionVectorIntConj = instructionVectorConj int vectorInt
 
 instructionVectorIntTakeN :: State -> State
-instructionVectorIntTakeN = instructionTakeN vectorInt
+instructionVectorIntTakeN = instructionVectorTakeN vectorInt
 
 instructionVectorIntSubVector :: State -> State
 instructionVectorIntSubVector = instructionSubVector vectorInt
@@ -25,10 +25,10 @@ instructionVectorIntNth :: State -> State
 instructionVectorIntNth = instructionVectorNth int vectorInt
 
 instructionVectorIntRest :: State -> State
-instructionVectorIntRest = instructionRest vectorInt
+instructionVectorIntRest = instructionVectorRest vectorInt
 
 instructionVectorIntButLast :: State -> State
-instructionVectorIntButLast = instructionButLast vectorInt
+instructionVectorIntButLast = instructionVectorButLast vectorInt
 
 instructionVectorIntLength :: State -> State
 instructionVectorIntLength = instructionLength vectorInt
@@ -61,7 +61,7 @@ instructionVectorIntReplaceFirst :: State -> State
 instructionVectorIntReplaceFirst = instructionVectorReplace int vectorInt (Just 1)
 
 instructionVectorIntRemove :: State -> State
-instructionVectorIntRemove = instructionVectorRemove int vectorInt
+instructionVectorIntRemove = instructionVectorRemove int vectorInt Nothing
 
 instructionVectorIntIterate :: State -> State
 instructionVectorIntIterate = instructionVectorIterate int vectorInt GeneVectorInt instructionVectorIntIterate "instructionVectorIntIterate"

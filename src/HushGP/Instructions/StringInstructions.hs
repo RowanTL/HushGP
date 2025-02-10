@@ -28,7 +28,7 @@ rstrip = reverse . lstrip . reverse
 
 -- |Concats the top two strings on the string stack and pushes the result.
 instructionStringConcat :: State -> State
-instructionStringConcat = instructionConcat string
+instructionStringConcat = instructionVectorConcat string
 
 -- |Swaps the top two strings on the string stack.
 instructionStringSwap :: State -> State
@@ -243,84 +243,126 @@ instructionStringMakeEmpty = instructionVectorMakeEmpty string
 instructionStringIsEmptyString :: State -> State
 instructionStringIsEmptyString = instructionVectorIsEmpty string
 
--- TODO: Make this generic
+-- |Removes the Nth char from the top string of the string stack. N is pulled
+-- from the top of the int stack.
 instructionStringRemoveNth :: State -> State
-instructionStringRemoveNth state@(State {_string = s1 : ss, _int = i1 : is}) = state{_string = deleteAt (absNum i1 s1) s1 : ss, _int = is}
-instructionStringRemoveNth state = state
+instructionStringRemoveNth = instructionVectorRemoveNth string
 
+-- |Sets the Nth char from the top string of the string stack to the top char from
+-- the char stack. N is pulled from the top of the int stack.
 instructionStringSetNth :: State -> State
 instructionStringSetNth = instructionVectorSetNth char string
 
+-- |Strips the whitespace of the top string on the string stack and pushes the result
+-- back to the string stack.
 instructionStringStripWhitespace :: State -> State
 instructionStringStripWhitespace state@(State {_string = s1 : ss}) = state{_string = strip s1 : ss}
 instructionStringStripWhitespace state = state
 
-instructionStringFromLens :: Show a => State -> Lens' State [a] -> State
-instructionStringFromLens state@(State {_string = ss}) accessor =
+-- |Utility Function: Casts a type based on a lens to a string. Pushes the result
+-- to the string stack.
+instructionStringFromLens :: Show a => Lens' State [a] -> State -> State
+instructionStringFromLens accessor state@(State {_string = ss}) =
   case uncons (view accessor state) of
     Nothing -> state
     Just (x1,_) -> state{_string = show x1 : ss}
 
+-- |Converts the top bool from the bool stack to a string. Pushes the result to
+-- the string stack.
 instructionStringFromBool :: State -> State
-instructionStringFromBool state = instructionStringFromLens state bool
+instructionStringFromBool = instructionStringFromLens bool
 
+-- |Converts the top int from the int stack to a string. Pushes the result to
+-- the string stack.
 instructionStringFromInt :: State -> State
-instructionStringFromInt state = instructionStringFromLens state int
+instructionStringFromInt = instructionStringFromLens int
 
+-- |Converts the top float from the float stack to a string. Pushes the result to
+-- the string stack.
 instructionStringFromFloat :: State -> State
-instructionStringFromFloat state = instructionStringFromLens state float
+instructionStringFromFloat = instructionStringFromLens float
 
+-- |Converts the top char from the char stack to a string. Pushes the result to
+-- the string stack.
 instructionStringFromChar :: State -> State
 instructionStringFromChar state@(State {_string = ss, _char = c1 : cs}) = state{_string = [c1] : ss, _char = cs}
 instructionStringFromChar state = state
 
+-- |Removes the top string from the string stack.
 instructionStringPop :: State -> State
 instructionStringPop = instructionPop string
 
+-- |Duplicates the top string on the string stack.
 instructionStringDup :: State -> State
 instructionStringDup = instructionDup string
 
+-- |Duplicates the top string on the string stack N times based off the top of the int stack.
 instructionStringDupN :: State -> State
 instructionStringDupN = instructionDupN string
 
+-- |Rotates the top three strings on the string stack.
 instructionStringRot :: State -> State
 instructionStringRot = instructionRot string
 
+-- |Sets the string stack to []
 instructionStringFlush :: State -> State
 instructionStringFlush = instructionFlush string
 
+-- |Checks to see if the top two strings are equal and pushes the result
+-- to the bool stack.
 instructionStringEq :: State -> State
 instructionStringEq = instructionEq string
 
+-- |Calculates the size of the string stack and pushes the result
+-- to the int stack.
 instructionStringStackDepth :: State -> State
 instructionStringStackDepth = instructionStackDepth string
 
+-- |Moves an item from deep within the string stack to the top of the string stack based on
+-- the top int from the int stack.
 instructionStringYank :: State -> State
 instructionStringYank = instructionYank string
 
+-- |Copies an item from deep within the string stack to the top of the string stack based on
+-- the top int from the int stack.
 instructionStringYankDup :: State -> State
 instructionStringYankDup = instructionYankDup string
 
+-- |Pushes True to the bool stack if the string stack is empty. Pushes False otherwise.
 instructionStringIsStackEmpty :: State -> State
 instructionStringIsStackEmpty = instructionIsStackEmpty string
 
+-- |Moves an item from the top of the string stack to deep within the string stack based on
+-- the top int from the int stack.
 instructionStringShove :: State -> State
 instructionStringShove = instructionShove string
 
+-- |Copies an item from the top of the string stack to deep within the string stack based on
+-- the top int from the int stack.
 instructionStringShoveDup :: State -> State
 instructionStringShoveDup = instructionShoveDup string
 
+-- |Sorts the top string on the string stack by their ascii value and pushes the result
+-- back to the string stack.
 instructionStringSort :: State -> State
 instructionStringSort = instructionVectorSort string
 
+-- |Sorts the top string on the string stack backwards by their ascii value and pushes the result
+-- back to the string stack.
 instructionStringSortReverse :: State -> State
 instructionStringSortReverse = instructionVectorSortReverse string
 
+-- |Duplicate the top N items from the string stack based on the top int from the int stack.
 instructionStringDupItems :: State -> State
 instructionStringDupItems = instructionDupItems string
 
+-- |Takes the top string and splits its up into strings of size 1 and pushes all of those
+-- strings back onto the string stack.
 instructionStringParseToChar :: State -> State
 instructionStringParseToChar = instructionVectorParseToPrim string
 
+-- |Uses the top two ints from the top of the int stack to pull a sub string
+-- from the top string on the string stack. Pushes the result back to the
+-- string stack.
 instructionStringSubString :: State -> State
 instructionStringSubString = instructionSubVector string

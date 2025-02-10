@@ -4,13 +4,13 @@ import HushGP.State
 import HushGP.Instructions.GenericInstructions
 
 instructionVectorFloatConcat :: State -> State
-instructionVectorFloatConcat = instructionConcat vectorFloat
+instructionVectorFloatConcat = instructionVectorConcat vectorFloat
 
 instructionVectorFloatConj :: State -> State
-instructionVectorFloatConj = instructionConj float vectorFloat
+instructionVectorFloatConj = instructionVectorConj float vectorFloat
 
 instructionVectorFloatTakeN :: State -> State
-instructionVectorFloatTakeN = instructionTakeN vectorFloat
+instructionVectorFloatTakeN = instructionVectorTakeN vectorFloat
 
 instructionVectorFloatSubVector :: State -> State
 instructionVectorFloatSubVector = instructionSubVector vectorFloat
@@ -25,10 +25,10 @@ instructionVectorFloatNth :: State -> State
 instructionVectorFloatNth = instructionVectorNth float vectorFloat
 
 instructionVectorFloatRest :: State -> State
-instructionVectorFloatRest = instructionRest vectorFloat
+instructionVectorFloatRest = instructionVectorRest vectorFloat
 
 instructionVectorFloatButLast :: State -> State
-instructionVectorFloatButLast = instructionButLast vectorFloat
+instructionVectorFloatButLast = instructionVectorButLast vectorFloat
 
 instructionVectorFloatLength :: State -> State
 instructionVectorFloatLength = instructionLength vectorFloat
@@ -61,7 +61,7 @@ instructionVectorFloatReplaceFirst :: State -> State
 instructionVectorFloatReplaceFirst = instructionVectorReplace float vectorFloat (Just 1)
 
 instructionVectorFloatRemove :: State -> State
-instructionVectorFloatRemove = instructionVectorRemove float vectorFloat
+instructionVectorFloatRemove = instructionVectorRemove float vectorFloat Nothing
 
 instructionVectorFloatIterate :: State -> State
 instructionVectorFloatIterate = instructionVectorIterate float vectorFloat GeneVectorFloat instructionVectorFloatIterate "instructionVectorFloatIterate"

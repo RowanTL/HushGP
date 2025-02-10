@@ -4,13 +4,13 @@ import HushGP.State
 import HushGP.Instructions.GenericInstructions
 
 instructionVectorStringConcat :: State -> State
-instructionVectorStringConcat = instructionConcat vectorString
+instructionVectorStringConcat = instructionVectorConcat vectorString
 
 instructionVectorStringConj :: State -> State
-instructionVectorStringConj = instructionConj string vectorString
+instructionVectorStringConj = instructionVectorConj string vectorString
 
 instructionVectorStringTakeN :: State -> State
-instructionVectorStringTakeN = instructionTakeN vectorString
+instructionVectorStringTakeN = instructionVectorTakeN vectorString
 
 instructionVectorStringSubVector :: State -> State
 instructionVectorStringSubVector = instructionSubVector vectorString
@@ -25,10 +25,10 @@ instructionVectorStringNth :: State -> State
 instructionVectorStringNth = instructionVectorNth string vectorString
 
 instructionVectorStringRest :: State -> State
-instructionVectorStringRest = instructionRest vectorString
+instructionVectorStringRest = instructionVectorRest vectorString
 
 instructionVectorStringButLast :: State -> State
-instructionVectorStringButLast = instructionButLast vectorString
+instructionVectorStringButLast = instructionVectorButLast vectorString
 
 instructionVectorStringLength :: State -> State
 instructionVectorStringLength = instructionLength vectorString
@@ -61,7 +61,7 @@ instructionVectorStringReplaceFirst :: State -> State
 instructionVectorStringReplaceFirst = instructionVectorReplace string vectorString (Just 1)
 
 instructionVectorStringRemove :: State -> State
-instructionVectorStringRemove = instructionVectorRemove string vectorString
+instructionVectorStringRemove = instructionVectorRemove string vectorString Nothing
 
 instructionVectorStringIterate :: State -> State
 instructionVectorStringIterate = instructionVectorIterate string vectorString GeneVectorString instructionVectorStringIterate "instructionVectorStringIterate"
