@@ -10,7 +10,7 @@
 - [X] Disambiguate isEmpty and stackIsEmpty
 - [X] Rename Logical to Bool
 - [X] Make int yank, shove, yankdup, and shovedup generic
-- [ ] Write hackage documentation for each function
+- [ ] Write haddock documentation for each function
 - [X] Refactor all functions to take state as the final parameter
 - [X] Standardize the pattern matching parameter names, such as c1 : cs
 - [ ] Write unit/quickcheck tests for all of the instructions
@@ -21,3 +21,4 @@
   - [ ] Need to make this reproducable too (Check pysh json files)
 - [ ] Add Memory
 - [ ] Add history stack(s), like a call stack
+- [ ] Implement interpreter options (could probably just place this all into a map or something)
