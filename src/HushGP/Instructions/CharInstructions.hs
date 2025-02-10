@@ -64,7 +64,7 @@ instructionCharFromAsciiFloat state = state
 
 -- |Pushes the top string to the char stack split up into individual chars.
 -- For example: have the string "hello" and the char stack ['a', 'b', 'c'], the char stack
--- looks like ['h', 'e', 'l', 'l', 'o', 'a', 'b', 'c'].
+-- looks like ['h', 'e', 'l', 'l', 'o', 'a', 'b', 'c'] after this instruction executes.
 instructionCharsFromString :: State -> State
 instructionCharsFromString state@(State {_char = cs, _string = s1 : ss}) = state{_char = s1 <> cs, _string = ss}
 instructionCharsFromString state = state
@@ -131,3 +131,8 @@ instructionCharShoveDup = instructionShoveDup char
 -- |Duplicate the top N items from the char stack based on the top int from the int stack.
 instructionCharDupItems :: State -> State
 instructionCharDupItems = instructionDupItems char
+
+-- |Takes the top string from the string stack and invidually pushes
+-- all chars in said string to the char stack.
+instructionCharFromAllString :: State -> State
+instructionCharFromAllString = instructionPushAll char string

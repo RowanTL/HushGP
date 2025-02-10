@@ -38,55 +38,38 @@ instructionStringSwap = instructionSwap string
 -- on the string stack based on an int from the int stack.
 instructionStringInsertString :: State -> State
 instructionStringInsertString = instructionVectorInsertVector string
--- instructionStringInsertString state@(State{_string = s1 : s2 : ss, _int = i1 : is}) = state {_string = combineTupleList s2 (splitAt i1 s1) : ss, _int = is}
--- instructionStringInsertString state = state
 
 -- |Takes the first string from the string stack and pushes the first character
 -- back to the string stack as a string.
 instructionStringFromFirstChar :: State -> State
 instructionStringFromFirstChar = instructionVectorFromFirstPrim string
--- instructionStringFromFirstChar state@(State {_string = (schar : _) : ss}) = state {_string = [schar] : ss}
--- instructionStringFromFirstChar state = state
 
 -- |Takes the first string from the string stack and pushes the last character
 -- back to the string stack as a string.
 instructionStringFromLastChar :: State -> State
 instructionStringFromLastChar = instructionVectorFromLastPrim string
--- instructionStringFromLastChar state@(State {_string = s1 : ss}) =
-  -- if not $ null s1
-    -- then state {_string = [last s1] : ss}
-    -- else state
--- instructionStringFromLastChar state = state
 
 -- |Takes the first string from the string stack and pushes the Nth character
 -- back to the string stack as a string. N in is the top int of the int stack.
 instructionStringFromNthChar :: State -> State
 instructionStringFromNthChar = instructionVectorFromNthPrim string
--- instructionStringFromNthChar state@(State {_string = s1 : ss, _int = i1 : is}) = state{_string = [s1 !! absNum i1 s1] : ss, _int = is}
--- instructionStringFromNthChar state = state
 
 -- |Takes the first two strings from the top of the string stack. Looks for and pushed the
 -- index of the second substring inside of the first substring to the int stack.
 -- If not found, returns -1.
 instructionStringIndexOfString :: State -> State
 instructionStringIndexOfString = instructionVectorIndexOfVector string
--- instructionStringIndexOfString state@(State {_string = s1 : s2 : ss, _int = is}) = state {_string = ss, _int = findSubA s1 s2 : is}
--- instructionStringIndexOfString state = state
 
 -- |Takes the first two strings from the top of the string stack. Pushes True to the
 -- bool stack if the second string is contained within the first string. Pushes False otherwise.
 instructionStringContainsString :: State -> State
 instructionStringContainsString = instructionVectorContainsVector string
--- instructionStringContainsString state@(State {_string = s1 : s2 : ss, _bool = bs}) = state {_string = ss, _bool = (findSubA s1 s2 /= -1) : bs}
--- instructionStringContainsString state = state
 
 -- |Takes the first two strings from the top of the string stack. Splits the first string
 -- based on the second string and pushes the result to the string stack.
 -- pysh reverses this. Check this for propeller
 instructionStringSplitOnString :: State -> State
 instructionStringSplitOnString = instructionVectorSplitOnVector string
--- instructionStringSplitOnString state@(State {_string = s1 : s2 : ss}) = state {_string = reverse $ splitOn s2 s1 <> ss}
--- instructionStringSplitOnString state = state
 
 -- |Takes the first three strings from the top of the string stack. Replaces the first instance of
 -- the second string within the first string with the third string. Pushes the result to the string stack.
@@ -285,8 +268,7 @@ instructionStringFromFloat = instructionStringFromLens float
 -- |Converts the top char from the char stack to a string. Pushes the result to
 -- the string stack.
 instructionStringFromChar :: State -> State
-instructionStringFromChar state@(State {_string = ss, _char = c1 : cs}) = state{_string = [c1] : ss, _char = cs}
-instructionStringFromChar state = state
+instructionStringFromChar = instructionVectorFromPrim char string
 
 -- |Removes the top string from the string stack.
 instructionStringPop :: State -> State
@@ -366,3 +348,8 @@ instructionStringParseToChar = instructionVectorParseToPrim string
 -- string stack.
 instructionStringSubString :: State -> State
 instructionStringSubString = instructionSubVector string
+
+-- |Iterates over the top string on the string stack, applying the top instruction of the
+-- exec stack along the way.
+instructionStringIterate :: State -> State
+instructionStringIterate = instructionVectorIterate char string GeneString instructionStringIterate "instructionStringIterate"

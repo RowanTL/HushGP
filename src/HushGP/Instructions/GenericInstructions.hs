@@ -297,6 +297,7 @@ instructionVectorFirst primAccessor vectorAccessor state =
 
 -- |Based on a vector lens, takes the first item from the top vector on the vector stack
 -- and creates a vector wrapping that first item, pushing it back onto the stack.
+-- Not to be confused with instructionVectorFromFirstPrim.
 instructionVectorFromFirstPrim :: Lens' State [[a]] -> State -> State
 instructionVectorFromFirstPrim accessor state =
   case uncons (view accessor state) of
@@ -305,6 +306,16 @@ instructionVectorFromFirstPrim accessor state =
         Just (vp1, _) -> state & accessor .~ ([vp1] : vs)
         _ -> state
     _ -> state
+
+-- |Based on two lenses, one of a primitive type and the next of a vector type, 
+-- pushes the top item of the primitive stack wrapped in a list to the top of the
+-- vector stack. Not to be confused with instructionVectorFromFirstPrim.
+instructionVectorFromPrim :: Lens' State [a] -> Lens' State [[a]] -> State -> State
+instructionVectorFromPrim primAccessor vectorAccessor state =
+  case uncons (view primAccessor state) of
+    Just (p1, ps) -> state & primAccessor .~ ps & vectorAccessor .~ ([p1] : view vectorAccessor state)
+    _ -> state
+    
 
 -- |Based on two lenses, one of a primitive type and the next of a vector type, 
 -- Takes the last item from the top vector and places it onto the passed primitive stack.
@@ -587,8 +598,7 @@ instructionVectorRemoveVectorN accessor state@(State {_int = i1 : is}) = instruc
 instructionVectorRemoveVectorN _ state = state
   
 -- |Based on two lenses, one of a primitive type and the next of a vector type,
--- removes the first occurrence inside of the top vector from the vector stack where the top
--- item from the primitive stack equals a primitive inside of the vector stack.
+-- iterates over the top vector from the vector stack using the top code from the code stack.
 instructionVectorIterate :: Lens' State [a] -> Lens' State [[a]] -> ([a] -> Gene) -> (State -> State) -> String -> State -> State
 instructionVectorIterate primAccessor vectorAccessor vectorType typeIterateFunction typeIterateFunctionName state@(State {_exec = e1 : es}) =
   case uncons (view vectorAccessor state) of
