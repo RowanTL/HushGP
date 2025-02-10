@@ -55,10 +55,10 @@ instructionVectorBoolSetNth :: State -> State
 instructionVectorBoolSetNth = instructionVectorSetNth bool vectorBool
 
 instructionVectorBoolReplace :: State -> State
-instructionVectorBoolReplace = instructionVectorReplace bool vectorBool
+instructionVectorBoolReplace = instructionVectorReplace bool vectorBool Nothing
 
 instructionVectorBoolReplaceFirst :: State -> State
-instructionVectorBoolReplaceFirst = instructionVectorReplaceFirst bool vectorBool
+instructionVectorBoolReplaceFirst = instructionVectorReplace bool vectorBool (Just 1)
 
 instructionVectorBoolRemove :: State -> State
 instructionVectorBoolRemove = instructionVectorRemove bool vectorBool

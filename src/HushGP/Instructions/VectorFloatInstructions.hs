@@ -55,10 +55,10 @@ instructionVectorFloatSetNth :: State -> State
 instructionVectorFloatSetNth = instructionVectorSetNth float vectorFloat
 
 instructionVectorFloatReplace :: State -> State
-instructionVectorFloatReplace = instructionVectorReplace float vectorFloat
+instructionVectorFloatReplace = instructionVectorReplace float vectorFloat Nothing
 
 instructionVectorFloatReplaceFirst :: State -> State
-instructionVectorFloatReplaceFirst = instructionVectorReplaceFirst float vectorFloat
+instructionVectorFloatReplaceFirst = instructionVectorReplace float vectorFloat (Just 1)
 
 instructionVectorFloatRemove :: State -> State
 instructionVectorFloatRemove = instructionVectorRemove float vectorFloat

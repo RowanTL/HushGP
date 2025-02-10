@@ -5,13 +5,16 @@ import HushGP.Instructions.GenericInstructions
 import Data.List.Split
 import Control.Lens
 
+-- |Utility String: Whitespack characters.
 -- shamelessly stolen from https://hackage.haskell.org/package/MissingH-1.6.0.1/docs/src/Data.String.Utils.html#strip
 wschars :: String
 wschars = " \t\r\n"
 
+-- |Utility Function: Strips a string of its whitespace on both sides.
 strip :: String -> String
 strip = lstrip . rstrip
 
+-- |Utility Function: Strips a string of its whitespace on the left side.
 lstrip :: String -> String
 lstrip s = case s of
                   [] -> []
@@ -19,99 +22,136 @@ lstrip s = case s of
                             then lstrip xs
                             else s
 
--- this is a tad inefficient init
+-- |Utility Function: Strips a string of its whitespace on the right side.
+-- this is a tad inefficient
 rstrip :: String -> String
 rstrip = reverse . lstrip . reverse
 
+-- |Concats the top two strings on the string stack and pushes the result.
 instructionStringConcat :: State -> State
 instructionStringConcat = instructionConcat string
 
+-- |Swaps the top two strings on the string stack.
 instructionStringSwap :: State -> State
 instructionStringSwap = instructionSwap string
 
+-- |Inserts the second string on the string stack into the first string
+-- on the string stack based on an int from the int stack.
 instructionStringInsertString :: State -> State
-instructionStringInsertString state@(State{_string = s1 : s2 : ss, _int = i1 : is}) = state {_string = combineTupleList s2 (splitAt i1 s1) : ss, _int = is}
-instructionStringInsertString state = state
+instructionStringInsertString = instructionVectorInsertVector string
+-- instructionStringInsertString state@(State{_string = s1 : s2 : ss, _int = i1 : is}) = state {_string = combineTupleList s2 (splitAt i1 s1) : ss, _int = is}
+-- instructionStringInsertString state = state
 
+-- |Takes the first string from the string stack and pushes the first character
+-- back to the string stack as a string.
 instructionStringFromFirstChar :: State -> State
-instructionStringFromFirstChar state@(State {_string = (schar : _) : ss}) = state {_string = [schar] : ss}
-instructionStringFromFirstChar state = state
+instructionStringFromFirstChar = instructionVectorFromFirstPrim string
+-- instructionStringFromFirstChar state@(State {_string = (schar : _) : ss}) = state {_string = [schar] : ss}
+-- instructionStringFromFirstChar state = state
 
+-- |Takes the first string from the string stack and pushes the last character
+-- back to the string stack as a string.
 instructionStringFromLastChar :: State -> State
-instructionStringFromLastChar state@(State {_string = s1 : ss}) =
-  if not $ null s1
-    then state {_string = [last s1] : ss}
-    else state
-instructionStringFromLastChar state = state
+instructionStringFromLastChar = instructionVectorFromLastPrim string
+-- instructionStringFromLastChar state@(State {_string = s1 : ss}) =
+  -- if not $ null s1
+    -- then state {_string = [last s1] : ss}
+    -- else state
+-- instructionStringFromLastChar state = state
 
+-- |Takes the first string from the string stack and pushes the Nth character
+-- back to the string stack as a string. N in is the top int of the int stack.
 instructionStringFromNthChar :: State -> State
-instructionStringFromNthChar state@(State {_string = s1 : ss, _int = i1 : is}) = state{_string = [s1 !! absNum i1 s1] : ss, _int = is}
-instructionStringFromNthChar state = state
+instructionStringFromNthChar = instructionVectorFromNthPrim string
+-- instructionStringFromNthChar state@(State {_string = s1 : ss, _int = i1 : is}) = state{_string = [s1 !! absNum i1 s1] : ss, _int = is}
+-- instructionStringFromNthChar state = state
 
+-- |Takes the first two strings from the top of the string stack. Looks for and pushed the
+-- index of the second substring inside of the first substring to the int stack.
+-- If not found, returns -1.
 instructionStringIndexOfString :: State -> State
-instructionStringIndexOfString state@(State {_string = s1 : s2 : ss, _int = is}) = state {_string = ss, _int = findSubA s1 s2 : is}
-instructionStringIndexOfString state = state
+instructionStringIndexOfString = instructionVectorIndexOfVector string
+-- instructionStringIndexOfString state@(State {_string = s1 : s2 : ss, _int = is}) = state {_string = ss, _int = findSubA s1 s2 : is}
+-- instructionStringIndexOfString state = state
 
+-- |Takes the first two strings from the top of the string stack. Pushes True to the
+-- bool stack if the second string is contained within the first string. Pushes False otherwise.
 instructionStringContainsString :: State -> State
-instructionStringContainsString state@(State {_string = s1 : s2 : ss, _bool = bs}) = state {_string = ss, _bool = (findSubA s1 s2 /= -1) : bs}
-instructionStringContainsString state = state
+instructionStringContainsString = instructionVectorContainsVector string
+-- instructionStringContainsString state@(State {_string = s1 : s2 : ss, _bool = bs}) = state {_string = ss, _bool = (findSubA s1 s2 /= -1) : bs}
+-- instructionStringContainsString state = state
 
+-- |Takes the first two strings from the top of the string stack. Splits the first string
+-- based on the second string and pushes the result to the string stack.
 -- pysh reverses this. Check this for propeller
 instructionStringSplitOnString :: State -> State
-instructionStringSplitOnString state@(State {_string = s1 : s2 : ss}) = state {_string = reverse $ splitOn s2 s1 <> ss}
-instructionStringSplitOnString state = state
+instructionStringSplitOnString = instructionVectorSplitOnVector string
+-- instructionStringSplitOnString state@(State {_string = s1 : s2 : ss}) = state {_string = reverse $ splitOn s2 s1 <> ss}
+-- instructionStringSplitOnString state = state
 
+-- |Takes the first three strings from the top of the string stack. Replaces the first instance of
+-- the second string within the first string with the third string. Pushes the result to the string stack.
 instructionStringReplaceFirstString :: State -> State
-instructionStringReplaceFirstString state@(State {_string = s1 : s2 : s3 : ss}) = state {_string = replace s1 s2 s3 (Just 1) : ss}
-instructionStringReplaceFirstString state = state
+instructionStringReplaceFirstString = instructionVectorReplaceVector string (Just 1)
 
+-- |Takes the first three strings from the top of the string stack. Replaces the number of instances based on the of the int stack of
+-- the second string within the first string with the third string. Pushes the result to the string stack.
 instructionStringReplaceNString :: State -> State
-instructionStringReplaceNString state@(State {_string = s1 : s2 : s3 : ss, _int = i1 : is}) = state{_string = replace s1 s2 s3 (Just i1) : ss, _int = is}
-instructionStringReplaceNString state = state
+instructionStringReplaceNString = instructionVectorReplaceVectorN string
 
+-- |Takes the first three strings from the top of the string stack. Replaces all instances of
+-- the second string within the first string with the third string. Pushes the result to the string stack.
 instructionStringReplaceAllString :: State -> State
-instructionStringReplaceAllString state@(State {_string = s1 : s2 : s3 : ss}) = state{_string = replace s1 s2 s3 Nothing : ss}
-instructionStringReplaceAllString state = state
+instructionStringReplaceAllString = instructionVectorReplaceVector string Nothing
 
+-- |Takes the first two strings from the top of the string stack. Removes the first instance of
+-- the second string. Pushes the result to the string stack.
 instructionStringRemoveFirstString :: State -> State
-instructionStringRemoveFirstString state@(State {_string = s1 : s2 : ss}) = state{_string = replace s1 s2 "" (Just 1) : ss}
-instructionStringRemoveFirstString state = state
+instructionStringRemoveFirstString = instructionVectorRemoveVector string (Just 1)
 
+-- |Takes the first two strings from the top of the string stack. Removes N instances
+-- based on the top int from the int stack of the second string. Pushes the result to the string stack.
 instructionStringRemoveNString :: State -> State
-instructionStringRemoveNString state@(State {_string = s1 : s2 : ss, _int = i1 : is}) = state{_string = replace s1 s2 "" (Just i1) : ss, _int = is}
-instructionStringRemoveNString state = state
+instructionStringRemoveNString = instructionVectorRemoveVectorN string
 
+-- |Takes the first two strings from the top of the string stack. Removes all instances of
+-- the second string. Pushes the result to the string stack.
 instructionStringRemoveAllString :: State -> State
-instructionStringRemoveAllString state@(State {_string = s1 : s2 : ss}) = state{_string = replace s1 s2 "" Nothing : ss}
-instructionStringRemoveAllString state = state
+instructionStringRemoveAllString = instructionVectorRemoveVector string Nothing
 
+-- |Counts the amount of occurrences of the second string in the first
+-- string. Pushes the result to the string stack.
 instructionStringOccurrencesOfString :: State -> State
-instructionStringOccurrencesOfString state@(State {_string = s1 : s2 : ss, _int = is}) = state{_string = ss, _int = amtOccurences s1 s2 : is}
-instructionStringOccurrencesOfString state = state
+instructionStringOccurrencesOfString = instructionVectorOccurrencesOfVector string
 
+-- |Inserts the top char of the char stack into the top string of the string
+-- stack based on an index from the top int of the int stack.
 instructionStringInsertChar :: State -> State
-instructionStringInsertChar state@(State {_string = s1 : ss, _char = c1 : cs, _int = i1 : is}) = state{_string = combineTuple c1 (splitAt i1 s1) : ss, _char = cs, _int = is}
-instructionStringInsertChar state = state
+instructionStringInsertChar = instructionVectorInsert char string
 
+-- |Pushes True to the bool stack if the top char on the char stack is within the
+-- top string on the string stack. Pushes False otherwise.
 instructionStringContainsChar :: State -> State
 instructionStringContainsChar = instructionVectorContains char string
 
+-- |Pushes the first index found of the top char of the char stack within the
+-- first string in the string stack to the int stack.
 instructionStringIndexOfChar :: State -> State
 instructionStringIndexOfChar = instructionVectorIndexOf char string
 
+-- |@TODO
 instructionStringSplitOnChar :: State -> State
-instructionStringSplitOnChar state@(State {_string = s1 : ss, _char = c1 : cs}) = state {_string = reverse $ splitOn [c1] s1 <> ss, _char = cs}
-instructionStringSplitOnChar state = state
+instructionStringSplitOnChar = instructionVectorSplitOn char string
 
 instructionStringReplaceFirstChar :: State -> State
-instructionStringReplaceFirstChar = instructionVectorReplaceFirst char string
+instructionStringReplaceFirstChar = instructionVectorReplace char string (Just 1)
 
 instructionStringReplaceNChar :: State -> State
 instructionStringReplaceNChar state@(State {_string = s1 : ss, _char = c1 : c2 : cs, _int = i1 : is}) = state{_string = replace s1 [c1] [c2] (Just i1) : ss, _char = cs, _int = is}
 instructionStringReplaceNChar state = state
 
 instructionStringReplaceAllChar :: State -> State
-instructionStringReplaceAllChar = instructionVectorReplace char string
+instructionStringReplaceAllChar = instructionVectorReplace char string Nothing
 
 instructionStringRemoveFirstChar :: State -> State
 instructionStringRemoveFirstChar state@(State {_string = s1 : ss, _char = c1 : cs}) = state {_string = replace s1 [c1] "" (Just 1) : ss, _char = cs}

@@ -55,10 +55,10 @@ instructionVectorStringSetNth :: State -> State
 instructionVectorStringSetNth = instructionVectorSetNth string vectorString
 
 instructionVectorStringReplace :: State -> State
-instructionVectorStringReplace = instructionVectorReplace string vectorString
+instructionVectorStringReplace = instructionVectorReplace string vectorString Nothing
 
 instructionVectorStringReplaceFirst :: State -> State
-instructionVectorStringReplaceFirst = instructionVectorReplaceFirst string vectorString
+instructionVectorStringReplaceFirst = instructionVectorReplace string vectorString (Just 1)
 
 instructionVectorStringRemove :: State -> State
 instructionVectorStringRemove = instructionVectorRemove string vectorString

@@ -55,10 +55,10 @@ instructionVectorCharSetNth :: State -> State
 instructionVectorCharSetNth = instructionVectorSetNth char vectorChar
 
 instructionVectorCharReplace :: State -> State
-instructionVectorCharReplace = instructionVectorReplace char vectorChar
+instructionVectorCharReplace = instructionVectorReplace char vectorChar Nothing
 
 instructionVectorCharReplaceFirst :: State -> State
-instructionVectorCharReplaceFirst = instructionVectorReplaceFirst char vectorChar
+instructionVectorCharReplaceFirst = instructionVectorReplace char vectorChar (Just 1)
 
 instructionVectorCharRemove :: State -> State
 instructionVectorCharRemove = instructionVectorRemove char vectorChar
