@@ -2,7 +2,6 @@ module HushGP.Instructions.StringInstructions where
 
 import HushGP.State
 import HushGP.Instructions.GenericInstructions
-import Data.List.Split
 import Control.Lens
 
 -- |Utility String: Whitespack characters.
@@ -139,74 +138,112 @@ instructionStringContainsChar = instructionVectorContains char string
 instructionStringIndexOfChar :: State -> State
 instructionStringIndexOfChar = instructionVectorIndexOf char string
 
--- |@TODO
+-- |Takes the top string from the string stack and the top
+-- char from the char stack. Splits the top string based on
+-- the top char and pushes the result to the string stack.
 instructionStringSplitOnChar :: State -> State
 instructionStringSplitOnChar = instructionVectorSplitOn char string
 
+-- |Takes the top string from the string stack and the two top char from the char stack.
+-- Replaces the first instance of the top char with the second char.
 instructionStringReplaceFirstChar :: State -> State
 instructionStringReplaceFirstChar = instructionVectorReplace char string (Just 1)
 
+-- |Takes the top string from the string stack and the two top char from the char stack.
+-- Replaces N instances of the top char with the second char. N is determined by the
+-- top int on the int stack.
 instructionStringReplaceNChar :: State -> State
-instructionStringReplaceNChar state@(State {_string = s1 : ss, _char = c1 : c2 : cs, _int = i1 : is}) = state{_string = replace s1 [c1] [c2] (Just i1) : ss, _char = cs, _int = is}
-instructionStringReplaceNChar state = state
+instructionStringReplaceNChar = instructionVectorReplaceN char string
 
+-- |Takes the top string from the string stack and the two top char from the char stack.
+-- Replaces all instances of the top char with the second char.
 instructionStringReplaceAllChar :: State -> State
 instructionStringReplaceAllChar = instructionVectorReplace char string Nothing
 
+-- |Takes the top string from the string stack and the top char from the char stack.
+-- Removes the first instance of the top char with the second char.
 instructionStringRemoveFirstChar :: State -> State
-instructionStringRemoveFirstChar state@(State {_string = s1 : ss, _char = c1 : cs}) = state {_string = replace s1 [c1] "" (Just 1) : ss, _char = cs}
-instructionStringRemoveFirstChar state = state
+instructionStringRemoveFirstChar = instructionVectorRemove char string (Just 1)
 
+-- |Takes the top string from the string stack and the top char from the char stack.
+-- Removes N instances of the top char with the second char. N is pulled from the top
+-- of the int stack.
 instructionStringRemoveNChar :: State -> State
-instructionStringRemoveNChar state@(State {_string = s1 : ss, _char = c1 : cs, _int = i1 : is}) = state{_string = replace s1 [c1] "" (Just i1) : ss, _char = cs, _int = is}
-instructionStringRemoveNChar state = state
+instructionStringRemoveNChar = instructionVectorRemoveN char string
 
+-- |Takes the top string from the string stack and the top char from the char stack.
+-- Removes all instances of the top char with the second char.
 instructionStringRemoveAllChar :: State -> State
-instructionStringRemoveAllChar = instructionVectorRemove char string
+instructionStringRemoveAllChar = instructionVectorRemove char string Nothing
 
+-- |Takes the top string from the string stack and the top char from the char stack.
+-- Counts the amount of occurrences of the top char inside of the top string. Pushes
+-- this result to the int stack.
 instructionStringOccurrencesOfChar :: State -> State
 instructionStringOccurrencesOfChar = instructionVectorOccurrencesOf char string
 
+-- |Takes the top string from the string stack and reverses it. Pushes the reversed string
+-- to the top of the stack.
 instructionStringReverse :: State -> State
 instructionStringReverse = instructionReverse string
 
+-- |Takes the top string from the string stack, takes the first N chars from the top string,
+-- and pushes the result to the string stack. N is pulled from the top of the int stack.
 instructionStringHead :: State -> State
-instructionStringHead = instructionTakeN string
+instructionStringHead = instructionVectorTakeN string
 
+-- |Takes the top string from the string stack, takes the last N chars from the top string,
+-- and pushes the result to the string stack. N is pulled from the top of the int stack.
 instructionStringTail :: State -> State
-instructionStringTail state@(State {_string = s1 : ss, _int = i1 : is}) = state{_string = takeR (absNum i1 s1) s1 : ss, _int = is}
-instructionStringTail state = state
+instructionStringTail = instructionVectorTakeRN string
 
+-- |Takes the top string from the string stack and the top char from the char stack.
+-- Prepends the top char to the top string. Pushes the result to the string stack.
+instructionStringPrependChar :: State -> State
+instructionStringPrependChar = instructionVectorConj char string
+
+-- |Takes the top string from the string stack and the top char from the char stack.
+-- Appends the top char to the top string. Pushes the result to the string stack.
 instructionStringAppendChar :: State -> State
-instructionStringAppendChar = instructionConj char string
+instructionStringAppendChar = instructionVectorConjEnd char string
 
-instructionStringConjEndChar :: State -> State
-instructionStringConjEndChar = instructionConjEnd char string
-
+-- |Takes the top string from the string stack and removes the first char
+-- from said string. Pushes the result to the string stack.
 instructionStringRest :: State -> State
-instructionStringRest = instructionRest string
+instructionStringRest = instructionVectorRest string
 
+-- |Takes the top string from the string stack and removes the last char
+-- from said string. Pushes the result to the string stack.
 instructionStringButLast :: State -> State
-instructionStringButLast = instructionButLast string
+instructionStringButLast = instructionVectorButLast string
 
+-- |Takes the top string from the string stack and drops the first N characters
+-- from said string. Pushes the result to the string stack. N is pulled from the top
+-- of the int stack.
 instructionStringDrop :: State -> State
-instructionStringDrop state@(State {_string = s1 : ss, _int = i1 : is}) = state{_string = drop (absNum i1 s1) s1 : ss, _int = is}
-instructionStringDrop state = state
+instructionStringDrop = instructionVectorDrop string
 
+-- |Takes the top string from the string stack and drops the last N characters
+-- from said string. Pushes the result to the string stack. N is pulled from the top
+-- of the int stack.
 instructionStringButLastN :: State -> State
-instructionStringButLastN state@(State {_string = s1 : ss, _int = i1 : is}) = state{_string = dropR (absNum i1 s1) s1 : ss, _int = is}
-instructionStringButLastN state = state
+instructionStringButLastN = instructionVectorDropR string
 
+-- |Takes the top string from the string stack and calculates the length. The length
+-- is then pushed to the int stack.
 instructionStringLength :: State -> State
 instructionStringLength = instructionLength string
 
+-- |Makes an empty string and pushes it to the top of the string stack.
 instructionStringMakeEmpty :: State -> State
 instructionStringMakeEmpty = instructionVectorMakeEmpty string
 
+-- |Checks to see if the top string is empty on the string stack.
+-- Pushes True to the bool stack if empty. Pushes False if not.
 instructionStringIsEmptyString :: State -> State
-instructionStringIsEmptyString state@(State {_string = s1 : ss, _bool = bs}) = state{_string = ss, _bool = null s1 : bs}
-instructionStringIsEmptyString state = state
+instructionStringIsEmptyString = instructionVectorIsEmpty string
 
+-- TODO: Make this generic
 instructionStringRemoveNth :: State -> State
 instructionStringRemoveNth state@(State {_string = s1 : ss, _int = i1 : is}) = state{_string = deleteAt (absNum i1 s1) s1 : ss, _int = is}
 instructionStringRemoveNth state = state
