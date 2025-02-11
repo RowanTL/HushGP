@@ -483,7 +483,7 @@ instructionVectorOccurrencesOfVector accessor state@(State {_int = is}) =
     _ -> state
 
 -- |This function parses the primitives inside a vector type and pushes that vector split into
--- lists of size one onto the respective vector stack. Based on a vector lens.
+-- lists of size one and pushes the result onto the respective vector stack. Based on a vector lens.
 instructionVectorParseToPrim :: Lens' State [[a]] -> State -> State
 instructionVectorParseToPrim accessor state =
   case uncons (view accessor state) of
@@ -599,6 +599,7 @@ instructionVectorRemoveVectorN _ state = state
   
 -- |Based on two lenses, one of a primitive type and the next of a vector type,
 -- iterates over the top vector from the vector stack using the top code from the code stack.
+-- Pysh explains this better.
 instructionVectorIterate :: Lens' State [a] -> Lens' State [[a]] -> ([a] -> Gene) -> (State -> State) -> String -> State -> State
 instructionVectorIterate primAccessor vectorAccessor vectorType typeIterateFunction typeIterateFunctionName state@(State {_exec = e1 : es}) =
   case uncons (view vectorAccessor state) of
