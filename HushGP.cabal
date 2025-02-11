@@ -52,6 +52,7 @@ library
                     , HushGP.Instructions.VectorStringInstructions
                     , HushGP.Instructions.VectorBoolInstructions
                     , HushGP.Instructions.VectorCharInstructions
+                    , HushGP.Instructions.Utility
                     , HushGP.PushTests
                     , HushGP.PushTests.IntTests
                     , HushGP.PushTests.GenericTests

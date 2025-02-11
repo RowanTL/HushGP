@@ -2,29 +2,8 @@ module HushGP.Instructions.StringInstructions where
 
 import HushGP.State
 import HushGP.Instructions.GenericInstructions
+import HushGP.Instructions.Utility
 import Control.Lens
-
--- |Utility String: Whitespack characters.
--- shamelessly stolen from https://hackage.haskell.org/package/MissingH-1.6.0.1/docs/src/Data.String.Utils.html#strip
-wschars :: String
-wschars = " \t\r\n"
-
--- |Utility Function: Strips a string of its whitespace on both sides.
-strip :: String -> String
-strip = lstrip . rstrip
-
--- |Utility Function: Strips a string of its whitespace on the left side.
-lstrip :: String -> String
-lstrip s = case s of
-                  [] -> []
-                  (x:xs) -> if x `elem` wschars
-                            then lstrip xs
-                            else s
-
--- |Utility Function: Strips a string of its whitespace on the right side.
--- this is a tad inefficient
-rstrip :: String -> String
-rstrip = reverse . lstrip . reverse
 
 -- |Concats the top two strings on the string stack and pushes the result.
 instructionStringConcat :: State -> State

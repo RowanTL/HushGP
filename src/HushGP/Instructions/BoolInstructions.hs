@@ -2,6 +2,7 @@ module HushGP.Instructions.BoolInstructions where
 
 import HushGP.State
 import HushGP.Instructions.GenericInstructions
+import HushGP.Instructions.Utility
 
 -- |If top of int stack /= 0 pushes True to bool stack, else false.
 instructionBoolFromInt :: State -> State
@@ -12,12 +13,6 @@ instructionBoolFromInt state = state
 instructionBoolFromFloat :: State -> State
 instructionBoolFromFloat state@(State {_float = f1 : fs, _bool = bs}) = state {_float = fs, _bool = (f1 /= 0) : bs}
 instructionBoolFromFloat state = state
-
--- |A template function to make bool comparisons concise.
-boolTemplate :: (Bool -> Bool -> Bool) -> State -> State
-boolTemplate func state@(State {_bool = b1 : b2 : bs}) = state {_bool = func b1 b2 : bs}
-boolTemplate _ state = state
-
 -- |Takes the top two bools and Ands them.
 instructionBoolAnd :: State -> State
 instructionBoolAnd = boolTemplate (&&)
@@ -35,13 +30,6 @@ instructionBoolInvertSecondThenAnd state = state
 -- |Takes the top two bools and Ors them.
 instructionBoolOr :: State -> State
 instructionBoolOr = boolTemplate (||)
-
--- |Utility function. Haskell doesn't have its own xor operation.
-xor :: Bool -> Bool -> Bool
-xor b1 b2
-  | b1 && not b2 = True
-  | not b1 && b2 = True
-  | otherwise = False
 
 -- |Takes the xor of the top two bools.
 instructionBoolXor :: State -> State

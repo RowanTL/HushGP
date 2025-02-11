@@ -2,12 +2,8 @@ module HushGP.Instructions.CharInstructions where
 
 import Data.Char
 import HushGP.State
-import HushGP.Instructions.StringInstructions (wschars)
 import HushGP.Instructions.GenericInstructions
-
--- |Converts a whole number `mod` 128 to a char.
-intToAscii :: Integral a => a -> Char
-intToAscii val = chr (abs (fromIntegral val) `mod` 128)
+import HushGP.Instructions.Utility
 
 -- |Combines the top two chars into a string and pushes the result to the string stack.
 instructionCharConcat :: State -> State

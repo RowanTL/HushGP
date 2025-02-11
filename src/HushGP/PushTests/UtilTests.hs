@@ -1,6 +1,6 @@
 module HushGP.PushTests.UtilTests where
 
-import HushGP.Instructions.GenericInstructions
+import HushGP.Instructions.Utility
 import Test.QuickCheck
 
 prop_DeleteAtTest :: Int -> [Int] -> Property

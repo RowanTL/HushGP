@@ -2,6 +2,7 @@ module HushGP.Instructions.FloatInstructions where
 
 import Data.Fixed (mod')
 import HushGP.Instructions.GenericInstructions
+import HushGP.Instructions.Utility
 import HushGP.State
 import Data.Char
 
