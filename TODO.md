@@ -16,6 +16,7 @@
 - [ ] Write unit/quickcheck tests for all of the instructions
 - [ ] Use template haskell to generate function lists
 - [X] Move utility functions to their own file
+- [ ] Make add/sub/mult/div/mod instructions generic
 
 ## PushGP TODO
 - [ ] Implement a Plushy genome translator
