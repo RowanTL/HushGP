@@ -70,16 +70,12 @@ instructionExecShoveDup = instructionShoveDup exec
 instructionExecIsStackEmpty :: State -> State
 instructionExecIsStackEmpty = instructionIsStackEmpty exec
 
--- |Utility: Shorthand for instructionExecDoRange
-execDoRange :: Gene
-execDoRange = StateFunc (instructionExecDoRange, "instructionExecDoRange")
-
 -- |Evaluates the top item on the exec stack for each step along the range i to j. Both i and j are 
 -- taken from the int stack. Differs from code_do_range only in the source of the code and the recursive call.
 instructionExecDoRange :: State -> State
 instructionExecDoRange state@(State {_exec = e1 : es, _int = i0 : i1 : is}) =
   if increment i0 i1 /= 0
-    then state {_exec = e1 : Block [GeneInt (i1 + increment i0 i1), GeneInt i0, execDoRange, e1] : es, _int = i1 : is}
+    then state {_exec = e1 : Block [GeneInt (i1 + increment i0 i1), GeneInt i0, StateFunc (instructionExecDoRange, "instructionExecDoRange"), e1] : es, _int = i1 : is}
     else state {_exec = e1 : es, _int = i1 : is}
   where
     increment :: Int -> Int -> Int
@@ -95,7 +91,7 @@ instructionExecDoCount :: State -> State
 instructionExecDoCount state@(State {_exec = e1 : es, _int = i1 : is}) =
   if i1 < 1
     then state
-    else state {_exec = Block [GeneInt 0, GeneInt $ i1 - 1, execDoRange, e1] : es, _int = is}
+    else state {_exec = Block [GeneInt 0, GeneInt $ i1 - 1, StateFunc (instructionExecDoRange, "instructionExecDoRange"), e1] : es, _int = is}
 instructionExecDoCount state = state
 
 -- |Evaluates the top item on the code stack n times, where n comes from the n comes from the top of the int stack.
@@ -103,7 +99,7 @@ instructionExecDoTimes :: State -> State
 instructionExecDoTimes state@(State {_exec = e1 : es, _int = i1 : is}) =
   if i1 < 1
     then state
-    else state {_exec = Block [GeneInt 0, GeneInt $ i1 - 1, execDoRange, Block [StateFunc (instructionIntPop, "instructionIntPop"), e1]] : es, _int = is}
+    else state {_exec = Block [GeneInt 0, GeneInt $ i1 - 1, StateFunc (instructionExecDoRange, "instructionExecDoRange"), Block [StateFunc (instructionIntPop, "instructionIntPop"), e1]] : es, _int = is}
 instructionExecDoTimes state = state
 
 -- |Utility: A shorthand for instructionExecWhile

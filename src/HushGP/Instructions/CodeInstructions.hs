@@ -96,19 +96,11 @@ instructionCodeDoThenPop :: State -> State
 instructionCodeDoThenPop state@(State {_code = c1 : _, _exec = es}) = state {_exec = c1 : StateFunc (instructionCodePop, "instructionCodePop") : es}
 instructionCodeDoThenPop state = state
 
--- |Utility: A shorthand for instrucitonCodeFromExec to make code instructions less bloated
-codeFromExec :: Gene
-codeFromExec = StateFunc (instructionCodeFromExec, "instructionCodeFromExec")
-
--- |Utility: A shorthand for instructionCodoDoRange to make code instructions less bloated
-codeDoRange :: Gene
-codeDoRange = StateFunc (instructionCodeDoRange, "instructionCodeDoRange")
-
 -- |Evaluates the top item on the code stack for each step along the range i to j. Both i and j are taken from the int stack.
 instructionCodeDoRange :: State -> State
 instructionCodeDoRange state@(State {_code = c1 : cs, _int = i0 : i1 : is, _exec = es}) =
   if increment i0 i1 /= 0
-    then state {_exec = c1 : Block [GeneInt (i1 + increment i0 i1), GeneInt i0, codeFromExec, c1, codeDoRange] : es, _int = i1 : is, _code = cs}
+    then state {_exec = c1 : Block [GeneInt (i1 + increment i0 i1), GeneInt i0, StateFunc (instructionCodeFromExec, "instructionCodeFromExec"), c1, StateFunc (instructionCodeDoRange, "instructionCodeDoRange")] : es, _int = i1 : is, _code = cs}
     else state {_exec = c1: es, _int = i1 : is, _code = cs}
   where
     increment :: Int -> Int -> Int
@@ -123,7 +115,7 @@ instructionCodeDoCount :: State -> State
 instructionCodeDoCount state@(State {_code = c : cs, _int = i1 : is, _exec = es}) =
   if i1 < 1
     then state
-    else state {_code = cs, _int = is, _exec = Block [GeneInt 0, GeneInt $ i1 - 1, codeFromExec, c, codeDoRange] : es}
+    else state {_code = cs, _int = is, _exec = Block [GeneInt 0, GeneInt $ i1 - 1, StateFunc (instructionCodeFromExec, "instructionCodeFromExec"), c, StateFunc (instructionCodeDoRange, "instructionCodeDoRange")] : es}
 instructionCodeDoCount state = state
 
 -- |Evaluates the top item on the code stack n times, where n comes from the n comes from the top of the int stack.
@@ -131,7 +123,7 @@ instructionCodeDoTimes :: State -> State
 instructionCodeDoTimes state@(State {_code = c : cs, _int = i1 : is, _exec = es}) =
   if i1 < 1
     then state
-    else state {_code = cs, _int = is, _exec = Block [GeneInt 0, GeneInt $ i1 - 1, codeFromExec, Block [StateFunc (instructionIntPop, "instructionIntPop"), c], codeDoRange] : es}
+    else state {_code = cs, _int = is, _exec = Block [GeneInt 0, GeneInt $ i1 - 1, StateFunc (instructionCodeFromExec, "instructionCodeFromExec"), Block [StateFunc (instructionIntPop, "instructionIntPop"), c], StateFunc (instructionCodeDoRange, "instructionCodeDoRange")] : es}
 instructionCodeDoTimes state = state
 
 -- |If the top boolean is true, execute the top element of the code stack and skip the second. Otherwise, skip the top element of the code stack and execute the second.
