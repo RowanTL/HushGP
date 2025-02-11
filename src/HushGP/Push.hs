@@ -12,7 +12,7 @@ import HushGP.State
 -- Everntually, this can be part of the apply func to state helpers,
 -- which should take the number and type of parameter they have.
 
--- This is one of the push genome functions itself, not infrastructure.
+-- |This is one of the push genome functions itself, not infrastructure.
 -- Optionally, split this off into independent functions
 instructionParameterLoad :: State -> State
 instructionParameterLoad state@(State {_parameter = (p : _)}) = case p of
@@ -32,11 +32,11 @@ instructionParameterLoad state@(State {_parameter = (p : _)}) = case p of
   (Block xs) -> state & exec .~ xs <> view exec state
 instructionParameterLoad state = state
 
--- Loads a genome into the exec stack
+-- |Loads a genome into the exec stack
 loadProgram :: [Gene] -> State -> State
 loadProgram newstack state = state & exec .~ newstack
 
--- Takes a Push state, and generates the next push state via:
+-- |Takes a Push state, and generates the next push state via:
 -- If the first item on the EXEC stack is a single instruction
 --     then pop it and execute it.
 -- Else if the first item on the EXEC stack is a literal
@@ -64,23 +64,3 @@ interpretExec state@(State {_exec = e : es}) =
     (PlaceInput val) -> interpretExec (state {_exec = (view input state Map.! val) : es})
     Close -> undefined -- This should be removed later. Will be converted to Blocks in the Plushy -> Exec stack process
 interpretExec state = state
-
--- interpretOneStep :: State -> State
--- interpretOneStep state@(State {_exec = e : es}) =
---   case e of
---     (GeneInt val) -> state & exec .~ es & int .~ val : view int state
---     (GeneFloat val) -> state & exec .~ es & float .~ val : view float state
---     (GeneBool val) -> state & exec .~ es & bool .~ val : view bool state
---     (GeneString val) -> state & exec .~ es & string .~ val : view string state
---     (GeneChar val) -> state & exec .~ es & char .~ val : view char state
---     (GeneVectorInt val) -> state & exec .~ es & vectorInt .~ val : view vectorInt state
---     (GeneVectorFloat val) -> state & exec .~ es & vectorFloat .~ val : view vectorFloat state
---     (GeneVectorBool val) -> state & exec .~ es & vectorBool .~ val : view vectorBool state
---     (GeneVectorString val) -> state & exec .~ es & vectorString .~ val : view vectorString state
---     (GeneVectorChar val) -> state & exec .~ es & vectorChar .~ val : view vectorChar state
---     (StateFunc (func, _)) -> func state {_exec = es}
---     (Block block) ->  (state {_exec = block ++ es})
---     (PlaceInput val) ->  (state {_exec = (view input state Map.! val) : es})
---     Close -> undefined
--- interpretOneStep state = state
--- Need to make interpretExec strict, right?

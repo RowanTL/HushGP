@@ -8,7 +8,7 @@ import Data.Map qualified as Map
 import GHC.Generics
 import Test.QuickCheck
 
--- The exec stack must store heterogenous types,
+-- |The exec stack must store heterogenous types,
 -- and we must be able to detect that type at runtime.
 -- One solution is for the exec stack to be a list of [Gene].
 -- The parameter stack could be singular [Gene] or multiple [atomic] types.
@@ -83,6 +83,7 @@ instance Arbitrary Gene where
         return Close
       ]
 
+-- |The structure that holds all of the values.
 data State = State
   { _exec :: [Gene],
     _code :: [Gene],
