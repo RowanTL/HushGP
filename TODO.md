@@ -14,7 +14,7 @@
 - [X] Refactor all functions to take state as the final parameter
 - [X] Standardize the pattern matching parameter names, such as c1 : cs
 - [ ] Write unit/quickcheck tests for all of the instructions
-- [ ] Use template haskell to generate function lists
+~~[ ] Use template haskell to generate function lists~~
 - [X] Move utility functions to their own file
 - [ ] Make add/sub/mult/div/mod instructions generic
 
