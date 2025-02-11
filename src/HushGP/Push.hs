@@ -12,8 +12,8 @@ import HushGP.State
 -- Everntually, this can be part of the apply func to state helpers,
 -- which should take the number and type of parameter they have.
 
--- |This is one of the push genome functions itself, not infrastructure.
--- Optionally, split this off into independent functions
+-- | This is one of the push genome functions itself, not infrastructure.
+--  Optionally, split this off into independent functions
 instructionParameterLoad :: State -> State
 instructionParameterLoad state@(State {_parameter = (p : _)}) = case p of
   (GeneInt val) -> state & int .~ val : view int state
@@ -32,20 +32,20 @@ instructionParameterLoad state@(State {_parameter = (p : _)}) = case p of
   (Block xs) -> state & exec .~ xs <> view exec state
 instructionParameterLoad state = state
 
--- |Loads a genome into the exec stack
+-- | Loads a genome into the exec stack
 loadProgram :: [Gene] -> State -> State
 loadProgram newstack state = state & exec .~ newstack
 
--- |Takes a Push state, and generates the next push state via:
--- If the first item on the EXEC stack is a single instruction
---     then pop it and execute it.
--- Else if the first item on the EXEC stack is a literal
---     then pop it and push it onto the appropriate stack.
--- Else (the first item must be a list) pop it and push all of the
---     items that it contains back onto the EXEC stack individually,
---     in reverse order (so that the item that was first in the list
---     ends up on top).
--- The empty-stack safety of interpretExec on empty stacks depends on the functions it calls.
+-- | Takes a Push state, and generates the next push state via:
+--  If the first item on the EXEC stack is a single instruction
+--      then pop it and execute it.
+--  Else if the first item on the EXEC stack is a literal
+--      then pop it and push it onto the appropriate stack.
+--  Else (the first item must be a list) pop it and push all of the
+--      items that it contains back onto the EXEC stack individually,
+--      in reverse order (so that the item that was first in the list
+--      ends up on top).
+--  The empty-stack safety of interpretExec on empty stacks depends on the functions it calls.
 interpretExec :: State -> State
 interpretExec state@(State {_exec = e : es}) =
   case e of

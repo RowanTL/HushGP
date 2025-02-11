@@ -247,3 +247,13 @@ lstrip s = case s of
 -- this is a tad inefficient
 rstrip :: String -> String
 rstrip = reverse . lstrip . reverse
+
+-- string utility
+
+-- |Utility Function: Casts a type based on a lens to a string. Pushes the result
+-- to the string stack.
+instructionStringFromLens :: Show a => Lens' State [a] -> State -> State
+instructionStringFromLens accessor state@(State {_string = ss}) =
+  case uncons (view accessor state) of
+    Nothing -> state
+    Just (x1,_) -> state{_string = show x1 : ss}

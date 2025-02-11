@@ -3,7 +3,6 @@ module HushGP.Instructions.StringInstructions where
 import HushGP.State
 import HushGP.Instructions.GenericInstructions
 import HushGP.Instructions.Utility
-import Control.Lens
 
 -- |Concats the top two strings on the string stack and pushes the result.
 instructionStringConcat :: State -> State
@@ -220,14 +219,6 @@ instructionStringSetNth = instructionVectorSetNth char string
 instructionStringStripWhitespace :: State -> State
 instructionStringStripWhitespace state@(State {_string = s1 : ss}) = state{_string = strip s1 : ss}
 instructionStringStripWhitespace state = state
-
--- |Utility Function: Casts a type based on a lens to a string. Pushes the result
--- to the string stack.
-instructionStringFromLens :: Show a => Lens' State [a] -> State -> State
-instructionStringFromLens accessor state@(State {_string = ss}) =
-  case uncons (view accessor state) of
-    Nothing -> state
-    Just (x1,_) -> state{_string = show x1 : ss}
 
 -- |Converts the top bool from the bool stack to a string. Pushes the result to
 -- the string stack.
