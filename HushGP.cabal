@@ -57,6 +57,7 @@ library
                     , HushGP.PushTests.IntTests
                     , HushGP.PushTests.GenericTests
                     , HushGP.PushTests.UtilTests
+                    , HushGP.TH
 
     -- Modules included in this library but not exported.
     -- other-modules:
