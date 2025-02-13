@@ -17,11 +17,12 @@
 - [X] Use template haskell to generate function lists
 - [X] Move utility functions to their own file
 - [ ] Make add/sub/mult/div/mod instructions generic
-- [ ] Use template haskell to (mostly) generate functions from generic ones
+- [ ] Use template haskell to (mostly) generate functions from generic ones (Split files based on the arity of their functions)
 
 ## PushGP TODO
 - [ ] Implement a Plushy genome translator
   - [ ] Need to make this reproducable too (Check pysh json files)
+  - [ ] Implement silent markers as well
 - [ ] Add Memory
 - [ ] Add history stack(s), like a call stack
 - [ ] Implement interpreter options (could probably just place this into a map)
