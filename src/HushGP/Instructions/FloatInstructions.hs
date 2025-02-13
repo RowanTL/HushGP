@@ -41,6 +41,11 @@ instructionFloatSub :: State -> State
 instructionFloatSub state@(State {_float = f1 : f2 : fs}) = state {_float = f2 - f1 : fs}
 instructionFloatSub state = state
 
+-- |Subtracts the second float from the first float and pushes the result to the float stack.
+instructionFloatSubOpp :: State -> State
+instructionFloatSubOpp state@(State {_float = i1 : i2 : is}) = state {_float = i1 - i2 : is}
+instructionFloatSubOpp state = state
+
 -- |Multiplies the top two floats on the float stack.
 instructionFloatMul :: State -> State
 instructionFloatMul state@(State {_float = f1 : f2 : fs}) = state {_float = f2 * f1 : fs}
@@ -50,6 +55,12 @@ instructionFloatMul state = state
 instructionFloatDiv :: State -> State
 instructionFloatDiv state@(State {_float = f1 : f2 : fs}) = state {_float = if f1 /= 0 then f2 / f1 : fs else f1 : f2 : fs}
 instructionFloatDiv state = state
+
+-- |Divides the second float from the first float and pushes the result to the float stack.
+-- This does truncate.
+instructionFloatDivOpp :: State -> State
+instructionFloatDivOpp state@(State {_float = i1 : i2 : is}) = state {_float = if i2 /= 0 then (i1 / i2) : is else i1 : i2 : is}
+instructionFloatDivOpp state = state
 
 -- |Mods the first float from the second float on the float stack.
 instructionFloatMod :: State -> State

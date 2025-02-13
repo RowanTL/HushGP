@@ -39,6 +39,11 @@ instructionIntSub :: State -> State
 instructionIntSub state@(State {_int = i1 : i2 : is}) = state {_int = i2 - i1 : is}
 instructionIntSub state = state
 
+-- |Subtracts the second int from the first int and pushes the result to the int stack.
+instructionIntSubOpp :: State -> State
+instructionIntSubOpp state@(State {_int = i1 : i2 : is}) = state {_int = i1 - i2 : is}
+instructionIntSubOpp state = state
+
 -- |Multiplies the top two ints from the int stack and pushes the result to the int stack.
 instructionIntMul :: State -> State
 instructionIntMul state@(State {_int = i1 : i2 : is}) = state {_int = i2 * i1 : is}
@@ -49,6 +54,12 @@ instructionIntMul state = state
 instructionIntDiv :: State -> State
 instructionIntDiv state@(State {_int = i1 : i2 : is}) = state {_int = if i1 /= 0 then (i2 `div` i1) : is else i1 : i2 : is}
 instructionIntDiv state = state
+
+-- |Divides the second int from the first int and pushes the result to the int stack.
+-- This does truncate.
+instructionIntDivOpp :: State -> State
+instructionIntDivOpp state@(State {_int = i1 : i2 : is}) = state {_int = if i2 /= 0 then (i1 `div` i2) : is else i1 : i2 : is}
+instructionIntDivOpp state = state
 
 -- |Mods the first float from the second float and pushes the result to the int stack.
 -- This does truncate.
