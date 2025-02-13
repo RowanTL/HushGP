@@ -1,3 +1,4 @@
+{-# LANGUAGE TemplateHaskell #-}
 module HushGP.Instructions.CodeInstructions where
 
 import Data.List (elemIndex)
@@ -5,6 +6,7 @@ import HushGP.State
 import HushGP.Instructions.GenericInstructions
 import HushGP.Instructions.IntInstructions
 import HushGP.Instructions.Utility
+import HushGP.TH
 -- import Debug.Trace
 
 -- |Pops the top of the code stack
@@ -345,3 +347,6 @@ instructionCodeNoOp state = state
 -- |Duplicates the top N items of the code stack based on the top of the int stack.
 instructionCodeDupItems :: State -> State
 instructionCodeDupItems = instructionDupItems code
+
+allCodeInstructions :: [Gene]
+allCodeInstructions = map StateFunc ($(functionExtractor "instruction"))

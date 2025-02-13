@@ -1,3 +1,4 @@
+{-# LANGUAGE TemplateHaskell #-}
 module HushGP.Instructions.FloatInstructions where
 
 import Data.Fixed (mod')
@@ -5,6 +6,7 @@ import HushGP.Instructions.GenericInstructions
 import HushGP.Instructions.Utility
 import HushGP.State
 import Data.Char
+import HushGP.TH
 
 -- |Converts the top int to a float and pushes the result to the float stack.
 instructionFloatFromInt :: State -> State
@@ -169,3 +171,6 @@ instructionFloatTan state = state
 -- |Duplicate the top N items from the float stack based on the top int from the int stack.
 instructionFloatDupItems :: State -> State
 instructionFloatDupItems = instructionDupItems float
+
+allFloatInstructions :: [Gene]
+allFloatInstructions = map StateFunc ($(functionExtractor "instruction"))

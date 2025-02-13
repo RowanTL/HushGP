@@ -1,7 +1,9 @@
+{-# LANGUAGE TemplateHaskell #-}
 module HushGP.Instructions.VectorFloatInstructions where
 
 import HushGP.State
 import HushGP.Instructions.GenericInstructions
+import HushGP.TH
 
 -- |Pops the top float vector from the float vector stack.
 instructionVectorFloatPop :: State -> State
@@ -328,3 +330,6 @@ instructionVectorFloatInsert = instructionVectorInsert float vectorFloat
 -- pulled from the top of the int stack.
 instructionVectorFloatInsertVectorFloat :: State -> State
 instructionVectorFloatInsertVectorFloat = instructionVectorInsertVector vectorFloat
+
+allVectorFloatInstructions :: [Gene]
+allVectorFloatInstructions = map StateFunc ($(functionExtractor "instruction"))

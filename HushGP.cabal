@@ -28,7 +28,7 @@ category:           Data
 build-type:         Simple
 
 common warnings
-    ghc-options: -Wall
+    ghc-options: -Wall -XTemplateHaskell
 
 library
     -- Import common warning flags.
@@ -57,6 +57,7 @@ library
                     , HushGP.PushTests.IntTests
                     , HushGP.PushTests.GenericTests
                     , HushGP.PushTests.UtilTests
+                    , HushGP.TH
 
     -- Modules included in this library but not exported.
     -- other-modules:
@@ -66,7 +67,7 @@ library
 
     -- Other library packages from which modules are imported.
     build-depends:
-        base, containers, lens, split, QuickCheck
+        base, containers, lens, split, QuickCheck, regex-tdfa, template-haskell
 
     -- Directories containing source files.
     hs-source-dirs:   src

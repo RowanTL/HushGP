@@ -1,7 +1,9 @@
+{-# LANGUAGE TemplateHaskell #-}
 module HushGP.Instructions.VectorCharInstructions where
 
 import HushGP.State
 import HushGP.Instructions.GenericInstructions
+import HushGP.TH
 
 -- |Pops the top char vector from the char vector stack.
 instructionVectorCharPop :: State -> State
@@ -328,3 +330,6 @@ instructionVectorCharInsert = instructionVectorInsert char vectorChar
 -- pulled from the top of the int stack.
 instructionVectorCharInsertVectorChar :: State -> State
 instructionVectorCharInsertVectorChar = instructionVectorInsertVector vectorChar
+
+allVectorCharInstructions :: [Gene]
+allVectorCharInstructions = map StateFunc ($(functionExtractor "instruction"))

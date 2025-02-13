@@ -1,9 +1,11 @@
+{-# LANGUAGE TemplateHaskell #-}
 module HushGP.Instructions.CharInstructions where
 
 import Data.Char
 import HushGP.State
 import HushGP.Instructions.GenericInstructions
 import HushGP.Instructions.Utility
+import HushGP.TH
 
 -- |Combines the top two chars into a string and pushes the result to the string stack.
 instructionCharConcat :: State -> State
@@ -132,3 +134,6 @@ instructionCharDupItems = instructionDupItems char
 -- all chars in said string to the char stack.
 instructionCharFromAllString :: State -> State
 instructionCharFromAllString = instructionPushAll char string
+
+allCharInstructions :: [Gene]
+allCharInstructions = map StateFunc ($(functionExtractor "instruction"))

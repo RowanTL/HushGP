@@ -1,9 +1,10 @@
+{-# LANGUAGE TemplateHaskell #-}
 module HushGP.Instructions.IntInstructions where
 
 import HushGP.State
 import HushGP.Instructions.GenericInstructions
 import Data.Char
--- import Debug.Trace
+import HushGP.TH
 
 -- |Converts the top float to an int and pushes the result to the int stack.
 instructionIntFromFloat :: State -> State
@@ -155,3 +156,6 @@ instructionIntIsStackEmpty = instructionIsStackEmpty int
 -- |Duplicate the top N items from the int stack based on the top int from the int stack.
 instructionIntDupItems :: State -> State
 instructionIntDupItems = instructionDupItems int
+
+allIntInstructions :: [Gene]
+allIntInstructions = map StateFunc ($(functionExtractor "instruction"))

@@ -1,7 +1,9 @@
+{-# LANGUAGE TemplateHaskell #-}
 module HushGP.Instructions.VectorStringInstructions where
 
 import HushGP.State
 import HushGP.Instructions.GenericInstructions
+import HushGP.TH
 
 -- |Pops the top string vector from the string vector stack.
 instructionVectorStringPop :: State -> State
@@ -328,3 +330,6 @@ instructionVectorStringInsert = instructionVectorInsert string vectorString
 -- pulled from the top of the int stack.
 instructionVectorStringInsertVectorString :: State -> State
 instructionVectorStringInsertVectorString = instructionVectorInsertVector vectorString
+
+allVectorStringInstructions :: [Gene]
+allVectorStringInstructions = map StateFunc ($(functionExtractor "instruction"))

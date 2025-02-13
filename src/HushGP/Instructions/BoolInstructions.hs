@@ -1,8 +1,10 @@
+{-# LANGUAGE TemplateHaskell #-}
 module HushGP.Instructions.BoolInstructions where
 
 import HushGP.State
 import HushGP.Instructions.GenericInstructions
 import HushGP.Instructions.Utility
+import HushGP.TH
 
 -- |If top of int stack /= 0 pushes True to bool stack, else false.
 instructionBoolFromInt :: State -> State
@@ -94,3 +96,6 @@ instructionBoolIsStackEmpty = instructionIsStackEmpty bool
 -- |Duplicate the top N items from the bool stack based on the top int from the int stack.
 instructionBoolDupItems :: State -> State
 instructionBoolDupItems = instructionDupItems bool
+
+allBoolInstructions :: [Gene]
+allBoolInstructions = map StateFunc ($(functionExtractor "instruction"))

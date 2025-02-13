@@ -1,7 +1,9 @@
+{-# LANGUAGE TemplateHaskell #-}
 module HushGP.Instructions.VectorBoolInstructions where
 
 import HushGP.State
 import HushGP.Instructions.GenericInstructions
+import HushGP.TH
 
 -- |Pops the top bool vector from the bool vector stack.
 instructionVectorBoolPop :: State -> State
@@ -328,3 +330,6 @@ instructionVectorBoolInsert = instructionVectorInsert bool vectorBool
 -- pulled from the top of the int stack.
 instructionVectorBoolInsertVectorBool :: State -> State
 instructionVectorBoolInsertVectorBool = instructionVectorInsertVector vectorBool
+
+allVectorBoolInstructions :: [Gene]
+allVectorBoolInstructions = map StateFunc ($(functionExtractor "instruction"))

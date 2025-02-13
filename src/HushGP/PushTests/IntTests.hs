@@ -26,8 +26,8 @@ prop_IntMod state = aaa1Test int instructionIntMod mod state
 prop_IntFromFloat :: State -> Property
 prop_IntFromFloat = ab1Test float int instructionIntFromFloat floor
 
-prop_IntFromProperty :: State -> Property
-prop_IntFromProperty = ab1Test bool int instructionIntFromBool (\x -> if x then 1 else 0)
+prop_IntFromBool :: State -> Property
+prop_IntFromBool = ab1Test bool int instructionIntFromBool (\x -> if x then 1 else 0)
 
 prop_IntMin :: State -> Property
 prop_IntMin = aaa1Test int instructionIntMin min

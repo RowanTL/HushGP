@@ -1,8 +1,10 @@
+{-# LANGUAGE TemplateHaskell #-}
 module HushGP.Instructions.StringInstructions where
 
 import HushGP.State
 import HushGP.Instructions.GenericInstructions
 import HushGP.Instructions.Utility
+import HushGP.TH
 
 -- |Concats the top two strings on the string stack and pushes the result.
 instructionStringConcat :: State -> State
@@ -323,3 +325,6 @@ instructionStringSubString = instructionSubVector string
 -- exec stack along the way.
 instructionStringIterate :: State -> State
 instructionStringIterate = instructionVectorIterate char string GeneString instructionStringIterate "instructionStringIterate"
+
+allStringInstructions :: [Gene]
+allStringInstructions = map StateFunc ($(functionExtractor "instruction"))

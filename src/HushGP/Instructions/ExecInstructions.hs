@@ -1,8 +1,10 @@
+{-# LANGUAGE TemplateHaskell #-}
 module HushGP.Instructions.ExecInstructions where
 
 import HushGP.State
 import HushGP.Instructions.IntInstructions
 import HushGP.Instructions.GenericInstructions
+import HushGP.TH
 
 -- |Removes the second item from the exec stack if the top of the bool stack is True.
 -- Removes the first item from the exec stack if the top of the bool stack is False.
@@ -153,3 +155,6 @@ instructionExecY state = state
 -- |Duplicates the top N items of the exec stack based on the top of the int stack.
 instructionExecDupItems :: State -> State
 instructionExecDupItems = instructionDupItems exec
+
+allExecInstructions :: [Gene]
+allExecInstructions = map StateFunc ($(functionExtractor "instruction"))
