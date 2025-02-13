@@ -17,6 +17,7 @@
 - [X] Use template haskell to generate function lists
 - [X] Move utility functions to their own file
 - [ ] Make add/sub/mult/div/mod instructions generic
+- [ ] Use template haskell to (mostly) generate functions from generic ones
 
 ## PushGP TODO
 - [ ] Implement a Plushy genome translator
