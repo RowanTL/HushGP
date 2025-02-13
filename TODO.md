@@ -23,6 +23,7 @@
 - [ ] Implement a Plushy genome translator
   - [ ] Need to make this reproducable too (Check pysh json files)
   - [ ] Implement silent markers as well
+  - [ ] Have close amt of 1,2, and 3
 - [ ] Add Memory
 - [ ] Add history stack(s), like a call stack
 - [ ] Implement interpreter options (could probably just place this into a map)
