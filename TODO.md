@@ -24,6 +24,10 @@
   - [ ] Need to make this reproducable too (Check pysh json files)
   - [ ] Implement silent and skip markers as well
   - [ ] Have close amt of 1,2, and 3
+  - [ ] Need a random genome generator
+    - I'm only going to implement propeller's :specified version
+      - Is the best according to the papers
 - [ ] Add Memory
 - [ ] Add history stack(s), like a call stack
 - [ ] Implement interpreter options (could probably just place this into a map)
+- [ ] Devise a good way to implement ERCs
