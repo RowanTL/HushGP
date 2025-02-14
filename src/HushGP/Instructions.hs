@@ -31,10 +31,16 @@ import HushGP.Instructions.VectorIntInstructions
 import HushGP.Instructions.VectorStringInstructions
 import HushGP.State
 
+noOpStateFunc :: Gene
+noOpStateFunc = StateFunc (instructionNoOp, "instructionNoOp")
+
+noOpStateFuncBlock :: Gene
+noOpStateFuncBlock = StateFunc (instructionNoOpBlock, "instructionNoOpBlock")
+
 -- | All of the instructions declared in all the instruction submodules
 allInstructions :: [Gene]
 allInstructions =
-  allIntInstructions
+  noOpStateFunc : noOpStateFuncBlock : allIntInstructions
     <> allFloatInstructions
     <> allBoolInstructions
     <> allCharInstructions

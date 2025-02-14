@@ -6,6 +6,21 @@ import Data.Map qualified as Map
 import HushGP.Instructions.Opens
 import HushGP.State
 import HushGP.Utility
+import HushGP.Instructions
+
+tempPlushy :: [Gene]
+tempPlushy = [
+    StateFunc (instructionIntDiv, "instructionIntDiv"),
+    StateFunc (instructionExecDup, "instructionExecDup"),
+    GeneInt 1,
+    GeneInt 0,
+    StateFunc (instructionIntDiv, "instructionIntDiv"),
+    GeneInt (-15),
+    StateFunc (instructionIntSub, "instructionIntSub"),
+    StateFunc (instructionNoOpBlock, "instructionNoOpBlock"),
+    Close,
+    Close
+  ]
 
 -- | Makes a random plushy from variables in a passed argMap and
 --  a passed list of instructions.
@@ -50,31 +65,26 @@ plushyToPush plushy = plushyToPush' (concatMap (\x -> if isOpenerList x then x <
 
 -- | Internal function used to convert a plushy genome with opens in it into a push genome.
 plushyToPush' :: [Gene] -> [Gene] -> [Gene]
-plushyToPush' openPlushy push =
-  if null openPlushy
-    then
-      if any isOpen push
+plushyToPush' openPlushy push
+  | null openPlushy = if any isOpen push
         then plushyToPush' [Close] push
         else push
-    else
-      if firstPlushy == Close
-        then
-          if any isOpen push
-            then plushyToPush' (drop 1 openPlushy) (if numOpen (push !! openIndex) == 1 then preOpen <> postOpen else preOpen <> postOpen <> [decOpen (Open (numOpen (push !! openIndex)))])
+  | firstPlushy == Close = if any isOpen push
+            then plushyToPush' (drop 1 openPlushy) (if numOpen (push !! openIndex) == 1 then preOpen <> [Block postOpen] else preOpen <> [Block (postOpen <> [decOpen (Open (numOpen (push !! openIndex)))])])
             else plushyToPush' (drop 1 openPlushy) push
-        else plushyToPush' (drop 1 openPlushy) (push <> [firstPlushy])
+  | otherwise = plushyToPush' (drop 1 openPlushy) (push <> [firstPlushy])
   where
-    firstPlushy :: Gene
-    firstPlushy =
-      case uncons openPlushy of
-        Just (g, _) -> g
-        _ -> error "This shouldn't happen"
-    postOpen :: [Gene]
-    postOpen = reverse (takeWhile (not . isOpen) (reverse push))
-    openIndex :: Int
-    openIndex = length push - length postOpen - 1
-    numOpen :: Gene -> Int
-    numOpen (Open n) = n
-    numOpen _ = 0
-    preOpen :: [Gene]
-    preOpen = take openIndex push
+      firstPlushy :: Gene
+      firstPlushy
+        = case uncons openPlushy of
+            Just (g, _) -> g
+            _ -> error "This shouldn't happen"
+      postOpen :: [Gene]
+      postOpen = reverse (takeWhile (not . isOpen) (reverse push))
+      openIndex :: Int
+      openIndex = length push - length postOpen - 1
+      numOpen :: Gene -> Int
+      numOpen (Open n) = n
+      numOpen _ = 0
+      preOpen :: [Gene]
+      preOpen = take openIndex push

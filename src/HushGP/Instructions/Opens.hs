@@ -2,6 +2,7 @@ module HushGP.Instructions.Opens where
 
 import HushGP.State
 import Data.Map qualified as Map
+import HushGP.Instructions.GenericInstructions
 import HushGP.Instructions.ExecInstructions
 import HushGP.Instructions.StringInstructions
 import HushGP.Instructions.VectorIntInstructions
@@ -36,5 +37,6 @@ instructionOpens = Map.fromList [
     (StateFunc (instructionVectorFloatIterate, "instructionVectorFloatIterate"), 1),
     (StateFunc (instructionVectorStringIterate, "instructionVectorStringIterate"), 1),
     (StateFunc (instructionVectorBoolIterate, "instructionVectorBoolIterate"), 1),
-    (StateFunc (instructionVectorCharIterate, "instructionVectorCharIterate"), 1)
+    (StateFunc (instructionVectorCharIterate, "instructionVectorCharIterate"), 1),
+    (StateFunc (instructionNoOpBlock, "instructionNoOpBlock"), 1)
   ]

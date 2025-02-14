@@ -9,6 +9,14 @@ import Data.List.Split
 
 -- import Debug.Trace 
 
+-- |Does No Operation. Useful for genome stuff :)
+instructionNoOpBlock :: State -> State
+instructionNoOpBlock state = state
+
+-- |Does No Operation. Just evolve fodder.
+instructionNoOp :: State -> State
+instructionNoOp state = state
+
 -- |Duplicates the top of a stack based on a lens.
 instructionDup :: Lens' State [a] -> State  -> State
 instructionDup accessor state =
