@@ -76,8 +76,8 @@ instructionExecIsStackEmpty = instructionIsStackEmpty exec
 -- taken from the int stack. Differs from code_do_range only in the source of the code and the recursive call.
 instructionExecDoRange :: State -> State
 instructionExecDoRange state@(State {_exec = e1 : es, _int = i0 : i1 : is}) =
-  if increment i0 i1 /= 0
-    then state {_exec = e1 : Block [GeneInt (i1 + increment i0 i1), GeneInt i0, StateFunc (instructionExecDoRange, "instructionExecDoRange"), e1] : es, _int = i1 : is}
+  if increment (fromIntegral i0) (fromIntegral i1) /= 0
+    then state {_exec = e1 : Block [GeneInt (i1 + toInteger (increment (fromIntegral i0) (fromIntegral i1))), GeneInt i0, StateFunc (instructionExecDoRange, "instructionExecDoRange"), e1] : es, _int = i1 : is}
     else state {_exec = e1 : es, _int = i1 : is}
   where
     increment :: Int -> Int -> Int

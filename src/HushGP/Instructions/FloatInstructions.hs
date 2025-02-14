@@ -10,7 +10,7 @@ import HushGP.TH
 
 -- |Converts the top int to a float and pushes the result to the float stack.
 instructionFloatFromInt :: State -> State
-instructionFloatFromInt state@(State {_float = fs, _int = i1 : is}) = state {_float = (fromIntegral i1 :: Float) : fs, _int = is}
+instructionFloatFromInt state@(State {_float = fs, _int = i1 : is}) = state {_float = (fromIntegral i1 :: Double) : fs, _int = is}
 instructionFloatFromInt state = state
 
 -- |If the top bool True, pushes 1.0 to the float stack. Pushes 0.0 if False.
@@ -20,14 +20,14 @@ instructionFloatFromBool state = state
 
 -- |Takes the top char and converts it to int representation. That int then gets casted to a float and pushed to the float stack.
 instructionFloatFromChar :: State -> State
-instructionFloatFromChar state@(State {_char = c1 : cs, _float = fs}) = state {_char = cs, _float = (fromIntegral (ord c1) :: Float) : fs}
+instructionFloatFromChar state@(State {_char = c1 : cs, _float = fs}) = state {_char = cs, _float = (fromIntegral (ord c1) :: Double) : fs}
 instructionFloatFromChar state = state
 
 -- |Reads the top string and converts it to a float if possible. If not, acts as a NoOp.
 instructionFloatFromString :: State -> State
 instructionFloatFromString state@(State {_string = s1 : ss, _float = fs}) =
   if all (\x -> isDigit x || x == '.') s1 && amtOccurences "." s1 <= 1
-  then state{_string = ss, _float = read @Float s1 : fs}
+  then state{_string = ss, _float = read @Double s1 : fs}
   else state
 instructionFloatFromString state = state
 

@@ -53,11 +53,14 @@ library
                     , HushGP.Instructions.VectorBoolInstructions
                     , HushGP.Instructions.VectorCharInstructions
                     , HushGP.Instructions.Utility
+                    , HushGP.Instructions.Opens
                     , HushGP.PushTests
                     , HushGP.PushTests.IntTests
                     , HushGP.PushTests.GenericTests
                     , HushGP.PushTests.UtilTests
                     , HushGP.TH
+                    , HushGP.Utility
+                    , HushGP.Genome
 
     -- Modules included in this library but not exported.
     -- other-modules:
@@ -67,7 +70,7 @@ library
 
     -- Other library packages from which modules are imported.
     build-depends:
-        base, containers, lens, split, QuickCheck, regex-tdfa, template-haskell
+        base, containers, lens, split, QuickCheck, regex-tdfa, template-haskell, random
 
     -- Directories containing source files.
     hs-source-dirs:   src

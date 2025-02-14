@@ -52,10 +52,10 @@ instructionCodeTail state = state
 -- https://faculty.hampshire.edu/lspector/push3-description.html#Type
 -- This is the CODE.NTHCDR command
 instructionCodeTailN :: State -> State
-instructionCodeTailN state@(State {_code = Block bc : cs, _int = i : is}) = state {_code = Block (drop index bc) : cs, _int = is}
+instructionCodeTailN state@(State {_code = Block bc : cs, _int = i1 : is}) = state {_code = Block (drop index bc) : cs, _int = is}
   where
     index :: Int
-    index = abs i `mod` length bc
+    index = fromIntegral (abs i1) `mod` length bc
 instructionCodeTailN state = state
 
 -- |If the top item on the code stack is a Block, takes the init of said Block and places the result on top of the code stack.
@@ -101,8 +101,8 @@ instructionCodeDoThenPop state = state
 -- |Evaluates the top item on the code stack for each step along the range i to j. Both i and j are taken from the int stack.
 instructionCodeDoRange :: State -> State
 instructionCodeDoRange state@(State {_code = c1 : cs, _int = i0 : i1 : is, _exec = es}) =
-  if increment i0 i1 /= 0
-    then state {_exec = c1 : Block [GeneInt (i1 + increment i0 i1), GeneInt i0, StateFunc (instructionCodeFromExec, "instructionCodeFromExec"), c1, StateFunc (instructionCodeDoRange, "instructionCodeDoRange")] : es, _int = i1 : is, _code = cs}
+  if increment (fromIntegral i0) (fromIntegral i1) /= 0
+    then state {_exec = c1 : Block [GeneInt (i1 + toInteger (increment (fromIntegral i0) (fromIntegral i1))), GeneInt i0, StateFunc (instructionCodeFromExec, "instructionCodeFromExec"), c1, StateFunc (instructionCodeDoRange, "instructionCodeDoRange")] : es, _int = i1 : is, _code = cs}
     else state {_exec = c1: es, _int = i1 : is, _code = cs}
   where
     increment :: Int -> Int -> Int
@@ -154,7 +154,7 @@ instructionCodeN state@(State {_code = (Block c1) : cs, _int = i1 : is}) =
     else state
   where
     index :: Int
-    index = abs i1 `mod` length c1
+    index = fromIntegral (abs i1) `mod` length c1
 instructionCodeN state@(State {_code = c1 : cs, _int = _ : is}) = state {_code = c1 : cs, _int = is}
 instructionCodeN state = state
 
@@ -185,7 +185,7 @@ instructionCodeExtract state@(State {_code = block@(Block c1) : cs, _int = i1 : 
   let
     index = abs i1 `mod` codeRecursiveSize block
   in
-  state{_code = codeAtPoint c1 index : cs, _int = is}
+  state{_code = codeAtPoint c1 (fromIntegral index) : cs, _int = is}
 instructionCodeExtract state@(State {_code = cs, _int = _ : is}) = state{_code = cs, _int = is}
 instructionCodeExtract state = state
 
@@ -196,12 +196,12 @@ instructionCodeInsert state@(State {_code = block@(Block c1) : c2 : cs, _int = i
   let
     index = abs i1 `mod` codeRecursiveSize block
   in
-    state{_code = Block (codeInsertAtPoint c1 c2 index) : cs, _int = is}
+    state{_code = Block (codeInsertAtPoint c1 c2 (fromIntegral index)) : cs, _int = is}
 instructionCodeInsert state@(State {_code = c1 : c2 : cs, _int = i1 : is}) =
   let
     index = abs i1 `mod` codeRecursiveSize (Block [c1])
   in
-    state{_code = Block (codeInsertAtPoint [c1] c2 index) : cs, _int = is}
+    state{_code = Block (codeInsertAtPoint [c1] c2 (fromIntegral index)) : cs, _int = is}
 instructionCodeInsert state = state
 
 -- |If the top code item is a Block that is empty, pushes 0 to the int stack if c2 is also an empty Block and -1 if not.
@@ -209,7 +209,7 @@ instructionCodeInsert state = state
 -- If neither the top code item or second code item are Blocks, checks equality. If equal, pushes 1 to int stack, pushes 0 if not.
 instructionCodeFirstPosition :: State -> State
 instructionCodeFirstPosition state@(State {_code = (Block []) : c2 : cs, _int = is}) = state {_code = cs, _int = (if c2 == Block [] then 0 else -1) : is}
-instructionCodeFirstPosition state@(State {_code = (Block c1) : c2 : cs, _int = is}) = state {_code = cs, _int = positionElem c1 c2 : is}
+instructionCodeFirstPosition state@(State {_code = (Block c1) : c2 : cs, _int = is}) = state {_code = cs, _int = fromIntegral (positionElem c1 c2) : is}
   where
     positionElem :: [Gene] -> Gene -> Int
     positionElem genes gene =

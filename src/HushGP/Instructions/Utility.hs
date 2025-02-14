@@ -135,8 +135,8 @@ isBlock _ = False
 
 -- |Utility function: Returns the length of the passed block.
 -- If the gene isn't a block, returns 1
-blockLength :: Gene -> Int
-blockLength (Block bxs) = length bxs
+blockLength :: Gene -> Integer
+blockLength (Block bxs) = toInteger $ length bxs
 blockLength _ = 1
 
 -- |Utility function: Returns true if the passed block is empty, false is not.
@@ -150,7 +150,7 @@ blockIsNull _ = False
 -- CODE.CONTAINER
 findContainer :: Gene -> Gene -> Gene
 findContainer (Block fullA) gene
-  | length fullA <= blockLength gene = Block []
+  | fromIntegral (length fullA) <= blockLength gene = Block []
   | gene `elem` fullA = Block [] -- Not allowed to be top level
   | any isBlock fullA = findContainer' (filter isBlock fullA) gene
   | otherwise = Block []
@@ -162,8 +162,8 @@ findContainer (Block fullA) gene
 findContainer _ _ = Block []
 
 -- |Utility Function: A helper function for instructionCodeDiscrepancy. The full description is there.
-countDiscrepancy :: Gene -> Gene -> Int
-countDiscrepancy (Block xs) (Block ys) = sum [if uncurry (==) tup then 0 else 1 | tup <- zip xs ys] + abs (length xs - length ys)
+countDiscrepancy :: Gene -> Gene -> Integer
+countDiscrepancy (Block xs) (Block ys) = sum [if uncurry (==) tup then 0 else 1 | tup <- zip xs ys] + abs (toInteger (length xs) - toInteger (length ys))
 countDiscrepancy xgene ygene = if xgene == ygene then 1 else 0
 
 -- |Utility Function: Extracts the first gene from a block. Returns itself if not a block
@@ -220,7 +220,7 @@ codeMember (Block bxs) ygene = ygene `elem` bxs
 codeMember _ _ = False
 
 -- |Utility Function: Calculates the size of a Block including counting the nested Blocks recursively
-codeRecursiveSize :: Gene -> Int
+codeRecursiveSize :: Gene -> Integer
 codeRecursiveSize (Block bxs) = sum [codeRecursiveSize x + if isBlock x then 1 else 0 | x <- bxs]
 codeRecursiveSize _ = 1
 

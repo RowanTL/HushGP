@@ -1,33 +1,42 @@
-{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE TemplateHaskell #-}
 
 module HushGP.State where
 
 import Control.Lens hiding (elements)
 import Data.Map qualified as Map
-import GHC.Generics
-import Test.QuickCheck
+import System.Random
 
--- | The exec stack must store heterogenous types,
+-- |The exec stack must store heterogenous types,
 --  and we must be able to detect that type at runtime.
 --  One solution is for the exec stack to be a list of [Gene].
 --  The parameter stack could be singular [Gene] or multiple [atomic] types.
 data Gene
-  = GeneInt Int
-  | GeneFloat Float
+  = GeneInt Integer
+  | GeneFloat Double
   | GeneBool Bool
   | GeneString String
   | GeneChar Char
-  | GeneVectorInt [Int]
-  | GeneVectorFloat [Float]
+  | GeneVectorInt [Integer]
+  | GeneVectorFloat [Double]
   | GeneVectorBool [Bool]
   | GeneVectorString [String]
   | GeneVectorChar [Char]
-  | StateFunc (State -> State, String) -- The string stores the name of the function
+  -- |State -> State is the function itself. String stores the name of the function.
+  | StateFunc (State -> State, String)
   | PlaceInput String
   | Close
+  | Open Int
   | Block [Gene]
-  deriving (Generic)
+  | GeneIntERC (Integer, StdGen)
+  | GeneFloatERC (Double, StdGen)
+  | GeneBoolERC (Bool, StdGen)
+  | GeneStringERC (String, StdGen)
+  | GeneCharERC (Char, StdGen)
+  | GeneVectorIntERC ([Integer], StdGen)
+  | GeneVectorFloatERC ([Double], StdGen)
+  | GeneVectorBoolERC ([Bool], StdGen)
+  | GeneVectorStringERC ([String], StdGen)
+  | GeneVectorCharERC ([Char], StdGen)
 
 instance Eq Gene where
   GeneInt x == GeneInt y = x == y
@@ -42,9 +51,68 @@ instance Eq Gene where
   GeneVectorString xs == GeneVectorString ys = xs == ys
   GeneVectorChar xs == GeneVectorChar ys = xs == ys
   Close == Close = True
+  Open x == Open y = x == y
   StateFunc (_, nameX) == StateFunc (_, nameY) = nameX == nameY
   Block x == Block y = x == y
+  GeneIntERC (x, _) == GeneIntERC (y, _) = x == y
+  GeneFloatERC (x, _) == GeneFloatERC (y, _) = x == y
+  GeneBoolERC (x, _) == GeneBoolERC (y, _) = x == y
+  GeneStringERC (x, _) == GeneStringERC (y, _) = x == y
+  GeneCharERC (x, _) == GeneCharERC (y, _) = x == y
+  GeneVectorIntERC (x, _) == GeneVectorIntERC (y, _) = x == y
+  GeneVectorFloatERC (x, _) == GeneVectorFloatERC (y, _) = x == y
+  GeneVectorBoolERC (x, _) == GeneVectorBoolERC (y, _) = x == y
+  GeneVectorStringERC (x, _) == GeneVectorStringERC (y, _) = x == y
+  GeneVectorCharERC (x, _) == GeneVectorCharERC (y, _) = x == y
+  GeneIntERC (x, _) == GeneInt y = x == y
+  GeneFloatERC (x, _) == GeneFloat y = x == y
+  GeneBoolERC (x, _) == GeneBool y = x == y
+  GeneStringERC (x, _) == GeneString y = x == y
+  GeneCharERC (x, _) == GeneChar y = x == y
+  GeneVectorIntERC (x, _) == GeneVectorInt y = x == y
+  GeneVectorFloatERC (x, _) == GeneVectorFloat y = x == y
+  GeneVectorBoolERC (x, _) == GeneVectorBool y = x == y
+  GeneVectorStringERC (x, _) == GeneVectorString y = x == y
+  GeneVectorCharERC (x, _) == GeneVectorChar y = x == y
   _ == _ = False
+
+instance Ord Gene where
+  GeneInt x <= GeneInt y = x <= y
+  GeneFloat x <= GeneFloat y = x <= y
+  GeneBool x <= GeneBool y = x <= y
+  GeneString x <= GeneString y = x <= y
+  GeneChar x <= GeneChar y = x <= y
+  PlaceInput x <= PlaceInput y = x <= y
+  GeneVectorInt xs <= GeneVectorInt ys = xs <= ys
+  GeneVectorFloat xs <= GeneVectorFloat ys = xs <= ys
+  GeneVectorBool xs <= GeneVectorBool ys = xs <= ys
+  GeneVectorString xs <= GeneVectorString ys = xs <= ys
+  GeneVectorChar xs <= GeneVectorChar ys = xs <= ys
+  Close <= Close = True
+  Open x <= Open y = x <= y
+  StateFunc (_, nameX) <= StateFunc (_, nameY) = nameX <= nameY
+  Block x <= Block y = x <= y
+  GeneIntERC (x, _) <= GeneIntERC (y, _) = x <= y
+  GeneFloatERC (x, _) <= GeneFloatERC (y, _) = x <= y
+  GeneBoolERC (x, _) <= GeneBoolERC (y, _) = x <= y
+  GeneStringERC (x, _) <= GeneStringERC (y, _) = x <= y
+  GeneCharERC (x, _) <= GeneCharERC (y, _) = x <= y
+  GeneVectorIntERC (x, _) <= GeneVectorIntERC (y, _) = x <= y
+  GeneVectorFloatERC (x, _) <= GeneVectorFloatERC (y, _) = x <= y
+  GeneVectorBoolERC (x, _) <= GeneVectorBoolERC (y, _) = x <= y
+  GeneVectorStringERC (x, _) <= GeneVectorStringERC (y, _) = x <= y
+  GeneVectorCharERC (x, _) <= GeneVectorCharERC (y, _) = x <= y
+  GeneIntERC (x, _) <= GeneInt y = x <= y
+  GeneFloatERC (x, _) <= GeneFloat y = x <= y
+  GeneBoolERC (x, _) <= GeneBool y = x <= y
+  GeneStringERC (x, _) <= GeneString y = x <= y
+  GeneCharERC (x, _) <= GeneChar y = x <= y
+  GeneVectorIntERC (x, _) <= GeneVectorInt y = x <= y
+  GeneVectorFloatERC (x, _) <= GeneVectorFloat y = x <= y
+  GeneVectorBoolERC (x, _) <= GeneVectorBool y = x <= y
+  GeneVectorStringERC (x, _) <= GeneVectorString y = x <= y
+  GeneVectorCharERC (x, _) <= GeneVectorChar y = x <= y
+  _ <= _ = False
 
 instance Show Gene where
   show (GeneInt x) = "Int: " <> show x
@@ -60,69 +128,37 @@ instance Show Gene where
   show (GeneVectorString xs) = "String Vec: " <> show xs
   show (GeneVectorChar xs) = "Char Vec: " <> show xs
   show Close = "Close"
+  show (Open x) = "Open: " <> show x
   show (Block xs) = "Block: " <> show xs
-
-instance CoArbitrary Gene
-
-instance Arbitrary Gene where
-  arbitrary =
-    oneof
-      [ GeneInt <$> arbitrary,
-        GeneFloat <$> arbitrary,
-        GeneBool <$> arbitrary,
-        GeneString <$> arbitrary,
-        GeneChar <$> arbitrary,
-        StateFunc <$> arbitrary,
-        PlaceInput <$> arbitrary,
-        GeneVectorInt <$> arbitrary,
-        GeneVectorFloat <$> arbitrary,
-        GeneVectorBool <$> arbitrary,
-        GeneVectorString <$> arbitrary,
-        GeneVectorChar <$> arbitrary,
-        Block <$> arbitrary,
-        return Close
-      ]
+  show (GeneIntERC x) = "Int ERC: " <> show x
+  show (GeneFloatERC x) = "Float ERC: " <> show x
+  show (GeneBoolERC x) = "Bool ERC: " <> show x
+  show (GeneStringERC x) = "String ERC: " <> show x
+  show (GeneCharERC x) = "Char ERC: " <> show x
+  show (GeneVectorIntERC x) = "Int Vec ERC: " <> show x
+  show (GeneVectorFloatERC x) = "Float Vec ERC: " <> show x
+  show (GeneVectorBoolERC x) = "Bool Vec ERC: " <> show x
+  show (GeneVectorStringERC x) = "String Vec ERC: " <> show x
+  show (GeneVectorCharERC x) = "Char Vec ERC: " <> show x
 
 -- | The structure that holds all of the values.
 data State = State
   { _exec :: [Gene],
     _code :: [Gene],
-    _int :: [Int],
-    _float :: [Float],
+    _int :: [Integer],
+    _float :: [Double],
     _bool :: [Bool],
     _string :: [String],
     _char :: [Char],
-    _vectorInt :: [[Int]],
-    _vectorFloat :: [[Float]],
+    _vectorInt :: [[Integer]],
+    _vectorFloat :: [[Double]],
     _vectorBool :: [[Bool]],
     _vectorString :: [[String]],
     _vectorChar :: [[Char]],
     _parameter :: [Gene],
     _input :: Map.Map String Gene
   }
-  deriving (Show, Eq, Generic)
-
-instance Arbitrary State where
-  arbitrary = do
-    arbExec <- arbitrary
-    arbCode <- arbitrary
-    arbInt <- arbitrary
-    arbFloat <- arbitrary
-    arbBool <- arbitrary
-    arbString <- arbitrary
-    arbChar <- arbitrary
-    arbVectorInt <- arbitrary
-    arbVectorFloat <- arbitrary
-    arbVectorBool <- arbitrary
-    arbVectorString <- arbitrary
-    arbVectorChar <- arbitrary
-    arbParameter <- arbitrary
-    -- arbInput <- arbitrary
-    State arbExec arbCode arbInt arbFloat arbBool arbString arbChar arbVectorInt arbVectorFloat arbVectorBool arbVectorString arbVectorChar arbParameter <$> arbitrary
-
--- Thanks hlint lol
-
-instance CoArbitrary State
+  deriving (Show, Eq, Ord)
 
 emptyState :: State
 emptyState =
@@ -148,8 +184,8 @@ exampleState =
   State
     { _exec = [],
       _code = [],
-      _int = [32, 56],
-      _float = [3.23, 9.235],
+      _int = [32, 56, 88, 91],
+      _float = [3.23, 9.235, 5.3211, 8.0],
       _bool = [True, False],
       _string = ["abc", "123"],
       _char = ['d', 'e', 'f'],

@@ -18,14 +18,14 @@ instructionIntFromBool state = state
 
 -- |Takes the top char and converts it to int representation. The result is pushed to the int stack.
 instructionIntFromChar :: State -> State
-instructionIntFromChar state@(State {_char = c1 : cs, _int = is}) = state {_char = cs, _int = ord c1 : is}
+instructionIntFromChar state@(State {_char = c1 : cs, _int = is}) = state {_char = cs, _int = fromIntegral (ord c1) : is}
 instructionIntFromChar state = state
 
 -- |Reads the top string and converts it to a int if possible. If not, acts as a NoOp.
 instructionIntFromString :: State -> State
 instructionIntFromString state@(State {_string = s1 : ss, _int = is}) =
   if all isDigit s1
-  then state{_string = ss, _int = read @Int s1 : is}
+  then state{_string = ss, _int = read @Integer s1 : is}
   else state
 instructionIntFromString state = state
 
