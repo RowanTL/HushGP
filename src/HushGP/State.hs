@@ -53,6 +53,7 @@ instance Eq Gene where
   GeneVectorChar xs == GeneVectorChar ys = xs == ys
   Close == Close = True
   Open x == Open y = x == y
+  Skip == Skip = True
   StateFunc (_, nameX) == StateFunc (_, nameY) = nameX == nameY
   Block x == Block y = x == y
   GeneIntERC (x, _) == GeneIntERC (y, _) = x == y
@@ -91,6 +92,7 @@ instance Ord Gene where
   GeneVectorChar xs <= GeneVectorChar ys = xs <= ys
   Close <= Close = True
   Open x <= Open y = x <= y
+  Skip <= Skip = True
   StateFunc (_, nameX) <= StateFunc (_, nameY) = nameX <= nameY
   Block x <= Block y = x <= y
   GeneIntERC (x, _) <= GeneIntERC (y, _) = x <= y

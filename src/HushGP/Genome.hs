@@ -69,17 +69,17 @@ plushyToPush plushy = plushyToPush' (concatMap (\x -> if isOpenerList x then x <
 -- | Internal function used to convert a plushy genome with opens in it into a push genome.
 plushyToPush' :: [Gene] -> [Gene] -> [Gene]
 plushyToPush' openPlushy push
-  | null openPlushy = if any isOpen push
+  | null openPlushy = trace "null" $ trace ("plushy: " <> show openPlushy) $ trace ("push: " <> show push) $ trace "--------------------" $ if any isOpen push
         then plushyToPush' [Close] push
         else push
-  | firstPlushy == Close = if any isOpen push
+  | firstPlushy == Close = trace "Close" $ trace ("plushy: " <> show openPlushy) $ trace ("push: " <> show push) $ trace "--------------------" $ if any isOpen push
             then plushyToPush' (drop 1 openPlushy) (if numOpen (push !! openIndex) == 1 then preOpen <> [Block postOpen] else preOpen <> [Block (postOpen <> [decOpen (Open (numOpen (push !! openIndex)))])])
             else plushyToPush' (drop 1 openPlushy) push
-  | firstPlushy == Skip =
+  | firstPlushy == Skip = trace "Skip" $ trace ("plushy: " <> show openPlushy) $ trace ("push: " <> show push) $ trace "--------------------" $
     case uncons openPlushy of
       Just (_, _ : xs) -> plushyToPush' xs push
       _ -> plushyToPush' (drop 1 openPlushy) push
-  | otherwise = plushyToPush' (drop 1 openPlushy) (push <> [firstPlushy])
+  | otherwise = trace "otherwise" $ trace ("plushy: " <> show openPlushy) $ trace ("push: " <> show push) $ trace "--------------------" $ plushyToPush' (drop 1 openPlushy) (push <> [firstPlushy])
   where
       firstPlushy :: Gene
       firstPlushy
