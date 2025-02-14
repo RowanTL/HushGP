@@ -6,24 +6,28 @@ import Data.Map qualified as Map
 import HushGP.Instructions.Opens
 import HushGP.State
 import HushGP.Utility
-import HushGP.Instructions
-import Debug.Trace
+-- import HushGP.Instructions
+-- import Debug.Trace
 
-tempPlushy :: [Gene]
-tempPlushy = [
-    StateFunc (instructionIntDiv, "instructionIntDiv"),
-    StateFunc (instructionExecDup, "instructionExecDup"),
-    GeneInt 1,
-    GeneInt 0,
-    StateFunc (instructionIntDiv, "instructionIntDiv"),
-    Skip,
-    GeneInt (-15),
-    StateFunc (instructionIntSub, "instructionIntSub"),
-    -- StateFunc (instructionNoOpBlock, "instructionNoOpBlock"),
-    StateFunc (instructionExecIf, "instructionExecIf"),
-    Close,
-    Close
-  ]
+-- tempPlushy :: [Gene]
+-- tempPlushy = [
+--     StateFunc (instructionIntDiv, "instructionIntDiv"),
+--     StateFunc (instructionExecDup, "instructionExecDup"),
+--     GeneInt 1,
+--     GeneInt 0,
+--     StateFunc (instructionIntDiv, "instructionIntDiv"),
+--     Skip,
+--     GeneInt (-15),
+--     StateFunc (instructionExecDup, "instructionExecDup"),
+--     StateFunc (instructionIntSub, "instructionIntSub"),
+--     StateFunc (instructionFloatMul, "instructionFloatMul"),
+--     Skip,
+--     Close,
+--     -- StateFunc (instructionNoOpBlock, "instructionNoOpBlock"),
+--     StateFunc (instructionExecIf, "instructionExecIf"),
+--     Close,
+--     Close
+--   ]
 
 -- | Makes a random plushy from variables in a passed argMap and
 --  a passed list of instructions.
@@ -69,17 +73,17 @@ plushyToPush plushy = plushyToPush' (concatMap (\x -> if isOpenerList x then x <
 -- | Internal function used to convert a plushy genome with opens in it into its push phenotype.
 plushyToPush' :: [Gene] -> [Gene] -> [Gene]
 plushyToPush' openPlushy push
-  | null openPlushy = trace "null" $ trace ("plushy: " <> show openPlushy) $ trace ("push: " <> show push) $ trace "--------------------" $ if any isOpen push
+  | null openPlushy = if any isOpen push
         then plushyToPush' [Close] push
         else push
-  | firstPlushy == Close = trace "Close" $ trace ("plushy: " <> show openPlushy) $ trace ("push: " <> show push) $ trace ("openIndex: " <> show openIndex) $ trace ("preOpen: " <> show preOpen) $ trace ("postOpen: " <> show postOpen) $ trace "--------------------" $ if any isOpen push
+  | firstPlushy == Close = if any isOpen push
             then plushyToPush' (drop 1 openPlushy) (if numOpen (push !! openIndex) == 1 then preOpen <> [Block postOpen] else preOpen <> [Block postOpen] <> [decOpen (Open (numOpen (push !! openIndex)))])
             else plushyToPush' (drop 1 openPlushy) push
-  | firstPlushy == Skip = trace "Skip" $ trace ("plushy: " <> show openPlushy) $ trace ("push: " <> show push) $ trace "--------------------" $
+  | firstPlushy == Skip =
     case uncons openPlushy of
       Just (_, _ : xs) -> plushyToPush' xs push
       _ -> plushyToPush' (drop 1 openPlushy) push
-  | otherwise = trace "otherwise" $ trace ("plushy: " <> show openPlushy) $ trace ("push: " <> show push) $ trace "--------------------" $ plushyToPush' (drop 1 openPlushy) (push <> [firstPlushy])
+  | otherwise = plushyToPush' (drop 1 openPlushy) (push <> [firstPlushy])
   where
       firstPlushy :: Gene
       firstPlushy
