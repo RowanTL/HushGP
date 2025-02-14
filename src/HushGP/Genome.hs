@@ -66,14 +66,14 @@ getOpenAmountList _ = 0
 plushyToPush :: [Gene] -> [Gene]
 plushyToPush plushy = plushyToPush' (concatMap (\x -> if isOpenerList x then x <> [Open (getOpenAmountList x)] else x) (chunksOf 1 plushy)) []
 
--- | Internal function used to convert a plushy genome with opens in it into a push genome.
+-- | Internal function used to convert a plushy genome with opens in it into its push phenotype.
 plushyToPush' :: [Gene] -> [Gene] -> [Gene]
 plushyToPush' openPlushy push
   | null openPlushy = trace "null" $ trace ("plushy: " <> show openPlushy) $ trace ("push: " <> show push) $ trace "--------------------" $ if any isOpen push
         then plushyToPush' [Close] push
         else push
-  | firstPlushy == Close = trace "Close" $ trace ("plushy: " <> show openPlushy) $ trace ("push: " <> show push) $ trace "--------------------" $ if any isOpen push
-            then plushyToPush' (drop 1 openPlushy) (if numOpen (push !! openIndex) == 1 then preOpen <> [Block postOpen] else preOpen <> [Block (postOpen <> [decOpen (Open (numOpen (push !! openIndex)))])])
+  | firstPlushy == Close = trace "Close" $ trace ("plushy: " <> show openPlushy) $ trace ("push: " <> show push) $ trace ("openIndex: " <> show openIndex) $ trace ("preOpen: " <> show preOpen) $ trace ("postOpen: " <> show postOpen) $ trace "--------------------" $ if any isOpen push
+            then plushyToPush' (drop 1 openPlushy) (if numOpen (push !! openIndex) == 1 then preOpen <> [Block postOpen] else preOpen <> [Block postOpen] <> [decOpen (Open (numOpen (push !! openIndex)))])
             else plushyToPush' (drop 1 openPlushy) push
   | firstPlushy == Skip = trace "Skip" $ trace ("plushy: " <> show openPlushy) $ trace ("push: " <> show push) $ trace "--------------------" $
     case uncons openPlushy of
