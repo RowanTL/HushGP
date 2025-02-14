@@ -6,10 +6,10 @@ import Control.Lens hiding (elements)
 import Data.Map qualified as Map
 import System.Random
 
--- |The exec stack must store heterogenous types,
---  and we must be able to detect that type at runtime.
---  One solution is for the exec stack to be a list of [Gene].
---  The parameter stack could be singular [Gene] or multiple [atomic] types.
+-- | The exec stack must store heterogenous types,
+--   and we must be able to detect that type at runtime.
+--   One solution is for the exec stack to be a list of [Gene].
+--   The parameter stack could be singular [Gene] or multiple [atomic] types.
 data Gene
   = GeneInt Integer
   | GeneFloat Double
@@ -21,8 +21,8 @@ data Gene
   | GeneVectorBool [Bool]
   | GeneVectorString [String]
   | GeneVectorChar [Char]
-  -- |State -> State is the function itself. String stores the name of the function.
-  | StateFunc (State -> State, String)
+  | -- | State -> State is the function itself. String stores the name of the function.
+    StateFunc (State -> State, String)
   | PlaceInput String
   | Close
   | Open Int
