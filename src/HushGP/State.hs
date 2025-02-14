@@ -26,6 +26,7 @@ data Gene
   | PlaceInput String
   | Close
   | Open Int
+  | Skip
   | Block [Gene]
   | GeneIntERC (Integer, StdGen)
   | GeneFloatERC (Double, StdGen)
@@ -129,6 +130,7 @@ instance Show Gene where
   show (GeneVectorChar xs) = "Char Vec: " <> show xs
   show Close = "Close"
   show (Open x) = "Open: " <> show x
+  show Skip = "Skip"
   show (Block xs) = "Block: " <> show xs
   show (GeneIntERC x) = "Int ERC: " <> show x
   show (GeneFloatERC x) = "Float ERC: " <> show x

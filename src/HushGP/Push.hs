@@ -74,4 +74,5 @@ interpretExec state@(State {_exec = e : es}) =
     (GeneVectorCharERC (val, _)) -> interpretExec (state & exec .~ es & vectorChar .~ val : view vectorChar state)
     Close -> undefined -- This should never happen. Will be converted to Blocks in the Plushy -> Exec stack process
     (Open _) -> undefined -- This should also never happen. Should be converted in Plushy -> Exec stack process
+    Skip -> undefined -- This should double also never happen.
 interpretExec state = state

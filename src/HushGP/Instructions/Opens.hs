@@ -15,7 +15,7 @@ import HushGP.Instructions.VectorCharInstructions
 -- To be used in plushy conversion.
 instructionOpens :: Map.Map Gene Int
 instructionOpens = Map.fromList [
-    (StateFunc (instructionExecIf, "instructionsExecIf"), 2),
+    (StateFunc (instructionExecIf, "instructionExecIf"), 2),
     (StateFunc (instructionExecDup, "instructionExecDup"), 1),
     (StateFunc (instructionExecDupN, "instructionExecDupN"), 1),
     (StateFunc (instructionExecPop, "instructionExecPop"), 1),

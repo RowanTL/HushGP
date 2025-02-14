@@ -7,6 +7,7 @@ import HushGP.Instructions.Opens
 import HushGP.State
 import HushGP.Utility
 import HushGP.Instructions
+import Debug.Trace
 
 tempPlushy :: [Gene]
 tempPlushy = [
@@ -15,9 +16,11 @@ tempPlushy = [
     GeneInt 1,
     GeneInt 0,
     StateFunc (instructionIntDiv, "instructionIntDiv"),
+    Skip,
     GeneInt (-15),
     StateFunc (instructionIntSub, "instructionIntSub"),
-    StateFunc (instructionNoOpBlock, "instructionNoOpBlock"),
+    -- StateFunc (instructionNoOpBlock, "instructionNoOpBlock"),
+    StateFunc (instructionExecIf, "instructionExecIf"),
     Close,
     Close
   ]
@@ -72,6 +75,10 @@ plushyToPush' openPlushy push
   | firstPlushy == Close = if any isOpen push
             then plushyToPush' (drop 1 openPlushy) (if numOpen (push !! openIndex) == 1 then preOpen <> [Block postOpen] else preOpen <> [Block (postOpen <> [decOpen (Open (numOpen (push !! openIndex)))])])
             else plushyToPush' (drop 1 openPlushy) push
+  | firstPlushy == Skip =
+    case uncons openPlushy of
+      Just (_, _ : xs) -> plushyToPush' xs push
+      _ -> plushyToPush' (drop 1 openPlushy) push
   | otherwise = plushyToPush' (drop 1 openPlushy) (push <> [firstPlushy])
   where
       firstPlushy :: Gene
