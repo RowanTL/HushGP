@@ -20,14 +20,14 @@
 - [ ] Use template haskell to (mostly) generate functions from generic ones (Split files based on the arity of their functions)
 
 ## PushGP TODO
-- [ ] Implement a Plushy genome translator
-  - [ ] Need to make this reproducable too (Check pysh json files)
+- [X] Implement a Plushy genome translator
   - [ ] Implement silent and skip markers as well
-  - [ ] Have close amt of 1,2, and 3
+  ~~[ ] Have close amt of 1,2, and 3~~
   - [X] Need a random genome generator
     - I'm only going to implement propeller's :specified version
       - Is the best according to the papers
   - [ ] Need a NoOp that opens blocks
+- [ ] Need to make genomes serializable (Check pysh json files)
 - [ ] Add Memory
 - [ ] Add history stack(s), like a call stack
 - [ ] Implement interpreter options (could probably just place this into a map)
