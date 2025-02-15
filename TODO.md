@@ -21,15 +21,19 @@
 
 ## PushGP TODO
 - [X] Implement a Plushy genome translator
-  - [ ] Implement silent and skip markers as well
+  - [X] Implement ~~silent and~~ skip marker(s) as well
   ~~[ ] Have close amt of 1,2, and 3~~
   - [X] Need a random genome generator
     - I'm only going to implement propeller's :specified version
       - Is the best according to the papers
-  - [ ] Need a NoOp that opens blocks
+  - [X] Need a NoOp that opens blocks
 - [ ] Need to make genomes serializable (Check pysh json files)
 - [ ] Add Memory
 - [ ] Add history stack(s), like a call stack
 - [ ] Implement interpreter options (could probably just place this into a map)
   - Should probably place this in a separate file
+- [ ] Implement different forms of downsampling
+- [ ] Implement concurrent execution of creating random plushies and evaluating individuals
 - [X] Devise a good way to implement ERCs
+- [ ] Implement random simplification of genomes
+  - [ ] Find a way to multi-thread this

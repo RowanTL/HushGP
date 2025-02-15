@@ -58,6 +58,7 @@ library
                     , HushGP.PushTests.IntTests
                     , HushGP.PushTests.GenericTests
                     , HushGP.PushTests.UtilTests
+                    , HushGP.GP.PushArgs
                     , HushGP.TH
                     , HushGP.Utility
                     , HushGP.Genome
