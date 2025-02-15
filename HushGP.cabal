@@ -36,7 +36,9 @@ library
 
     -- Modules exported by the library.
     exposed-modules:  HushGP.Push
-                    , HushGP.GP
+                    , HushGP.TH
+                    , HushGP.Utility
+                    , HushGP.Genome
                     , HushGP.State
                     , HushGP.Instructions
                     , HushGP.Instructions.IntInstructions
@@ -58,10 +60,10 @@ library
                     , HushGP.PushTests.IntTests
                     , HushGP.PushTests.GenericTests
                     , HushGP.PushTests.UtilTests
+                    , HushGP.GP
                     , HushGP.GP.PushArgs
-                    , HushGP.TH
-                    , HushGP.Utility
-                    , HushGP.Genome
+                    , HushGP.Problems.IntegerRegression
+
 
     -- Modules included in this library but not exported.
     -- other-modules:

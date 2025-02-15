@@ -21,9 +21,9 @@ data Gene
   | GeneVectorBool [Bool]
   | GeneVectorString [String]
   | GeneVectorChar [Char]
-  | -- | State -> State is the function itself. String stores the name of the function.
-    StateFunc (State -> State, String)
-  | PlaceInput String
+    -- | State -> State is the function itself. String stores the name of the function.
+  | StateFunc (State -> State, String)
+  | PlaceInput Int
   | Close
   | Open Int
   | Skip
@@ -160,7 +160,7 @@ data State = State
     _vectorString :: [[String]],
     _vectorChar :: [[Char]],
     _parameter :: [Gene],
-    _input :: Map.Map String Gene
+    _input :: Map.Map Int Gene
   }
   deriving (Show, Eq, Ord)
 

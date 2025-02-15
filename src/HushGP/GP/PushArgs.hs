@@ -4,6 +4,8 @@ import HushGP.State
 import Data.Map qualified as Map
 import HushGP.Instructions
 
+-- | The structure holding the arguments for the various aspects
+-- of the evolutionary run in Hush.
 data PushArgs = PushArgs
   {
     -- | For alternation, std deviation fo index when alternating.
@@ -42,8 +44,12 @@ data PushArgs = PushArgs
     downsampleParentsGens :: Int,
     -- | Whether or not to add the best individual to the next generation.
     elitism :: Bool,
-    -- User must provide their own error function. TODO: This
-    -- errorFunction :: (PushArgs -> )
+    -- | User must provide their own error function.
+    -- Arg 1: PushArgs for the current set of arguments.
+    -- Arg 2: ([[Gene]], [Gene]) is the input data. Input is the first index and output is the second index.
+    -- Arg 3: [Gene] is the plushy representation of a program.
+    -- Returns the error list for a given set of inputs of type [Double].
+    errorFunction :: PushArgs -> [[Gene]] -> [Gene] -> [Double],
     -- | Type of informed downsampling. "solved", "elite", "soft".
     informedDownsamplingType :: String,
     -- | List of instructions to use in the evolutionary run.
@@ -76,10 +82,10 @@ data PushArgs = PushArgs
     stepLimit :: Int,
     -- | For tournament selection, amount of individuals in each tournament.
     tournamentSize :: Int,
-    -- Training data for the gp, must be provided.
-    -- trainingData :: something
-    -- Testing data for the gp, must be provided if there is any.
-    -- testingData :: something
+    -- | Training data for the gp, must be provided.
+    trainingData :: [[Gene]],
+    -- | Testing data for the gp, must be provided if there is any.
+    testingData :: [[Gene]],
     -- | Addition rate for UMAD (deletion rate derived from this).
     umadRate :: Float,
     -- | Genetic operators and probabilities for their use, should sum to one
@@ -87,6 +93,8 @@ data PushArgs = PushArgs
     variation :: Map.Map String Float
   }
 
+-- | The default values for which all runs of Hush derive
+-- their args from.
 defaultPushArgs :: PushArgs
 defaultPushArgs = PushArgs {
     alignmentDeviation = 2,
@@ -106,7 +114,7 @@ defaultPushArgs = PushArgs {
     downsampleParentRate = 0.01,
     downsampleParentsGens = 10,
     elitism = False,
-    -- errorFunction = something,
+    errorFunction = error "Must supply the error function yourself",
     informedDownsamplingType = "solved",
     instructionList = allInstructions,
     maxMotelyBatchSize = 10,
@@ -124,8 +132,8 @@ defaultPushArgs = PushArgs {
     ssxNotBmx = False,
     stepLimit = 1000,
     tournamentSize = 5,
-    -- testingData = [],
-    -- trainingData = [],
+    testingData = [],
+    trainingData = [],
     umadRate = 0.1,
     variation = Map.fromList [("umad", 1.0)]
   }
