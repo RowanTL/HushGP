@@ -6,6 +6,7 @@ import Data.Map qualified as Map
 import HushGP.Instructions.Opens
 import HushGP.State
 import HushGP.Utility
+import HushGP.GP.PushArgs
 -- import HushGP.Instructions
 -- import Debug.Trace
 
@@ -31,8 +32,8 @@ import HushGP.Utility
 
 -- | Makes a random plushy from variables in a passed argMap and
 --  a passed list of instructions.
-makeRandomPlushy :: Map.Map String String -> [Gene] -> IO [Gene]
-makeRandomPlushy argMap = randomInstructions (read @Int (argMap Map.! "maxInitialPlushySize"))
+makeRandomPlushy :: PushArgs -> [Gene] -> IO [Gene]
+makeRandomPlushy pushArgs = randomInstructions (maxInitialPlushySize pushArgs)
 
 -- | A utility function to generate an amount based on an int rather than
 --  from an argmap.

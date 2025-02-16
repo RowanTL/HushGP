@@ -49,7 +49,7 @@ data PushArgs = PushArgs
     -- Arg 2: ([[Gene]], [Gene]) is the input data. Input is the first index and output is the second index.
     -- Arg 3: [Gene] is the plushy representation of a program.
     -- Returns the error list for a given set of inputs of type [Double].
-    errorFunction :: PushArgs -> [[Gene]] -> [Gene] -> [Double],
+    errorFunction :: PushArgs -> ([[Gene]], [Gene]) -> [Gene] -> [Double],
     -- | Type of informed downsampling. "solved", "elite", "soft".
     informedDownsamplingType :: String,
     -- | List of instructions to use in the evolutionary run.
@@ -83,9 +83,9 @@ data PushArgs = PushArgs
     -- | For tournament selection, amount of individuals in each tournament.
     tournamentSize :: Int,
     -- | Training data for the gp, must be provided.
-    trainingData :: [[Gene]],
+    trainingData :: ([[Gene]], [Gene]),
     -- | Testing data for the gp, must be provided if there is any.
-    testingData :: [[Gene]],
+    testingData :: ([[Gene]], [Gene]),
     -- | Addition rate for UMAD (deletion rate derived from this).
     umadRate :: Float,
     -- | Genetic operators and probabilities for their use, should sum to one

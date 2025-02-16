@@ -105,6 +105,14 @@ absNum rawNum lst = abs (fromIntegral rawNum) `mod` length lst
 notEmptyStack :: Lens' State [a] -> State -> Bool
 notEmptyStack accessor state = not . null $ view accessor state
 
+-- |Utility Function: Extracts an int from a GeneInt.
+-- How to make this polymorphic???????? A general function for
+-- this would be nice. Wrapped in a maybe too?
+extractGeneInt :: Gene -> Integer
+extractGeneInt (GeneInt x) = x
+extractGeneInt _ = error "todo this later??"
+
+
 -- bool utility
 
 -- |A template function to make bool comparisons concise.
