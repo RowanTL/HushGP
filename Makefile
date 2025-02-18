@@ -15,7 +15,7 @@ test: # Runs unit tests.
 	runghc -i./src/ test/Main.hs
 
 format: # Formats code using ormolu.
-	ormolu --mode inplace app/*.hs src/*.hs test/*.hs
+	ormolu --mode inplace app/*.hs src/HushGP/*.hs test/*.hs
 
 hlint: # HLint for lint suggestions.
 	hlint src/*.hs

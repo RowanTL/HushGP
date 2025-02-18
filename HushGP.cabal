@@ -19,28 +19,51 @@ version:            0.1.0.0
 synopsis:           A PushGP implementation in Haskell.
 
 -- The package author(s).
-author:             Taylor
+author:             Rowan Torbitzky-Lane, Taylor
 
 -- An email address to which users can send suggestions, bug reports, and patches.
-maintainer:         behindthebrain@zoho.eu
+maintainer:         rowan.a.tl@protonmail.com
 
 category:           Data
 build-type:         Simple
 
 common warnings
-    ghc-options: -Wall
+    ghc-options: -Wall -XTemplateHaskell -threaded
 
 library
     -- Import common warning flags.
     import:           warnings
 
     -- Modules exported by the library.
-    exposed-modules:  Push
-                    , GP
-                    , State
-                    , Instructions.IntInstructions
-                    , Instructions.ExecInstructions
-                    , Instructions.FloatInstructions
+    exposed-modules:  HushGP.Push
+                    , HushGP.TH
+                    , HushGP.Utility
+                    , HushGP.Genome
+                    , HushGP.State
+                    , HushGP.Instructions
+                    , HushGP.Instructions.IntInstructions
+                    , HushGP.Instructions.ExecInstructions
+                    , HushGP.Instructions.FloatInstructions
+                    , HushGP.Instructions.GenericInstructions
+                    , HushGP.Instructions.BoolInstructions
+                    , HushGP.Instructions.CodeInstructions
+                    , HushGP.Instructions.StringInstructions
+                    , HushGP.Instructions.CharInstructions
+                    , HushGP.Instructions.VectorIntInstructions
+                    , HushGP.Instructions.VectorFloatInstructions
+                    , HushGP.Instructions.VectorStringInstructions
+                    , HushGP.Instructions.VectorBoolInstructions
+                    , HushGP.Instructions.VectorCharInstructions
+                    , HushGP.Instructions.Utility
+                    , HushGP.Instructions.Opens
+                    , HushGP.PushTests
+                    , HushGP.PushTests.IntTests
+                    , HushGP.PushTests.GenericTests
+                    , HushGP.PushTests.UtilTests
+                    , HushGP.GP
+                    , HushGP.GP.PushArgs
+                    , HushGP.Problems.IntegerRegression
+
 
     -- Modules included in this library but not exported.
     -- other-modules:
@@ -50,7 +73,7 @@ library
 
     -- Other library packages from which modules are imported.
     build-depends:
-        base, containers
+        base, containers, lens, split, QuickCheck, regex-tdfa, template-haskell, random, parallel
 
     -- Directories containing source files.
     hs-source-dirs:   src
@@ -90,7 +113,7 @@ test-suite HushGP-test
     default-language: GHC2021
 
     -- Modules included in this executable, other than Main.
-    -- other-modules:
+    -- other-modules: 
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
@@ -107,4 +130,35 @@ test-suite HushGP-test
     -- Test dependencies.
     build-depends:
         base,
-        HushGP
+        HushGP,
+        lens,
+        QuickCheck
+
+test-suite HushGP-test-old
+    -- Import common warning flags.
+    import:           warnings
+
+    -- Base language which the package is written in.
+    default-language: GHC2021
+
+    -- Modules included in this executable, other than Main.
+    -- other-modules: 
+
+    -- LANGUAGE extensions used by modules in this package.
+    -- other-extensions:
+
+    -- The interface type and version of the test suite.
+    type:             exitcode-stdio-1.0
+
+    -- Directories containing source files.
+    hs-source-dirs:   test
+
+    -- The entrypoint to the test suite.
+    main-is:          MainOld.hs
+
+    -- Test dependencies.
+    build-depends:
+        base,
+        HushGP,
+        lens,
+
