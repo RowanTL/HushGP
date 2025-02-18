@@ -1,20 +1,6 @@
 # HushGP
 A PushGP implementation in Haskell
 
-This branch is meant to to go one by one and finish implementing all of
-the functions in the pyshgp list.
-
-https://erp12.github.io/pyshgp/html/core_instructions.html
-
-# Big Problem
-
-There is no easy way to determine equality of two functions in Haskell. No comparing names, no nothing.
-We coult compare applying two functions to an example state, but that would get tedious and costly quickly.
-
-The only idea floating in my head at the moment is to attach a string to the `StateFunc` Gene to
-track what the functions are. This would require a painful redefinition of the tests, but I think would be
-worth it in the grand scheme. Would mean we could also track the functions when outputting them after training.
-
 ## Tasks
 * [ ] Post minimal core of exec to haskell discourse for advice about speed optimization.
 * [x] Do test-driven development on this one.
