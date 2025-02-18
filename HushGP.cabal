@@ -28,7 +28,7 @@ category:           Data
 build-type:         Simple
 
 common warnings
-    ghc-options: -Wall -XTemplateHaskell
+    ghc-options: -Wall -XTemplateHaskell -threaded
 
 library
     -- Import common warning flags.
@@ -73,7 +73,7 @@ library
 
     -- Other library packages from which modules are imported.
     build-depends:
-        base, containers, lens, split, QuickCheck, regex-tdfa, template-haskell, random
+        base, containers, lens, split, QuickCheck, regex-tdfa, template-haskell, random, parallel
 
     -- Directories containing source files.
     hs-source-dirs:   src

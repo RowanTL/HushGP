@@ -10,30 +10,21 @@ import HushGP.GP.PushArgs
 -- import HushGP.Instructions
 -- import Debug.Trace
 
--- tempPlushy :: [Gene]
--- tempPlushy = [
---     StateFunc (instructionIntDiv, "instructionIntDiv"),
---     StateFunc (instructionExecDup, "instructionExecDup"),
---     GeneInt 1,
---     GeneInt 0,
---     StateFunc (instructionIntDiv, "instructionIntDiv"),
---     Skip,
---     GeneInt (-15),
---     StateFunc (instructionExecDup, "instructionExecDup"),
---     StateFunc (instructionIntSub, "instructionIntSub"),
---     StateFunc (instructionFloatMul, "instructionFloatMul"),
---     Skip,
---     Close,
---     -- StateFunc (instructionNoOpBlock, "instructionNoOpBlock"),
---     StateFunc (instructionExecIf, "instructionExecIf"),
---     Close,
---     Close
---   ]
+-- | The structure for an individual containing the genome, the totalFitness, and
+-- the individual fitness cases for lexicase.
+data Individual = Individual {
+  plushy :: IO [Gene],
+  totalFitness :: Maybe Double,
+  fitnessCases :: Maybe [Double]
+}
 
--- | Makes a random plushy from variables in a passed argMap and
---  a passed list of instructions.
-makeRandomPlushy :: PushArgs -> [Gene] -> IO [Gene]
-makeRandomPlushy pushArgs = randomInstructions (maxInitialPlushySize pushArgs)
+-- | Makes a random individual based on the variables in a passed PushArgs.
+makeRandomIndividual :: PushArgs -> Individual
+makeRandomIndividual pushArgs = Individual {plushy = makeRandomPlushy pushArgs, totalFitness = Nothing, fitnessCases = Nothing}
+
+-- | Makes a random plushy from variables in a passed PushArgs.
+makeRandomPlushy :: PushArgs -> IO [Gene]
+makeRandomPlushy pushArgs = randomInstructions (maxInitialPlushySize pushArgs) (instructionList pushArgs)
 
 -- | A utility function to generate an amount based on an int rather than
 --  from an argmap.

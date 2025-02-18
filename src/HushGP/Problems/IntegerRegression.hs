@@ -61,8 +61,8 @@ intErrorFunction :: PushArgs -> ([[Gene]], [Gene]) -> [Gene] -> [Double]
 intErrorFunction _args (inputData, outputData) plushy =
   map abs $ zipWith (-) (map ((fromIntegral @Integer @Double . (errorHead . _int) . interpretExec) . loadState plushy)  inputData) (map (fromIntegral @Integer @Double . extractGeneInt) outputData)
 
-intArgMap :: PushArgs
-intArgMap = defaultPushArgs
+intPushArgs :: PushArgs
+intPushArgs = defaultPushArgs
   {
     instructionList = runInstructions,
     errorFunction = intErrorFunction,
@@ -80,4 +80,4 @@ intArgMap = defaultPushArgs
   }
 
 main :: IO ()
-main = gpLoop intArgMap
+main = gpLoop intPushArgs

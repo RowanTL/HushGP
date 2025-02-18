@@ -132,8 +132,8 @@ defaultPushArgs = PushArgs {
     ssxNotBmx = False,
     stepLimit = 1000,
     tournamentSize = 5,
-    testingData = [],
-    trainingData = [],
+    testingData = ([], []),
+    trainingData = ([], []),
     umadRate = 0.1,
     variation = Map.fromList [("umad", 1.0)]
   }
