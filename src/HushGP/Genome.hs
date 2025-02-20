@@ -13,14 +13,19 @@ import HushGP.GP.PushArgs
 -- | The structure for an individual containing the genome, the totalFitness, and
 -- the individual fitness cases for lexicase.
 data Individual = Individual {
-  plushy :: IO [Gene],
+  plushy :: [Gene],
   totalFitness :: Maybe Double,
   fitnessCases :: Maybe [Double]
-}
+} deriving (Show, Eq)
+
+instance Ord Individual where
+  ind0 <= ind1 = totalFitness ind0 <= totalFitness ind1
 
 -- | Makes a random individual based on the variables in a passed PushArgs.
-makeRandomIndividual :: PushArgs -> Individual
-makeRandomIndividual pushArgs = Individual {plushy = makeRandomPlushy pushArgs, totalFitness = Nothing, fitnessCases = Nothing}
+makeRandomIndividual :: PushArgs -> IO Individual
+makeRandomIndividual pushArgs = do
+  randomPlushy <- makeRandomPlushy pushArgs
+  return Individual {plushy = randomPlushy, totalFitness = Nothing, fitnessCases = Nothing}
 
 -- | Makes a random plushy from variables in a passed PushArgs.
 makeRandomPlushy :: PushArgs -> IO [Gene]
