@@ -102,7 +102,7 @@ instructionStackDepth accessor state@(State {_int = is}) = state{_int = toIntege
 -- the top int from the int stack.
 instructionYankDup :: Lens' State [a] -> State -> State
 instructionYankDup accessor state@(State {_int = i1 : is}) = 
-  if notEmptyStack accessor state
+  if notEmptyStack accessor state{_int = is}
   then state{_int = is} & accessor .~ (view accessor state{_int = is} !! max 0 (min (fromIntegral i1) (length (view accessor state{_int = is}) - 1))) : view accessor state{_int = is}
   else state
 instructionYankDup  _ state = state
