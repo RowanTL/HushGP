@@ -3,20 +3,22 @@ module HushGP.Genome where
 import Data.List
 import Data.List.Split
 import Data.Map qualified as Map
+import HushGP.GP.PushArgs
 import HushGP.Instructions.Opens
 import HushGP.State
 import HushGP.Utility
-import HushGP.GP.PushArgs
+
 -- import HushGP.Instructions
 -- import Debug.Trace
 
 -- | The structure for an individual containing the genome, the totalFitness, and
 -- the individual fitness cases for lexicase.
-data Individual = Individual {
-  plushy :: [Gene],
-  totalFitness :: Maybe Double,
-  fitnessCases :: Maybe [Double]
-} deriving (Show, Eq)
+data Individual = Individual
+  { plushy :: [Gene],
+    totalFitness :: Maybe Double,
+    fitnessCases :: Maybe [Double]
+  }
+  deriving (Show, Eq)
 
 instance Ord Individual where
   ind0 <= ind1 = totalFitness ind0 <= totalFitness ind1
@@ -70,29 +72,31 @@ plushyToPush plushy = plushyToPush' (concatMap (\x -> if isOpenerList x then x <
 -- | Internal function used to convert a plushy genome with opens in it into its push phenotype.
 plushyToPush' :: [Gene] -> [Gene] -> [Gene]
 plushyToPush' openPlushy push
-  | null openPlushy = if any isOpen push
+  | null openPlushy =
+      if any isOpen push
         then plushyToPush' [Close] push
         else push
-  | firstPlushy == Close = if any isOpen push
-            then plushyToPush' (drop 1 openPlushy) (if numOpen (push !! openIndex) == 1 then preOpen <> [Block postOpen] else preOpen <> [Block postOpen] <> [decOpen (Open (numOpen (push !! openIndex)))])
-            else plushyToPush' (drop 1 openPlushy) push
+  | firstPlushy == Close =
+      if any isOpen push
+        then plushyToPush' (drop 1 openPlushy) (if numOpen (push !! openIndex) == 1 then preOpen <> [Block postOpen] else preOpen <> [Block postOpen] <> [decOpen (Open (numOpen (push !! openIndex)))])
+        else plushyToPush' (drop 1 openPlushy) push
   | firstPlushy == Skip =
-    case uncons openPlushy of
-      Just (_, _ : xs) -> plushyToPush' xs push
-      _ -> plushyToPush' (drop 1 openPlushy) push
+      case uncons openPlushy of
+        Just (_, _ : xs) -> plushyToPush' xs push
+        _ -> plushyToPush' (drop 1 openPlushy) push
   | otherwise = plushyToPush' (drop 1 openPlushy) (push <> [firstPlushy])
   where
-      firstPlushy :: Gene
-      firstPlushy
-        = case uncons openPlushy of
-            Just (g, _) -> g
-            _ -> error "This shouldn't happen"
-      postOpen :: [Gene]
-      postOpen = reverse (takeWhile (not . isOpen) (reverse push))
-      openIndex :: Int
-      openIndex = length push - length postOpen - 1
-      numOpen :: Gene -> Int
-      numOpen (Open n) = n
-      numOpen _ = 0
-      preOpen :: [Gene]
-      preOpen = take openIndex push
+    firstPlushy :: Gene
+    firstPlushy =
+      case uncons openPlushy of
+        Just (g, _) -> g
+        _ -> error "This shouldn't happen"
+    postOpen :: [Gene]
+    postOpen = reverse (takeWhile (not . isOpen) (reverse push))
+    openIndex :: Int
+    openIndex = length push - length postOpen - 1
+    numOpen :: Gene -> Int
+    numOpen (Open n) = n
+    numOpen _ = 0
+    preOpen :: [Gene]
+    preOpen = take openIndex push

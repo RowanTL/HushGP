@@ -21,8 +21,8 @@ data Gene
   | GeneVectorBool [Bool]
   | GeneVectorString [String]
   | GeneVectorChar [Char]
-    -- | State -> State is the function itself. String stores the name of the function.
-  | StateFunc (State -> State, String)
+  | -- | State -> State is the function itself. String stores the name of the function.
+    StateFunc (State -> State, String)
   | PlaceInput Int
   | Close
   | Open Int

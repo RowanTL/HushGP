@@ -40,15 +40,17 @@ noOpStateFuncBlock = StateFunc (instructionNoOpBlock, "instructionNoOpBlock")
 -- | All of the instructions declared in all the instruction submodules
 allInstructions :: [Gene]
 allInstructions =
-  noOpStateFunc : noOpStateFuncBlock : allIntInstructions
-    <> allFloatInstructions
-    <> allBoolInstructions
-    <> allCharInstructions
-    <> allCodeInstructions
-    <> allExecInstructions
-    <> allStringInstructions
-    <> allVectorIntInstructions
-    <> allVectorFloatInstructions
-    <> allVectorCharInstructions
-    <> allVectorStringInstructions
-    <> allVectorBoolInstructions
+  noOpStateFunc
+    : noOpStateFuncBlock
+    : allIntInstructions
+      <> allFloatInstructions
+      <> allBoolInstructions
+      <> allCharInstructions
+      <> allCodeInstructions
+      <> allExecInstructions
+      <> allStringInstructions
+      <> allVectorIntInstructions
+      <> allVectorFloatInstructions
+      <> allVectorCharInstructions
+      <> allVectorStringInstructions
+      <> allVectorBoolInstructions

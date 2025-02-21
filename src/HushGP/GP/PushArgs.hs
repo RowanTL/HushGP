@@ -77,7 +77,7 @@ data PushArgs = PushArgs
     -- | Whether to use mutli-threading.
     useMultiThreading :: Bool,
     -- | Max total error for solutions.
-    solutionErrorThreshold :: Int,
+    solutionErrorThreshold :: Double,
     -- | Limit of push interpreter steps in push program evaluation.
     stepLimit :: Int,
     -- | For tournament selection, amount of individuals in each tournament.
@@ -90,7 +90,9 @@ data PushArgs = PushArgs
     umadRate :: Float,
     -- | Genetic operators and probabilities for their use, should sum to one
     -- Takes a Map of String -> Float where the string is the genetic operator
-    variation :: Map.Map String Float
+    variation :: Map.Map String Float,
+    -- | The epsilons calculated for epsilon lexicase selection. Only used for epsilon lexicase selection.
+    epsilons :: Maybe [Double]
   }
 
 -- | The default values for which all runs of Hush derive
@@ -128,12 +130,13 @@ defaultPushArgs = PushArgs {
     simplificationSteps = 1000,
     simplificationVerbose = False,
     useMultiThreading = False, -- False for now, change to True later.
-    solutionErrorThreshold = 0,
+    solutionErrorThreshold = 0.0,
     ssxNotBmx = False,
     stepLimit = 1000,
     tournamentSize = 5,
     testingData = ([], []),
     trainingData = ([], []),
     umadRate = 0.1,
-    variation = Map.fromList [("umad", 1.0)]
+    variation = Map.fromList [("umad", 1.0)],
+    epsilons = Nothing
   }
