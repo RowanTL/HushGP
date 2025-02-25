@@ -56,6 +56,10 @@
 
             # Check that haskell-language-server works
             # hlsCheck.enable = true; # Requires sandbox to be disabled
+
+            shellHook = ''
+            echo "Entering HushGP environment"
+            '';
           };
         };
 
