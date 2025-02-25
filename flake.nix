@@ -25,13 +25,13 @@
           # Note that local packages are automatically included in `packages`
           # (defined by `defaults.packages` option).
           #
-          projectRoot = builtins.toString (lib.fileset.toSource {
-            root = ./.;
-            fileset = lib.fileset.unions [
-              ./src
-              ./haskell-template.cabal
-            ];
-          });
+          # projectRoot = builtins.toString (lib.fileset.toSource {
+          #   root = ./.;
+          #   fileset = lib.fileset.unions [
+          #     ./src
+          #     ./haskell-template.cabal
+          #   ];
+          # });
           packages = {
             # aeson.source = "1.5.0.0";      # Override aeson to a custom version from Hackage
             # shower.source = inputs.shower; # Override shower to a custom source path
