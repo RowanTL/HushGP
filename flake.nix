@@ -52,7 +52,7 @@
 
             # Programs you want to make available in the shell.
             # Default programs can be disabled by setting to 'null'
-            # tools = hp: { fourmolu = hp.fourmolu; ghcid = null; };
+            tools = hp: { ormolu = hp.ormolu; threadscope = hp.threadscope; };
 
             # Check that haskell-language-server works
             # hlsCheck.enable = true; # Requires sandbox to be disabled
