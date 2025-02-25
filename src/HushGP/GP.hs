@@ -33,7 +33,7 @@ gpLoop pushArgs = do
   unEvaledPopulation <- generatePopulation pushArgs
   -- let evaledPop = evaluatePopulation pushArgs unEvaledPopulation
   -- print evaledPop
-  print "gamer"
+  print "placeholder for now"
 
 -- | The guts of the GP loop. Where the work gets done after the initialization happens
 -- in the main gpLoop function. The first Int holds the generation count. The second Int
@@ -58,7 +58,7 @@ gpLoop' pushArgs generation evaluations population indexedTrainingData = do
           print "Incomplete Run, saving the best so far."
         | otherwise = gpLoop' pushArgs (succ generation)
             (evaluations + (populationSize pushArgs * length (fst $ trainingData pushArgs)) + (if generation `mod` downsampleParentsGens pushArgs == 0 then length parentReps * (length (fst indexedTrainingData) - length (fst $ trainingData pushArgs)) else 0) + (if bestIndPassesDownsample then length (fst indexedTrainingData) - length (fst $ trainingData pushArgs) else 0))
-            (if elitism then )
+            (if elitism then bestInd : )
   nextAction
   where
     -- \| This will have downsampling added to it later.
