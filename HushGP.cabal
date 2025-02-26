@@ -62,6 +62,7 @@ library
                     , HushGP.PushTests.UtilTests
                     , HushGP.GP
                     , HushGP.GP.PushArgs
+                    , HushGP.GP.PushData
                     , HushGP.Problems.IntegerRegression
 
 
