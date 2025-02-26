@@ -49,7 +49,7 @@ data PushArgs = PushArgs
     -- Arg 2: ([[Gene]], [Gene]) is the input data. Input is the first index and output is the second index.
     -- Arg 3: [Gene] is the plushy representation of a program.
     -- Returns the error list for a given set of inputs of type [Double].
-    errorFunction :: PushArgs -> ([[Gene]], [Gene]) -> [Gene] -> [Double],
+    errorFunction :: PushArgs -> ([[Gene]], [Gene], [Int]) -> [Gene] -> [Double],
     -- | Type of informed downsampling. "solved", "elite", "soft".
     informedDownsamplingType :: String,
     -- | List of instructions to use in the evolutionary run.

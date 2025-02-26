@@ -9,6 +9,7 @@ import HushGP.Genome
 import HushGP.State
 import HushGP.GP.Variation
 import HushGP.GP.Downsample
+import HushGP.Utility
 
 -- import Debug.Trace (trace, traceStack)
 
@@ -21,7 +22,7 @@ generatePopulation pushArgs = do
 
 -- | Evaluates a population of plushies with the error function passed in via PushArgs and sorts them.
 -- TODO: Need to make this runnable in parallel too.
-evaluatePopulation :: PushArgs -> ([[Gene]], [Gene]) -> [Individual] -> [Individual]
+evaluatePopulation :: PushArgs -> ([[Gene]], [Gene], [Int]) -> [Individual] -> [Individual]
 evaluatePopulation pushArgs passedTrainingData population = sort $ zipWith updateIndividual (map (errorFunction pushArgs pushArgs passedTrainingData . plushy) population) population
 
 -- | A helper function used in evaluatePopulation. Takes a [Double] as the error scores and an individual.
@@ -29,19 +30,21 @@ evaluatePopulation pushArgs passedTrainingData population = sort $ zipWith updat
 updateIndividual :: [Double] -> Individual -> Individual
 updateIndividual errors ind = ind {totalFitness = Just (sum errors), fitnessCases = Just errors}
 
--- | The start of the gp loop. TODO: Make this more accurate later.
+-- | The start of the gp loop. Generates the population and then calls
+-- gpLoop' with modifications to the variables if needed.
 gpLoop :: PushArgs -> IO ()
 gpLoop pushArgs = do
   unEvaledPopulation <- generatePopulation pushArgs
-  -- let evaledPop = evaluatePopulation pushArgs unEvaledPopulation
-  -- print evaledPop
-  print "placeholder for now"
+  let indexedTrainingData = makeIndexedTrainingData (trainingData pushArgs)
+  gpLoop' pushArgs 0 0 unEvaledPopulation indexedTrainingData
+  -- print "do this later"
+
 
 -- | The guts of the GP loop. Where the work gets done after the initialization happens
 -- in the main gpLoop function. The first Int holds the generation count. The second Int
 -- holds the evaluation count. The list of Individuals is the population. The last parameter is
 -- the training data (possibly downsampled).
-gpLoop' :: PushArgs -> Int -> Int -> [Individual] -> ([[Gene]], [Gene]) -> IO ()
+gpLoop' :: PushArgs -> Int -> Int -> [Individual] -> ([[Gene]], [Gene], [Int]) -> IO ()
 gpLoop' pushArgs generation evaluations population indexedTrainingData = do
   print "Put information about each generation here."
   when bestIndPassesDownsample $ print $ "Semi Success Generation: " <> show generation
@@ -56,17 +59,18 @@ gpLoop' pushArgs generation evaluations population indexedTrainingData = do
               print "Total test error simplified: " <> undefined -- Implement later
               print $ "Simplified plushy: " <> undefined -- show simplifiedPlushy
               print $ "Simplified program: " <> undefined -- show plushyToPush simplifiedPlushy
-        | (not (enableDownsampling epsilonPushArgs) && (generation >= maxGenerations epsilonPushArgs)) || (enableDownsampling epsilonPushArgs && (evaluations >= (maxGenerations epsilonPushArgs * length population * length (fst indexedTrainingData)))) =
-          print "Incomplete Run, saving the best so far."
+        | (not (enableDownsampling epsilonPushArgs) && (generation >= maxGenerations epsilonPushArgs)) || (enableDownsampling epsilonPushArgs && (evaluations >= (maxGenerations epsilonPushArgs * length population * length (tfst indexedTrainingData)))) =
+          print $ "Best individual: " <> show (plushy bestInd)
         | otherwise = gpLoop' pushArgs (succ generation)
-            (evaluations + (populationSize pushArgs * length (fst $ trainingData pushArgs)) + (if generation `mod` downsampleParentsGens pushArgs == 0 then length parentReps * (length (fst indexedTrainingData) - length (fst $ trainingData pushArgs)) else 0) + (if bestIndPassesDownsample then length (fst indexedTrainingData) - length (fst $ trainingData pushArgs) else 0))
-            (if elitism pushArgs then bestInd : replicate (populationSize epsilonPushArgs - 1) (newIndividual epsilonPushArgs evaledPop) else replicate (populationSize epsilonPushArgs) (newIndividual epsilonPushArgs evaledPop))
-            (if enableDownsampling pushArgs && ((generation `mod` downsampleParentsGens pushArgs) == 0) then updateCaseDistances repEvaluatedPop indexedTrainingData indexedTrainingData (informedDownsamplingType pushArgs) (solutionErrorThreshold pushArgs / fromIntegral @Int @Double (length $ fst indexedTrainingData)) else indexedTrainingData)
+            (evaluations + (populationSize pushArgs * length (fst $ trainingData pushArgs)) + (if generation `mod` downsampleParentsGens pushArgs == 0 then length parentReps * (length (tfst indexedTrainingData) - length (fst $ trainingData pushArgs)) else 0) + (if bestIndPassesDownsample then length (tfst indexedTrainingData) - length (fst $ trainingData pushArgs) else 0))
+            (if elitism pushArgs
+              then bestInd : replicate (populationSize epsilonPushArgs - 1) (newIndividual epsilonPushArgs evaledPop)
+              else replicate (populationSize epsilonPushArgs) (newIndividual epsilonPushArgs evaledPop))
+            (if enableDownsampling pushArgs && ((generation `mod` downsampleParentsGens pushArgs) == 0)
+              then updateCaseDistances repEvaluatedPop indexedTrainingData indexedTrainingData (informedDownsamplingType pushArgs) (solutionErrorThreshold pushArgs / fromIntegral @Int @Double (length $ tfst indexedTrainingData))
+              else indexedTrainingData)
   nextAction
   where
-    -- \| This will have downsampling added to it later.
-    loopTrainData :: ([[Gene]], [Gene])
-    loopTrainData = indexedTrainingData
     -- \| This will have downsampling functionality added later.
     parentReps :: [Individual]
     parentReps = []
