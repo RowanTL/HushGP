@@ -85,4 +85,3 @@ gpLoop' pushArgs generation evaluations population indexedTrainingData = do
     bestIndPassesDownsample = False -- TODO: fix this later
     epsilonPushArgs :: PushArgs
     epsilonPushArgs = pushArgs {epsilons = Nothing} -- TODO: And this
---gpLoop' _ _ _ _ _ = error "How did this happen?"
