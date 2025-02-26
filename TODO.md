@@ -27,6 +27,7 @@
     - I'm only going to implement propeller's :specified version
       - Is the best according to the papers
   - [X] Need a NoOp that opens blocks
+  - [ ] Have a way to balance amount of closes with open blocks
 - [ ] Need to make genomes serializable (Check pysh json files)
 - [ ] Add Memory
 - [ ] Add history stack(s), like a call stack

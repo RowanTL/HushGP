@@ -171,7 +171,13 @@ findContainer _ _ = Block []
 
 -- |Utility Function: A helper function for instructionCodeDiscrepancy. The full description is there.
 countDiscrepancy :: Gene -> Gene -> Integer
-countDiscrepancy (Block xs) (Block ys) = sum [if uncurry (==) tup then 0 else 1 | tup <- zip xs ys] + abs (toInteger (length xs) - toInteger (length ys))
+-- countDiscrepancy (Block xs) (Block ys) = sum [if uncurry (==) tup then 0 else 1 | tup <- zip xs ys] + abs (toInteger (length xs) - toInteger (length ys))
+-- countDiscrepancy (Block xs) (Block ys) = sum [if isBlock (fst tup) && isBlock (snd tup) then uncurry countDiscrepancy tup else if uncurry (==) tup then 0 else 1 | tup <- zip xs ys] + abs (toInteger (length xs) - toInteger (length ys))
+countDiscrepancy (Block xs) (Block []) = codeRecursiveSize (Block xs)
+countDiscrepancy (Block []) (Block ys) = codeRecursiveSize (Block ys)
+countDiscrepancy (Block (x:xs)) (Block (y:ys)) = if x == y then 1 + countDiscrepancy (Block xs) (Block ys) else countDiscrepancy (Block xs) (Block ys)
+countDiscrepancy _ (Block ys) = 1 + codeRecursiveSize (Block ys)
+countDiscrepancy (Block xs) _ = 1 + codeRecursiveSize (Block xs)
 countDiscrepancy xgene ygene = if xgene == ygene then 1 else 0
 
 -- |Utility Function: Extracts the first gene from a block. Returns itself if not a block

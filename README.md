@@ -45,3 +45,7 @@ This is clearly not ideal.
 4) For the exec stack itself,
 typeable, data generic, ghc.generic, data.dynamic, heterogeneous lists, etc. could also help,
 to detect the type of variables at runtime, but I would rather stick to language basics at first.
+
+## Nix Users
+
+This took my machine about 2 hours to build the environment after running `nix develop`.

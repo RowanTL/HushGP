@@ -57,8 +57,8 @@ loadState plushy vals =
   (loadProgram (plushyToPush plushy) emptyState){_input = Map.fromList (zip [0..] vals)}
 
 -- | The error function for a single set of inputs and outputs.
-intErrorFunction :: PushArgs -> ([[Gene]], [Gene]) -> [Gene] -> [Double]
-intErrorFunction _args (inputData, outputData) plushy =
+intErrorFunction :: PushArgs -> ([[Gene]], [Gene], [Int]) -> [Gene] -> [Double]
+intErrorFunction _args (inputData, outputData, _) plushy =
   map abs $ zipWith (-) (map ((fromIntegral @Integer @Double . (errorHead . _int) . interpretExec) . loadState plushy)  inputData) (map (fromIntegral @Integer @Double . extractGeneInt) outputData)
 
 intPushArgs :: PushArgs
@@ -76,7 +76,8 @@ intPushArgs = defaultPushArgs
     tournamentSize = 5,
     umadRate = 0.1,
     variation = Map.fromList [("umad", 1.0), ("crossover", 0.0)],
-    elitism = False
+    elitism = False,
+    enableDownsampling = False
   }
 
 main :: IO ()
