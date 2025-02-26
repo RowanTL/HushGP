@@ -1,8 +1,8 @@
 module HushGP.Problems.IntegerRegression where
 
-import Data.List.Split
 import Data.List
 import Data.Map qualified as Map
+import Control.Lens hiding (uncons)
 import HushGP.State
 import HushGP.Instructions
 import HushGP.GP.PushArgs
@@ -28,21 +28,21 @@ targetFunction x = (x * x * x) + (2 * x)
 -- | The training data for the model.
 trainData :: [PushData]
 trainData = map (\num -> PushData {
-      inputData = [GeneInt num],
-      outputData = (GeneInt . targetFunction) num,
-      downsampleIndex = Nothing,
-      caseDistances = Nothing})
+      _inputData = [GeneInt num],
+      _outputData = (GeneInt . targetFunction) num,
+      _downsampleIndex = Nothing,
+      _caseDistances = Nothing})
     [-10..10]
 
 -- | The testing data for the model.
 testData :: [PushData]
 -- testData = (chunksOf 1 $ map GeneInt $ [-20..(-11)] <> [11..21], map (GeneInt . targetFunction) ([-20..(-11)] <> [11..21]))
 testData = map (\num -> PushData {
-      inputData = [GeneInt num],
-      outputData = (GeneInt . targetFunction) num,
-      downsampleIndex = Nothing,
-      caseDistances = Nothing})
-    [-20..(-11)] <> [11..21]
+      _inputData = [GeneInt num],
+      _outputData = (GeneInt . targetFunction) num,
+      _downsampleIndex = Nothing,
+      _caseDistances = Nothing})
+    ([-20..(-11)] <> [11..21])
 
 -- | The instructions used in the evolutionary run.
 runInstructions :: [Gene]
@@ -68,10 +68,16 @@ loadState :: [Gene] -> [Gene] -> State
 loadState plushy vals = 
   (loadProgram (plushyToPush plushy) emptyState){_input = Map.fromList (zip [0..] vals)}
 
+extractField :: Lens' PushData a -> [PushData] -> [a]
+extractField accessor pushData = [ view accessor dataPoint | dataPoint <- pushData ]
+
 -- | The error function for a single set of inputs and outputs.
 intErrorFunction :: PushArgs -> [PushData] -> [Gene] -> [Double]
 intErrorFunction _args pushData plushy =
-  map abs $ zipWith (-) (map ((fromIntegral @Integer @Double . (errorHead . _int) . interpretExec) . loadState plushy) pushData) (map (fromIntegral @Integer @Double . extractGeneInt) outputData)
+  map abs $
+    zipWith (-)
+      (map ((fromIntegral @Integer @Double . (errorHead . _int) . interpretExec) . loadState plushy)
+      (extractField inputData pushData)) (map (fromIntegral @Integer @Double . extractGeneInt) (extractField outputData pushData))
 
 intPushArgs :: PushArgs
 intPushArgs = defaultPushArgs

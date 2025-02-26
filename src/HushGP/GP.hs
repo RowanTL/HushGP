@@ -6,7 +6,6 @@ import Control.Parallel.Strategies
 import Data.List (sort, uncons)
 import HushGP.GP.PushArgs
 import HushGP.Genome
-import HushGP.State
 import HushGP.GP.Variation
 import HushGP.GP.Downsample
 import HushGP.GP.PushData
@@ -45,7 +44,7 @@ gpLoop pushArgs = do
 -- in the main gpLoop function. The first Int holds the generation count. The second Int
 -- holds the evaluation count. The list of Individuals is the population. The last parameter is
 -- the training data (possibly downsampled).
-gpLoop' :: PushArgs -> Int -> Int -> [Individual] -> ([[Gene]], [Gene], [Int]) -> IO ()
+gpLoop' :: PushArgs -> Int -> Int -> [Individual] -> [PushData] -> IO ()
 gpLoop' pushArgs generation evaluations population indexedTrainingData = do
   print "Put information about each generation here."
   when bestIndPassesDownsample $ print $ "Semi Success Generation: " <> show generation
@@ -60,15 +59,15 @@ gpLoop' pushArgs generation evaluations population indexedTrainingData = do
               print "Total test error simplified: " <> undefined -- Implement later
               print $ "Simplified plushy: " <> undefined -- show simplifiedPlushy
               print $ "Simplified program: " <> undefined -- show plushyToPush simplifiedPlushy
-        | (not (enableDownsampling epsilonPushArgs) && (generation >= maxGenerations epsilonPushArgs)) || (enableDownsampling epsilonPushArgs && (evaluations >= (maxGenerations epsilonPushArgs * length population * length (tfst indexedTrainingData)))) =
+        | (not (enableDownsampling epsilonPushArgs) && (generation >= maxGenerations epsilonPushArgs)) || (enableDownsampling epsilonPushArgs && (evaluations >= (maxGenerations epsilonPushArgs * length population * length indexedTrainingData))) =
           print $ "Best individual: " <> show (plushy bestInd)
         | otherwise = gpLoop' pushArgs (succ generation)
-            (evaluations + (populationSize pushArgs * length (fst $ trainingData pushArgs)) + (if generation `mod` downsampleParentsGens pushArgs == 0 then length parentReps * (length (tfst indexedTrainingData) - length (fst $ trainingData pushArgs)) else 0) + (if bestIndPassesDownsample then length (tfst indexedTrainingData) - length (fst $ trainingData pushArgs) else 0))
+            (evaluations + (populationSize pushArgs * length (trainingData pushArgs)) + (if generation `mod` downsampleParentsGens pushArgs == 0 then length parentReps * (length indexedTrainingData - length (trainingData pushArgs)) else 0) + (if bestIndPassesDownsample then length indexedTrainingData - length (trainingData pushArgs) else 0))
             (if elitism pushArgs
               then bestInd : replicate (populationSize epsilonPushArgs - 1) (newIndividual epsilonPushArgs evaledPop)
               else replicate (populationSize epsilonPushArgs) (newIndividual epsilonPushArgs evaledPop))
             (if enableDownsampling pushArgs && ((generation `mod` downsampleParentsGens pushArgs) == 0)
-              then updateCaseDistances repEvaluatedPop indexedTrainingData indexedTrainingData (informedDownsamplingType pushArgs) (solutionErrorThreshold pushArgs / fromIntegral @Int @Double (length $ tfst indexedTrainingData))
+              then updateCaseDistances repEvaluatedPop indexedTrainingData indexedTrainingData (informedDownsamplingType pushArgs) (solutionErrorThreshold pushArgs / fromIntegral @Int @Double (length indexedTrainingData))
               else indexedTrainingData)
   nextAction
   where
