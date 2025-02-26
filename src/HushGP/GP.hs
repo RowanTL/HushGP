@@ -61,7 +61,7 @@ gpLoop' pushArgs generation evaluations population indexedTrainingData = do
         | otherwise = gpLoop' pushArgs (succ generation)
             (evaluations + (populationSize pushArgs * length (fst $ trainingData pushArgs)) + (if generation `mod` downsampleParentsGens pushArgs == 0 then length parentReps * (length (fst indexedTrainingData) - length (fst $ trainingData pushArgs)) else 0) + (if bestIndPassesDownsample then length (fst indexedTrainingData) - length (fst $ trainingData pushArgs) else 0))
             (if elitism pushArgs then bestInd : replicate (populationSize epsilonPushArgs - 1) (newIndividual epsilonPushArgs evaledPop) else replicate (populationSize epsilonPushArgs) (newIndividual epsilonPushArgs evaledPop))
-            (if enableDownsampling pushArgs then if (generation `mod` downsampleParentsGens pushArgs) == 0 then updateCaseDistances repEvaluatedPop indexedTrainingData indexedTrainingData (informedDownsamplingType pushArgs) (solutionErrorThreshold pushArgs / fromIntegral @Int @Double (length $ fst indexedTrainingData)) else indexedTrainingData else indexedTrainingData)
+            (if enableDownsampling pushArgs && ((generation `mod` downsampleParentsGens pushArgs) == 0) then updateCaseDistances repEvaluatedPop indexedTrainingData indexedTrainingData (informedDownsamplingType pushArgs) (solutionErrorThreshold pushArgs / fromIntegral @Int @Double (length $ fst indexedTrainingData)) else indexedTrainingData)
   nextAction
   where
     -- \| This will have downsampling added to it later.
