@@ -63,6 +63,7 @@ library
                     , HushGP.GP
                     , HushGP.GP.PushArgs
                     , HushGP.GP.Variation
+                    , HushGP.GP.Downsample
                     , HushGP.Problems.IntegerRegression
 
 
