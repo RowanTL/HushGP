@@ -1,8 +1,9 @@
 module HushGP.GP.PushArgs where
 
 import HushGP.State
-import Data.Map qualified as Map
 import HushGP.Instructions
+import HushGP.GP.PushData
+import Data.Map qualified as Map
 
 -- | The structure holding the arguments for the various aspects
 -- of the evolutionary run in Hush.
@@ -46,10 +47,10 @@ data PushArgs = PushArgs
     elitism :: Bool,
     -- | User must provide their own error function.
     -- Arg 1: PushArgs for the current set of arguments.
-    -- Arg 2: ([[Gene]], [Gene]) is the input data. Input is the first index and output is the second index.
+    -- Arg 2: [PushData] is the input data.
     -- Arg 3: [Gene] is the plushy representation of a program.
     -- Returns the error list for a given set of inputs of type [Double].
-    errorFunction :: PushArgs -> ([[Gene]], [Gene], [Int]) -> [Gene] -> [Double],
+    errorFunction :: PushArgs -> [PushData] -> [Gene] -> [Double],
     -- | Type of informed downsampling. "solved", "elite", "soft".
     informedDownsamplingType :: String,
     -- | List of instructions to use in the evolutionary run.
@@ -83,9 +84,9 @@ data PushArgs = PushArgs
     -- | For tournament selection, amount of individuals in each tournament.
     tournamentSize :: Int,
     -- | Training data for the gp, must be provided.
-    trainingData :: ([[Gene]], [Gene]),
+    trainingData :: [PushData],
     -- | Testing data for the gp, must be provided if there is any.
-    testingData :: ([[Gene]], [Gene]),
+    testingData :: [PushData],
     -- | Addition rate for UMAD (deletion rate derived from this).
     umadRate :: Float,
     -- | Genetic operators and probabilities for their use, should sum to one
@@ -134,8 +135,8 @@ defaultPushArgs = PushArgs {
     ssxNotBmx = False,
     stepLimit = 1000,
     tournamentSize = 5,
-    testingData = ([], []),
-    trainingData = ([], []),
+    testingData = error "Must supply the testingData yourself",
+    trainingData = error "Must supply the trainingData yourself",
     umadRate = 0.1,
     variation = Map.fromList [("umad", 1.0)],
     epsilons = Nothing

@@ -6,6 +6,7 @@ import Data.Map qualified as Map
 import HushGP.State
 import HushGP.Instructions
 import HushGP.GP.PushArgs
+import HushGP.GP.PushData
 import HushGP.Genome
 import HushGP.Push
 import HushGP.Instructions.Utility
@@ -25,12 +26,23 @@ targetFunction :: Integer -> Integer
 targetFunction x = (x * x * x) + (2 * x)
 
 -- | The training data for the model.
-trainData :: ([[Gene]], [Gene])
-trainData = (chunksOf 1 $ map GeneInt [-10..10], map (GeneInt . targetFunction) [-10..11])
+trainData :: [PushData]
+trainData = map (\num -> PushData {
+      inputData = [GeneInt num],
+      outputData = (GeneInt . targetFunction) num,
+      downsampleIndex = Nothing,
+      caseDistances = Nothing})
+    [-10..10]
 
 -- | The testing data for the model.
-testData :: ([[Gene]], [Gene])
-testData = (chunksOf 1 $ map GeneInt $ [-20..(-11)] <> [11..21], map (GeneInt . targetFunction) ([-20..(-11)] <> [11..21]))
+testData :: [PushData]
+-- testData = (chunksOf 1 $ map GeneInt $ [-20..(-11)] <> [11..21], map (GeneInt . targetFunction) ([-20..(-11)] <> [11..21]))
+testData = map (\num -> PushData {
+      inputData = [GeneInt num],
+      outputData = (GeneInt . targetFunction) num,
+      downsampleIndex = Nothing,
+      caseDistances = Nothing})
+    [-20..(-11)] <> [11..21]
 
 -- | The instructions used in the evolutionary run.
 runInstructions :: [Gene]
@@ -57,9 +69,9 @@ loadState plushy vals =
   (loadProgram (plushyToPush plushy) emptyState){_input = Map.fromList (zip [0..] vals)}
 
 -- | The error function for a single set of inputs and outputs.
-intErrorFunction :: PushArgs -> ([[Gene]], [Gene], [Int]) -> [Gene] -> [Double]
-intErrorFunction _args (inputData, outputData, _) plushy =
-  map abs $ zipWith (-) (map ((fromIntegral @Integer @Double . (errorHead . _int) . interpretExec) . loadState plushy)  inputData) (map (fromIntegral @Integer @Double . extractGeneInt) outputData)
+intErrorFunction :: PushArgs -> [PushData] -> [Gene] -> [Double]
+intErrorFunction _args pushData plushy =
+  map abs $ zipWith (-) (map ((fromIntegral @Integer @Double . (errorHead . _int) . interpretExec) . loadState plushy) pushData) (map (fromIntegral @Integer @Double . extractGeneInt) outputData)
 
 intPushArgs :: PushArgs
 intPushArgs = defaultPushArgs

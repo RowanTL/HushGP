@@ -9,6 +9,7 @@ import HushGP.Genome
 import HushGP.State
 import HushGP.GP.Variation
 import HushGP.GP.Downsample
+import HushGP.GP.PushData
 import HushGP.Utility
 
 -- import Debug.Trace (trace, traceStack)
@@ -22,7 +23,7 @@ generatePopulation pushArgs = do
 
 -- | Evaluates a population of plushies with the error function passed in via PushArgs and sorts them.
 -- TODO: Need to make this runnable in parallel too.
-evaluatePopulation :: PushArgs -> ([[Gene]], [Gene], [Int]) -> [Individual] -> [Individual]
+evaluatePopulation :: PushArgs -> [PushData] -> [Individual] -> [Individual]
 evaluatePopulation pushArgs passedTrainingData population = sort $ zipWith updateIndividual (map (errorFunction pushArgs pushArgs passedTrainingData . plushy) population) population
 
 -- | A helper function used in evaluatePopulation. Takes a [Double] as the error scores and an individual.

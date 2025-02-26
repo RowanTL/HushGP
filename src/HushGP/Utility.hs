@@ -30,7 +30,3 @@ thrd (_, _, x) = x
 -- |Utility function: Converts a tuple to a triple with a passed value.
 tupleToTriple :: (a, b) -> c -> (a, b, c)
 tupleToTriple (x, y) z = (x, y, z)
-
--- |Utility function: Converts the training data passed in to an indexed representation
-makeIndexedTrainingData :: ([[Gene]], [Gene]) -> ([[Gene]], [Gene], [Int])
-makeIndexedTrainingData (inputs, outputs) = (inputs, outputs, [0..(length inputs)])
