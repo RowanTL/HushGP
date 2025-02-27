@@ -66,6 +66,7 @@ library
                     , HushGP.GP.Downsample
                     , HushGP.GP.PushData
                     , HushGP.Problems.IntegerRegression
+                    , HushGP.Tools.Metrics
 
 
     -- Modules included in this library but not exported.

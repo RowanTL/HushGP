@@ -24,7 +24,7 @@ selectDownsampleRandom :: PushArgs -> [PushData] -> IO [PushData]
 selectDownsampleRandom pushArgs pushData = take (floor (downsampleRate pushArgs * fromIntegral @Int @Float (length pushData))) . shuffle' pushData (length pushData) <$> initStdGen
 
 -- |Selects a downsample that has it's cases maximally far away by sequentially
--- adding cases to the downsample that have their closest case maximally far away
+-- adding cases to the downsample that have their closest case maximally far away.
 selectDownsampleMaxmin :: PushArgs -> [PushData] -> IO [PushData]
 selectDownsampleMaxmin (PushArgs {downsampleRate = dsRate}) pushData = do
   shuffledCases <- shuffle' pushData (length pushData) <$> initStdGen
@@ -34,5 +34,14 @@ selectDownsampleMaxmin (PushArgs {downsampleRate = dsRate}) pushData = do
     (drop 1 shuffledCases)
     goalSize
 
+-- |The main loop of selectDownsampleMaxmin. This is where most of calculation happens.
+-- When called from selectDownsampleMaxmin: The first [PushData] holds the head of the
+-- original pushData wrapped in a list, the second [PushData] holds the rest of the list
+-- without the aformentioned head. The Int is the goal size derived from the downsample rate
+-- and the length of the original [pushData].
 selectDownsampleMaxmin' :: [PushData] -> [PushData] -> Int -> IO [PushData]
-selectDownsampleMaxmin' newDownsample casesToPickFrom goalSize = undefined
+selectDownsampleMaxmin' newDownsample casesToPickFrom goalSize
+  | length newDownsample >= goalSize = pure newDownsample
+  | otherwise = do
+      minCaseDistances
+  
