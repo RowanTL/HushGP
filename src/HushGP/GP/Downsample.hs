@@ -5,6 +5,7 @@ import System.Random
 import HushGP.Genome
 import HushGP.GP.PushData
 import HushGP.GP.PushArgs
+import Data.List
 
 -- |Sets the index of the passed training data.
 assignIndiciesToData :: [PushData] -> [PushData]
@@ -12,7 +13,7 @@ assignIndiciesToData oldData = zipWith (\dat idx -> dat{_downsampleIndex = Just 
 
 -- |Initializes cases distances for passed training data.
 initializeCaseDistances :: PushArgs -> [PushData]
-initializeCaseDistances pushArgs = [ dat{_caseDistances = Just (replicate (length $ trainingData pushArgs) (fromIntegral @Int @Double $ populationSize pushArgs))} | dat <- trainingData pushArgs ]
+initializeCaseDistances (PushArgs {trainingData = tData, populationSize = popSize}) = [ dat{_caseDistances = Just (replicate (length tData) (fromIntegral @Int @Double popSize))} | dat <- tData ]
 
 -- |Updates the cases distances when downsampling
 updateCaseDistances :: [Individual] -> [PushData] -> [PushData] -> String -> Double -> [PushData]
@@ -25,6 +26,13 @@ selectDownsampleRandom pushArgs pushData = take (floor (downsampleRate pushArgs 
 -- |Selects a downsample that has it's cases maximally far away by sequentially
 -- adding cases to the downsample that have their closest case maximally far away
 selectDownsampleMaxmin :: PushArgs -> [PushData] -> IO [PushData]
-selectDownsampleMaxmin pushArgs@(PushArgs {downsampleRate = dsRate}) pushData = do
+selectDownsampleMaxmin (PushArgs {downsampleRate = dsRate}) pushData = do
   shuffledCases <- shuffle' pushData (length pushData) <$> initStdGen
-  
+  let goalSize = floor @Float @Int (dsRate * (fromIntegral @Int @Float $ length pushData))
+  selectDownsampleMaxmin'
+    (case uncons shuffledCases of (Just (x, _)) -> [x]; _ -> error "error: shuffledCases empty!")
+    (drop 1 shuffledCases)
+    goalSize
+
+selectDownsampleMaxmin' :: [PushData] -> [PushData] -> Int -> IO [PushData]
+selectDownsampleMaxmin' newDownsample casesToPickFrom goalSize = undefined
