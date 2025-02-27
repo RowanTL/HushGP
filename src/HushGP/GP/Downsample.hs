@@ -22,6 +22,8 @@ updateCaseDistances evaledPop downsampleData trainingData informedDownsamplingTy
 selectDownsampleRandom :: PushArgs -> [PushData] -> IO [PushData]
 selectDownsampleRandom pushArgs pushData = take (floor (downsampleRate pushArgs * fromIntegral @Int @Float (length pushData))) . shuffle' pushData (length pushData) <$> initStdGen
 
+-- |Selects a downsample that has it's cases maximally far away by sequentially
+-- adding cases to the downsample that have their closest case maximally far away
 selectDownsampleMaxmin :: PushArgs -> [PushData] -> IO [PushData]
 selectDownsampleMaxmin pushArgs@(PushArgs {downsampleRate = dsRate}) pushData = do
   shuffledCases <- shuffle' pushData (length pushData) <$> initStdGen
