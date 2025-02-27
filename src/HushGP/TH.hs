@@ -23,7 +23,7 @@ extractAllFunctions pattern = do
   loc <- location
   -- file <- runIO $ readFile pattern
   file <- runIO $ readFile $ loc_filename loc
-  return $ nub $ filter (=~ pattern) $ map fst $ concatMap lex $ lines file
+  pure $ nub $ filter (=~ pattern) $ map fst $ concatMap lex $ lines file
 
 -- | Extracts all functions from a Q [String] (to be used with extractAllFunctions)
 --  funcs has a list of all functions from extractAllFunctions
@@ -35,4 +35,4 @@ functionExtractor :: String -> Q Exp
 functionExtractor pattern = do
   funcs <- extractAllFunctions pattern
   let makePair n = TupE [Just $ VarE $ mkName n, Just $ LitE $ StringL n]
-  return $ ListE $ map makePair funcs
+  pure $ ListE $ map makePair funcs

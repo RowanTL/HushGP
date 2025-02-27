@@ -26,8 +26,8 @@ targetFunction :: Integer -> Integer
 targetFunction x = (x * x * x) + (2 * x)
 
 -- | The training data for the model.
-trainData :: [PushData]
-trainData = map (\num -> PushData {
+intTrainData :: [PushData]
+intTrainData = map (\num -> PushData {
       _inputData = [GeneInt num],
       _outputData = (GeneInt . targetFunction) num,
       _downsampleIndex = Nothing,
@@ -35,9 +35,8 @@ trainData = map (\num -> PushData {
     [-10..10]
 
 -- | The testing data for the model.
-testData :: [PushData]
--- testData = (chunksOf 1 $ map GeneInt $ [-20..(-11)] <> [11..21], map (GeneInt . targetFunction) ([-20..(-11)] <> [11..21]))
-testData = map (\num -> PushData {
+intTestData :: [PushData]
+intTestData = map (\num -> PushData {
       _inputData = [GeneInt num],
       _outputData = (GeneInt . targetFunction) num,
       _downsampleIndex = Nothing,
@@ -84,8 +83,8 @@ intPushArgs = defaultPushArgs
   {
     instructionList = runInstructions,
     errorFunction = intErrorFunction,
-    trainingData = trainData,
-    testingData = testData,
+    trainingData = intTrainData,
+    testingData = intTestData,
     maxGenerations = 300,
     populationSize = 1000,
     maxInitialPlushySize = 100,
@@ -95,7 +94,8 @@ intPushArgs = defaultPushArgs
     umadRate = 0.1,
     variation = Map.fromList [("umad", 1.0), ("crossover", 0.0)],
     elitism = False,
-    enableDownsampling = False
+    enableDownsampling = False,
+    downsampleRate = 0.5
   }
 
 main :: IO ()
