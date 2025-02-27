@@ -20,7 +20,9 @@ updateCaseDistances evaledPop downsampleData trainingData informedDownsamplingTy
 
 -- |Draws a random amount of data points from a passed list of data points.
 selectDownsampleRandom :: PushArgs -> [PushData] -> IO [PushData]
-selectDownsampleRandom pushArgs pushData = take (floor (downsampleRate pushArgs * fromIntegral @Int @Float (length pushData))) . shuffle' pushData (length pushData - 1) <$> initStdGen
+selectDownsampleRandom pushArgs pushData = take (floor (downsampleRate pushArgs * fromIntegral @Int @Float (length pushData))) . shuffle' pushData (length pushData) <$> initStdGen
 
 selectDownsampleMaxmin :: PushArgs -> [PushData] -> IO [PushData]
-selectDownsampleMaxmin pushArgs@(PushArgs {downsampleRate = dsrate}) pushData = undefined
+selectDownsampleMaxmin pushArgs@(PushArgs {downsampleRate = dsRate}) pushData = do
+  shuffledCases <- shuffle' pushData (length pushData) <$> initStdGen
+  
