@@ -17,10 +17,6 @@ assignIndicesToData oldData = zipWith (\dat idx -> dat{_downsampleIndex = Just i
 initializeCaseDistances :: PushArgs -> [PushData]
 initializeCaseDistances (PushArgs {trainingData = tData, populationSize = popSize}) = [ dat{_caseDistances = Just (replicate (length tData) popSize)} | dat <- tData ]
 
--- |Updates the cases distances when downsampling.
-updateCaseDistances :: [Individual] -> [PushData] -> [PushData] -> String -> Double -> [PushData]
-updateCaseDistances evaledPop downsampleData trainingData informedDownsamplingType solutionThreshold = undefined
-
 -- |Draws a random amount of data points from a passed list of data points.
 selectDownsampleRandom :: PushArgs -> [PushData] -> IO [PushData]
 selectDownsampleRandom (PushArgs {downsampleRate = dsRate}) pushData = take (floor (dsRate * fromIntegral @Int @Float (length pushData))) . shuffle' pushData (length pushData) <$> initStdGen
@@ -114,3 +110,8 @@ updateAtIndices' :: [a] -> [a] -> [Int] -> [a]
 updateAtIndices' bigList _ [] = bigList
 updateAtIndices' bigList [] _ = bigList
 updateAtIndices' bigList (sval:svals) (idx:idxs) = updateAtIndices' (replaceAt idx sval bigList) svals idxs 
+
+-- |Updates the cases distances when downsampling.
+updateCaseDistances :: [Individual] -> [PushData] -> [PushData] -> String -> Double -> [PushData]
+updateCaseDistances evaledPop downsampleData trainingData informedDownsamplingType solutionThreshold = undefined
+-- map (\other -> getDistanceBetweenCases [[0,0],[0,0]] 0 other) [0..(length [3,4] - 1)]
