@@ -96,7 +96,7 @@ data PushArgs = PushArgs
     epsilons :: Maybe [Double],
     -- | Used with the CaseMaxminAuto downsampling strategy. Tells downsampling to stop when
     -- the maximum minimum distance is too far away.
-    caseDelta :: Double
+    caseDelta :: Int
   }
 
 -- | The default values for which all runs of Hush derive

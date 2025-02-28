@@ -15,9 +15,9 @@ assignIndiciesToData oldData = zipWith (\dat idx -> dat{_downsampleIndex = Just 
 
 -- |Initializes cases distances for passed training data.
 initializeCaseDistances :: PushArgs -> [PushData]
-initializeCaseDistances (PushArgs {trainingData = tData, populationSize = popSize}) = [ dat{_caseDistances = Just (replicate (length tData) (fromIntegral @Int @Double popSize))} | dat <- tData ]
+initializeCaseDistances (PushArgs {trainingData = tData, populationSize = popSize}) = [ dat{_caseDistances = Just (replicate (length tData) popSize)} | dat <- tData ]
 
--- |Updates the cases distances when downsampling
+-- |Updates the cases distances when downsampling.
 updateCaseDistances :: [Individual] -> [PushData] -> [PushData] -> String -> Double -> [PushData]
 updateCaseDistances evaledPop downsampleData trainingData informedDownsamplingType solutionThreshold = undefined
 
@@ -70,7 +70,7 @@ selectDownsampleMaxminAdaptive (PushArgs {caseDelta = cDelta}) pushData = do
 -- original pushData wrapped in a list, the second [PushData] holds the rest of the list
 -- without the aformentioned head. The Int is the caseDelta derived from the downsample rate
 -- and the length of the original [pushData].
-selectDownsampleMaxminAdaptive' :: [PushData] -> [PushData] -> Double -> IO [PushData]
+selectDownsampleMaxminAdaptive' :: [PushData] -> [PushData] -> Int -> IO [PushData]
 selectDownsampleMaxminAdaptive' newDownsample casesToPickFrom cDelta = do
       let newDistances = map extractDistance newDownsample
       let minCaseDistances = minOfColumns (map (\distList -> filterByIndex distList (map extractIndex casesToPickFrom)) newDistances)
@@ -82,3 +82,15 @@ selectDownsampleMaxminAdaptive' newDownsample casesToPickFrom cDelta = do
             ((casesToPickFrom !! selectedCaseIndex) : newDownsample)
             (shuffle' (deleteAt selectedCaseIndex casesToPickFrom) (length casesToPickFrom - 1) stdGen)
             cDelta
+-- |Returns the distance between two cases given a list of individual error vectors, and the index these
+-- cases exist in the error vector. Only makes the distinction between zero and nonzero errors"
+getDistanceBetweenCases :: [[Int]] -> Int -> Int -> Int
+getDistanceBetweenCases errorLists caseIndex0 caseIndex1 =
+  if lhe < caseIndex0 || lhe < caseIndex1 || caseIndex0 < 0 || caseIndex1 < 0
+    then length errorLists
+    else undefined
+  where
+    lhe :: Int
+    lhe = length $ head errorLists
+    errors0 :: [Int]
+    errors0 = map (\lst -> lst !! caseIndex0) errorLists

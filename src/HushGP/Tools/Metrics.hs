@@ -5,7 +5,7 @@ import System.Random
 import System.Random.Shuffle
 
 -- |Maps minimum over the transposed [[Double]].
-minOfColumns :: [[Double]] -> [Double]
+minOfColumns :: [[Int]] -> [Int]
 minOfColumns columns = map minimum (transpose columns)
 
 -- |Returns the index of the maximum value in a list, randomly tiebreaking.

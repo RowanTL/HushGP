@@ -9,12 +9,12 @@ data PushData = PushData {
   _inputData :: [Gene],
   _outputData :: Gene,
   _downsampleIndex :: Maybe Int,
-  _caseDistances :: Maybe [Double]
+  _caseDistances :: Maybe [Int]
 } deriving (Show)
 
 -- |Extracts the case distances from a PushData object. Errors if the
 -- _caseDistances list is Nothing.
-extractDistance :: PushData -> [Double]
+extractDistance :: PushData -> [Int]
 extractDistance PushData{_caseDistances = Nothing} = error "Error: Case distances are empty!. This should never happen"
 extractDistance PushData{_caseDistances = Just xs} = xs
 
