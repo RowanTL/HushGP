@@ -143,5 +143,5 @@ defaultPushArgs = PushArgs {
     umadRate = 0.1,
     variation = Map.fromList [("umad", 1.0)],
     epsilons = Nothing,
-    caseDelta = 0.0
+    caseDelta = 0
   }

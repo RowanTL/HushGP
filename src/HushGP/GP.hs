@@ -34,7 +34,7 @@ updateIndividual errors ind = ind {totalFitness = Just (sum errors), fitnessCase
 gpLoop :: PushArgs -> IO ()
 gpLoop pushArgs@(PushArgs {trainingData = tData}) = do
   unEvaledPopulation <- generatePopulation pushArgs
-  let indexedTrainingData = assignIndiciesToData tData
+  let indexedTrainingData = assignIndicesToData tData
   gpLoop' pushArgs 0 0 unEvaledPopulation indexedTrainingData
 
 -- | The guts of the GP loop. Where the work gets done after the initialization happens

@@ -320,7 +320,7 @@ instructionReverse accessor state =
     _ -> state
 
 -- |Based on two lenses, one of a primitive type and the next of a vector type,
--- takes the vector and individually pushes its indicies to the passed primitive stack.
+-- takes the vector and individually pushes its indices to the passed primitive stack.
 instructionPushAll :: Lens' State [a] -> Lens' State [[a]] -> State -> State
 instructionPushAll primAccessor vectorAccessor state =
   case uncons (view vectorAccessor state) of

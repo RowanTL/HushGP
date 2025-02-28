@@ -26,9 +26,9 @@ insertAt idx val xs = combineTuple val (splitAt idx xs)
 replaceAt :: Int -> a -> [a] -> [a]
 replaceAt idx val xs = deleteAt (idx + 1) (insertAt idx val xs)
 
--- |Utility Function: Takes two ints as indicies. Sorts them low to high, sets the start to
+-- |Utility Function: Takes two ints as indices. Sorts them low to high, sets the start to
 -- 0 if the lowest start is less than 0 and the end to the length of the list - 1 if the end
--- if larger than the list. Grabs the sub list of adjusted indicies.
+-- if larger than the list. Grabs the sub list of adjusted indices.
 subList :: Int -> Int -> [a] -> [a]
 subList idx0 idx1 xs =
   let

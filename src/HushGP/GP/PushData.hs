@@ -24,7 +24,7 @@ extractIndex :: PushData -> Int
 extractIndex PushData{_downsampleIndex = Nothing} = error "Error: Case distances are empty!. This should never happen"
 extractIndex PushData{_downsampleIndex = Just x} = x
 
--- |Filters a list by another list of indicies.
+-- |Filters a list by another list of indices.
 filterByIndex :: [a] -> [Int] -> [a]
 filterByIndex origList = map (origList !!)
 
