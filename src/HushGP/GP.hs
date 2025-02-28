@@ -15,8 +15,8 @@ import HushGP.Genome
 -- | Using a PushArgs object, generates a population of the specified size with the
 -- specified instructions in parallel.
 generatePopulation :: PushArgs -> IO [Individual]
-generatePopulation pushArgs = do
-  pop <- replicateM (populationSize pushArgs) (makeRandomIndividual pushArgs)
+generatePopulation pushArgs@(PushArgs {populationSize = popSize}) = do
+  pop <- replicateM popSize (makeRandomIndividual pushArgs)
   return (pop `using` evalList rpar) -- Does this work? Need to test this with the HEC viewing tool.
 
 -- | Evaluates a population of plushies with the error function passed in via PushArgs and sorts them.
@@ -32,9 +32,9 @@ updateIndividual errors ind = ind {totalFitness = Just (sum errors), fitnessCase
 -- | The start of the gp loop. Generates the population and then calls
 -- gpLoop' with modifications to the variables if needed.
 gpLoop :: PushArgs -> IO ()
-gpLoop pushArgs = do
+gpLoop pushArgs@(PushArgs {trainingData = tData}) = do
   unEvaledPopulation <- generatePopulation pushArgs
-  let indexedTrainingData = assignIndiciesToData (trainingData pushArgs)
+  let indexedTrainingData = assignIndiciesToData tData
   gpLoop' pushArgs 0 0 unEvaledPopulation indexedTrainingData
 
 -- | The guts of the GP loop. Where the work gets done after the initialization happens

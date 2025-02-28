@@ -93,7 +93,10 @@ data PushArgs = PushArgs
     -- Takes a Map of String -> Float where the string is the genetic operator
     variation :: Map.Map String Float,
     -- | The epsilons calculated for epsilon lexicase selection. Only used for epsilon lexicase selection.
-    epsilons :: Maybe [Double]
+    epsilons :: Maybe [Double],
+    -- | Used with the CaseMaxminAuto downsampling strategy. Tells downsampling to stop when
+    -- the maximum minimum distance is too far away.
+    caseDelta :: Double
   }
 
 -- | The default values for which all runs of Hush derive
@@ -139,5 +142,6 @@ defaultPushArgs = PushArgs {
     trainingData = error "Must supply the trainingData yourself",
     umadRate = 0.1,
     variation = Map.fromList [("umad", 1.0)],
-    epsilons = Nothing
+    epsilons = Nothing,
+    caseDelta = 0.0
   }

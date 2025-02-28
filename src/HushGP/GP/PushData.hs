@@ -12,4 +12,20 @@ data PushData = PushData {
   _caseDistances :: Maybe [Double]
 } deriving (Show)
 
+-- |Extracts the case distances from a PushData object. Errors if the
+-- _caseDistances list is Nothing.
+extractDistance :: PushData -> [Double]
+extractDistance PushData{_caseDistances = Nothing} = error "Error: Case distances are empty!. This should never happen"
+extractDistance PushData{_caseDistances = Just xs} = xs
+
+-- |Extracts the downsample index from a PushData object. Errors if the
+-- _downsampleIndex is Nothing.
+extractIndex :: PushData -> Int
+extractIndex PushData{_downsampleIndex = Nothing} = error "Error: Case distances are empty!. This should never happen"
+extractIndex PushData{_downsampleIndex = Just x} = x
+
+-- |Filters a list by another list of indicies.
+filterByIndex :: [a] -> [Int] -> [a]
+filterByIndex origList = map (origList !!)
+
 $(makeLenses ''PushData)
