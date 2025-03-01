@@ -23,6 +23,11 @@ data Individual = Individual
 instance Ord Individual where
   ind0 <= ind1 = totalFitness ind0 <= totalFitness ind1
 
+-- |Extracts the fitnessCases from an Individual. Errors if the field is empty.
+extractFitnessCases :: Individual -> [Double]
+extractFitnessCases Individual{fitnessCases = Nothing} = error "Error: fitnessCases is empty!"
+extractFitnessCases Individual{fitnessCases = Just xs} = xs
+
 -- | Makes a random individual based on the variables in a passed PushArgs.
 makeRandomIndividual :: PushArgs -> IO Individual
 makeRandomIndividual pushArgs = do
@@ -90,7 +95,7 @@ plushyToPush' openPlushy push
     firstPlushy =
       case uncons openPlushy of
         Just (g, _) -> g
-        _ -> error "This shouldn't happen"
+        _ -> error "Error: First plushy taken when no plushy available!"
     postOpen :: [Gene]
     postOpen = reverse (takeWhile (not . isOpen) (reverse push))
     openIndex :: Int

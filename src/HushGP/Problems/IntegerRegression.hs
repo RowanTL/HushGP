@@ -82,9 +82,6 @@ loadState :: [Gene] -> [Gene] -> State
 loadState plushy vals = 
   (loadProgram (plushyToPush plushy) emptyState){_input = Map.fromList (zip [0..] vals)}
 
-extractField :: Lens' PushData a -> [PushData] -> [a]
-extractField accessor pushData = [ view accessor dataPoint | dataPoint <- pushData ]
-
 -- | The error function for a single set of inputs and outputs.
 intErrorFunction :: PushArgs -> [PushData] -> [Gene] -> [Double]
 intErrorFunction _args pushData plushy =

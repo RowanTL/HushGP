@@ -17,7 +17,7 @@ assignIndicesToData oldData = zipWith (\dat idx -> dat{_downsampleIndex = Just i
 
 -- |Initializes cases distances for passed training data.
 initializeCaseDistances :: PushArgs -> [PushData]
-initializeCaseDistances (PushArgs {trainingData = tData, populationSize = popSize}) = [ dat{_caseDistances = Just (replicate (length tData) popSize)} | dat <- tData ]
+initializeCaseDistances (PushArgs {trainingData = tData, populationSize = popSize}) = [ dat{_caseDistances = Just (replicate (length tData) (fromIntegral @Int @Double popSize))} | dat <- tData ]
 
 -- |Draws a random amount of data points from a passed list of data points.
 selectDownsampleRandom :: PushArgs -> [PushData] -> IO [PushData]
@@ -68,7 +68,7 @@ selectDownsampleMaxminAdaptive (PushArgs {caseDelta = cDelta}) pushData = do
 -- original pushData wrapped in a list, the second [PushData] holds the rest of the list
 -- without the aformentioned head. The Int is the caseDelta derived from the downsample rate
 -- and the length of the original [pushData].
-selectDownsampleMaxminAdaptive' :: [PushData] -> [PushData] -> Int -> IO [PushData]
+selectDownsampleMaxminAdaptive' :: [PushData] -> [PushData] -> Double -> IO [PushData]
 selectDownsampleMaxminAdaptive' newDownsample casesToPickFrom cDelta = do
       let newDistances = map extractDistance newDownsample
       let minCaseDistances = minOfColumns (map (\distList -> filterByIndex distList (map extractIndex casesToPickFrom)) newDistances)
@@ -82,24 +82,24 @@ selectDownsampleMaxminAdaptive' newDownsample casesToPickFrom cDelta = do
             cDelta
 
 -- |Returns the distance between two cases given a list of individual error vectors, and the index these
--- cases exist in the error vector. Only makes the distinction between zero and nonzero errors"
-getDistanceBetweenCases :: [[Int]] -> Int -> Int -> Int
+-- cases exist in the error vector. Only makes the distinction between zero and nonzero errors.
+getDistanceBetweenCases :: [[Double]] -> Int -> Int -> Double
 getDistanceBetweenCases errorLists caseIndex0 caseIndex1 =
   if lhe < caseIndex0 || lhe < caseIndex1 || caseIndex0 < 0 || caseIndex1 < 0
-    then length errorLists
+    then fromIntegral @Int @Double $ length errorLists
     else sum $ zipWith (\e0 e1 -> abs $ abs (signum e0) - abs (signum e1)) errors0 errors1
   where
-    lhe :: Int
+    lhe :: Int -- length head errorLists
     lhe = length $ case uncons errorLists of Just (x, _) -> x; _ -> error "Error: errorLists is empty!"
-    errors0 :: [Int]
-    errors0 = map (!! caseIndex0) errorLists
-    errors1 :: [Int]
-    errors1 = map (!! caseIndex1) errorLists
+    errors0 :: [Double]
+    errors0 = map (\e -> case e !? caseIndex0 of Just x -> x; _ -> 0) errorLists
+    errors1 :: [Double]
+    errors1 = map (\e -> case e !? caseIndex1 of Just x -> x; _ -> 0) errorLists
 
 -- |Updates a list with the values from another list based on an index from a third list.
 -- The first list (bigList) has its indices updated with the values from the second list (smallList)
 -- per index notated in the third [Int] list.
-updateAtIndices :: [Int] -> [Int] -> [Int] -> [Int]
+updateAtIndices :: [a] -> [a] -> [Int] -> [a]
 updateAtIndices bigList _ [] = bigList
 updateAtIndices bigList smallList indices =
   if length smallList /= length indices || any (\x -> x < 0 || x >= length bigList) indices
@@ -118,9 +118,39 @@ updateAtIndices' bigList (sval:svals) (idx:idxs) = updateAtIndices' (replaceAt i
 mergePushDataListsAtIndex :: [PushData] -> [PushData] -> [PushData]
 mergePushDataListsAtIndex bigList smallList = map (\x -> let correspondingSmall = find (\y -> extractIndex x == extractIndex y) smallList in fromMaybe x correspondingSmall) bigList
 
+-- |Replaces all ints of a list that equal the minimum int in said same list with 0.
+replaceMinsWithZero :: (Num a, Ord a) => [a] -> [a]
+replaceMinsWithZero xs = map (\x -> if minimum xs == x then 0 else x) xs
+
+-- |Replaces values within a delta of zero with zero, mainly used for regression problems.
+replaceCloseZeroWithZero :: (Num a, Ord a) => a -> [a] -> [a]
+replaceCloseZeroWithZero delta = map (\x -> if delta >= x then 0 else x)
+
+-- |Converts a set of errors into a list where all the elite errors are replaced with 0s so that we can use
+-- it in the selection of downsamples with elite/not-elite selection.
+convertToEliteError :: forall a. (Num a, Ord a) => [[a]] -> [[a]]
+convertToEliteError = map (replaceMinsWithZero @a) -- crazy lambda reduction. Is it worth it here?
+
+-- |Converts a set of errors into a list where all of the errors are replaced with within a delta.
+convertToSoftError :: forall a. (Num a, Ord a) => a -> [[a]] -> [[a]]
+convertToSoftError delta = map (delta `replaceCloseZeroWithZero`)
+
 -- |Updates the cases distances when downsampling.
 updateCaseDistances :: [Individual] -> [PushData] -> [PushData] -> String -> Double -> [PushData]
-updateCaseDistances evaledPop downsampleData trainingData informedDownsamplingType solutionThreshold = undefined
+updateCaseDistances evaledPop downsampleData trainData informedDownsamplingType solutionThreshold =
+  mergePushDataListsAtIndex trainData
+    (mapIndexed (\idx dCase -> dCase{_caseDistances = Just (updateAtIndices (extractDistance dCase)
+      (map (getDistanceBetweenCases corrErrors idx) [0..(length dsIndicies - 1)]) dsIndicies)}) downsampleData)
+  where
+    dsIndicies :: [Int]
+    dsIndicies = map extractIndex downsampleData
+    errors :: [[Double]]
+    errors = map extractFitnessCases evaledPop
+    corrErrors :: [[Double]]
+    corrErrors = case informedDownsamplingType of
+      "elite" -> convertToEliteError errors
+      "soft" -> convertToSoftError solutionThreshold errors
+      _ -> errors
 
 
 -- map (\other -> getDistanceBetweenCases [[0,0],[0,0]] 0 other) [0..(length [3,4] - 1)]
