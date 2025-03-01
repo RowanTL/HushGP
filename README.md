@@ -1,5 +1,5 @@
 # HushGP
-A PushGP implementation in Haskell
+A PushGP implementation in Haskell.
 
 Note: **This is an imcomplete library at this time. I am still developing it.**
 
