@@ -31,6 +31,7 @@ testIntDsData = [
     (intTrainData !! 1){_downsampleIndex = Just 4, _caseDistances = Just [2,2,2,2,2]}
   ]
 
+-- This is the map-indexed call in the update-case-distances function.
 tempFunc :: [PushData]
 tempFunc = mapIndexed (\idx dCase -> dCase{_caseDistances = Just (updateAtIndices (extractDistance dCase) (map (\other -> getDistanceBetweenCases [[0,0],[0,0]] idx other) [0..(length [3,4] - 1)]) [3,4])}) testIntDsData
 

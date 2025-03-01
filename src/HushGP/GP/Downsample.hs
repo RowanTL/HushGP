@@ -3,6 +3,7 @@ module HushGP.GP.Downsample where
 import System.Random.Shuffle
 import System.Random
 import Data.List
+import Data.Maybe
 import HushGP.Genome
 import HushGP.Utility
 import HushGP.GP.PushData
@@ -112,9 +113,16 @@ updateAtIndices' bigList _ [] = bigList
 updateAtIndices' bigList [] _ = bigList
 updateAtIndices' bigList (sval:svals) (idx:idxs) = updateAtIndices' (replaceAt idx sval bigList) svals idxs 
 
+-- |Merges two lists of [Pushdata], replacing the PushData in the lists with their corresponding
+-- (based on index) PushData in the small list.
+mergePushDataListsAtIndex :: [PushData] -> [PushData] -> [PushData]
+mergePushDataListsAtIndex bigList smallList = map (\x -> let correspondingSmall = find (\y -> extractIndex x == extractIndex y) smallList in fromMaybe x correspondingSmall) bigList
+
 -- |Updates the cases distances when downsampling.
 updateCaseDistances :: [Individual] -> [PushData] -> [PushData] -> String -> Double -> [PushData]
 updateCaseDistances evaledPop downsampleData trainingData informedDownsamplingType solutionThreshold = undefined
+
+
 -- map (\other -> getDistanceBetweenCases [[0,0],[0,0]] 0 other) [0..(length [3,4] - 1)]
 -- tempData = intTrainData !! 0
 -- dCase = tempData{_downsampleIndex = Just 3, _caseDistances = Just [2,2,2,2,2]}
