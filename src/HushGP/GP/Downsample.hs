@@ -151,10 +151,3 @@ updateCaseDistances evaledPop downsampleData trainData informedDownsamplingType 
       "elite" -> convertToEliteError errors
       "soft" -> convertToSoftError solutionThreshold errors
       _ -> errors
-
-
--- map (\other -> getDistanceBetweenCases [[0,0],[0,0]] 0 other) [0..(length [3,4] - 1)]
--- tempData = intTrainData !! 0
--- dCase = tempData{_downsampleIndex = Just 3, _caseDistances = Just [2,2,2,2,2]}
--- updateIn dCase (updateAtIndices [2,2,2,2,2] (map (\other -> getDistanceBetweenCases [[0,0],[0,0]] 0 0) [0..(length [3,4] - 1)]) [3,4])
--- Replacement for updateIn: dCase{_caseDistances = Just (updateAtIndices (extractDistance dCase) (map (\other -> getDistanceBetweenCases [[0,0],[0,0]] 0 0) [0..(length [3,4] - 1)]) [3,4])}
