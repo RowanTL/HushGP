@@ -4,6 +4,7 @@ import System.Random.Shuffle
 import System.Random
 import Data.List
 import HushGP.Genome
+import HushGP.Utility
 import HushGP.GP.PushData
 import HushGP.GP.PushArgs
 import HushGP.Tools.Metrics
@@ -115,3 +116,7 @@ updateAtIndices' bigList (sval:svals) (idx:idxs) = updateAtIndices' (replaceAt i
 updateCaseDistances :: [Individual] -> [PushData] -> [PushData] -> String -> Double -> [PushData]
 updateCaseDistances evaledPop downsampleData trainingData informedDownsamplingType solutionThreshold = undefined
 -- map (\other -> getDistanceBetweenCases [[0,0],[0,0]] 0 other) [0..(length [3,4] - 1)]
+-- tempData = intTrainData !! 0
+-- dCase = tempData{_downsampleIndex = Just 3, _caseDistances = Just [2,2,2,2,2]}
+-- updateIn dCase (updateAtIndices [2,2,2,2,2] (map (\other -> getDistanceBetweenCases [[0,0],[0,0]] 0 0) [0..(length [3,4] - 1)]) [3,4])
+-- Replacement for updateIn: dCase{_caseDistances = Just (updateAtIndices (extractDistance dCase) (map (\other -> getDistanceBetweenCases [[0,0],[0,0]] 0 0) [0..(length [3,4] - 1)]) [3,4])}

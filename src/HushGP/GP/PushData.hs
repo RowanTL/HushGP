@@ -15,13 +15,13 @@ data PushData = PushData {
 -- |Extracts the case distances from a PushData object. Errors if the
 -- _caseDistances list is Nothing.
 extractDistance :: PushData -> [Int]
-extractDistance PushData{_caseDistances = Nothing} = error "Error: Case distances are empty!. This should never happen"
+extractDistance PushData{_caseDistances = Nothing} = error "Error: Case distances are Nothing!. They should be assigned first!"
 extractDistance PushData{_caseDistances = Just xs} = xs
 
 -- |Extracts the downsample index from a PushData object. Errors if the
 -- _downsampleIndex is Nothing.
 extractIndex :: PushData -> Int
-extractIndex PushData{_downsampleIndex = Nothing} = error "Error: Case distances are empty!. This should never happen"
+extractIndex PushData{_downsampleIndex = Nothing} = error "Error: Downsample index is empty!. They should be assigned first!"
 extractIndex PushData{_downsampleIndex = Just x} = x
 
 -- |Filters a list by another list of indices.
