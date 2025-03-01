@@ -22,4 +22,4 @@ mapIndexed = mapIndexed' 0
 -- with mapIndexed.
 mapIndexed' :: Int -> (Int -> a -> b) -> [a] -> [b]
 mapIndexed' _ _ [] = []
-mapIndexed' count f (x:xs) = f count x : mapIndexed' (count + 1) f xs
+mapIndexed' count f (x : xs) = f count x : mapIndexed' (count + 1) f xs

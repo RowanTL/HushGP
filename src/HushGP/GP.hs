@@ -46,9 +46,12 @@ gpLoop' pushArgs generation evaluations population indexedTrainingData = do
   print "Put information about each generation here."
   when bestIndPassesDownsample $ print $ "Semi Success Generation: " <> show generation
   let nextAction
-        | (bestIndPassesDownsample &&
-          ((case totalFitness (updateIndividual (errorFunction epsilonPushArgs epsilonPushArgs indexedTrainingData (plushy bestInd)) bestInd) of (Just x) -> x; _ -> error "Error: Best downsample individual has no fitness!")
-          <= solutionErrorThreshold epsilonPushArgs)) || (not (enableDownsampling epsilonPushArgs) && ((case totalFitness bestInd of (Just x) -> x; _ -> error "error: Best non-downsample individual has no fitness!") <= solutionErrorThreshold epsilonPushArgs)) =
+        | ( bestIndPassesDownsample
+              && ( (case totalFitness (updateIndividual (errorFunction epsilonPushArgs epsilonPushArgs indexedTrainingData (plushy bestInd)) bestInd) of (Just x) -> x; _ -> error "Error: Best downsample individual has no fitness!")
+                     <= solutionErrorThreshold epsilonPushArgs
+                 )
+          )
+            || (not (enableDownsampling epsilonPushArgs) && ((case totalFitness bestInd of (Just x) -> x; _ -> error "error: Best non-downsample individual has no fitness!") <= solutionErrorThreshold epsilonPushArgs)) =
             do
               print $ "Successful generation: " <> show generation
               print $ "Successful plushy: " <> show (plushy bestInd)
