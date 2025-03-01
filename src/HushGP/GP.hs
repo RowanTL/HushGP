@@ -1,6 +1,8 @@
 -- | The main file containing information about the GP loop and various population transformation functions.
 module HushGP.GP where
 
+import System.Random
+import System.Random.Shuffle
 import Control.Monad
 import Control.Parallel.Strategies
 import Data.List (sort, uncons)
@@ -42,9 +44,15 @@ gpLoop pushArgs@(PushArgs {trainingData = tData}) = do
 -- holds the evaluation count. The list of Individuals is the population. The last parameter is
 -- the training data (possibly downsampled).
 gpLoop' :: PushArgs -> Int -> Int -> [Individual] -> [PushData] -> IO ()
-gpLoop' pushArgs@(PushArgs {enableDownsampling = enableDS, solutionErrorThreshold = seThresh}) generation evaluations population indexedTrainingData = do
+gpLoop' pushArgs@(PushArgs {enableDownsampling = enableDS, solutionErrorThreshold = seThresh, downsampleParentsGens = dsParentGens, downsampleParentRate = dsParentRate, trainingData = tData})
+  generation evaluations population indexedTrainingData = do
   print "Put information about each generation here."
   when bestIndPassesDownsample $ print $ "Semi Success Generation: " <> show generation
+  parentReps <- do
+    shuffledParents <- shuffle' population (length population) <$> initStdGen
+    if enableDS && (generation `mod` dsParentGens == 0)
+    then pure $ take (floor @Float (dsParentRate * (fromIntegral @Int @Float $ length population))) shuffledParents
+    else pure []
   let nextAction
         | ( bestIndPassesDownsample
               && ( (case totalFitness (updateIndividual (errorFunction epsilonPushArgs epsilonPushArgs indexedTrainingData (plushy bestInd)) bestInd) of (Just x) -> x; _ -> error "Error: Best downsample individual has no fitness!")
@@ -72,26 +80,26 @@ gpLoop' pushArgs@(PushArgs {enableDownsampling = enableDS, solutionErrorThreshol
               ( evaluations
                   + (populationSize pushArgs * length (trainingData pushArgs))
                   + (if generation `mod` downsampleParentsGens pushArgs == 0 then length parentReps * (length indexedTrainingData - length (trainingData pushArgs)) else 0)
-                  + (if bestIndPassesDownsample then length indexedTrainingData - length (trainingData pushArgs) else 0)
+                  + (if bestIndPassesDownsample then length indexedTrainingData - length tData else 0)
               )
               ( if elitism pushArgs
                   then bestInd : replicate (populationSize epsilonPushArgs - 1) (newIndividual epsilonPushArgs evaledPop)
                   else replicate (populationSize epsilonPushArgs) (newIndividual epsilonPushArgs evaledPop)
               )
-              ( if enableDownsampling pushArgs && ((generation `mod` downsampleParentsGens pushArgs) == 0)
+              ( if enableDS && ((generation `mod` dsParentGens) == 0)
                   then updateCaseDistances repEvaluatedPop indexedTrainingData indexedTrainingData (informedDownsamplingType pushArgs) (solutionErrorThreshold pushArgs / fromIntegral @Int @Double (length indexedTrainingData))
                   else indexedTrainingData
               )
   nextAction
   where
     -- \| This will have downsampling functionality added later.
-    parentReps :: [Individual]
-    parentReps = []
-    -- \| This will have downsampling functionality added later.
     repEvaluatedPop :: [Individual]
-    repEvaluatedPop = []
+    repEvaluatedPop =
+      if enableDS
+      then evaluatePopulation pushArgs indexedTrainingData population
+      else []
     evaledPop :: [Individual]
-    evaledPop = evaluatePopulation pushArgs indexedTrainingData population
+    evaledPop = evaluatePopulation pushArgs tData population
     bestInd :: Individual
     bestInd = case uncons evaledPop of Just (x, _) -> x; _ -> error "Error: Population is empty!"
     bestIndPassesDownsample :: Bool
