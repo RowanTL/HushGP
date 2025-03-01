@@ -28,6 +28,10 @@ extractFitnessCases :: Individual -> [Double]
 extractFitnessCases Individual {fitnessCases = Nothing} = error "Error: fitnessCases is empty!"
 extractFitnessCases Individual {fitnessCases = Just xs} = xs
 
+extractTotalFitness :: Individual -> Double
+extractTotalFitness Individual {totalFitness = Nothing} = error "Error: totalFitness is empty!"
+extractTotalFitness Individual {totalFitness = Just x} = x
+
 -- | Makes a random individual based on the variables in a passed PushArgs.
 makeRandomIndividual :: PushArgs -> IO Individual
 makeRandomIndividual pushArgs = do

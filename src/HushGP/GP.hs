@@ -42,7 +42,7 @@ gpLoop pushArgs@(PushArgs {trainingData = tData}) = do
 -- holds the evaluation count. The list of Individuals is the population. The last parameter is
 -- the training data (possibly downsampled).
 gpLoop' :: PushArgs -> Int -> Int -> [Individual] -> [PushData] -> IO ()
-gpLoop' pushArgs generation evaluations population indexedTrainingData = do
+gpLoop' pushArgs@(PushArgs {enableDownsampling = enableDS, solutionErrorThreshold = seThresh}) generation evaluations population indexedTrainingData = do
   print "Put information about each generation here."
   when bestIndPassesDownsample $ print $ "Semi Success Generation: " <> show generation
   let nextAction
@@ -95,6 +95,6 @@ gpLoop' pushArgs generation evaluations population indexedTrainingData = do
     bestInd :: Individual
     bestInd = case uncons evaledPop of Just (x, _) -> x; _ -> error "Error: Population is empty!"
     bestIndPassesDownsample :: Bool
-    bestIndPassesDownsample = False -- TODO: fix this later
+    bestIndPassesDownsample = enableDS && (extractTotalFitness bestInd <= seThresh)
     epsilonPushArgs :: PushArgs
     epsilonPushArgs = pushArgs {epsilons = Nothing} -- TODO: And this
