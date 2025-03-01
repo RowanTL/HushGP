@@ -2,7 +2,6 @@ module HushGP.Problems.IntegerRegression where
 
 import Data.List
 import Data.Map qualified as Map
-import Control.Lens hiding (uncons)
 import HushGP.State
 import HushGP.Instructions
 import HushGP.GP.PushArgs
@@ -12,10 +11,6 @@ import HushGP.Push
 import HushGP.Instructions.Utility
 import HushGP.GP
 
--- temporary imports for testing until I get this updated.
-import HushGP.Utility
-import HushGP.GP.Downsample
-
 testPlushy :: [Gene]
 testPlushy = [
     PlaceInput 0,
@@ -23,17 +18,6 @@ testPlushy = [
     StateFunc (instructionIntAdd, "instructionIntAdd")
     -- GeneFloat 3.2
   ]
-
--- |Equivalent to ds-data
-testIntDsData :: [PushData]
-testIntDsData = [
-    (head intTrainData){_downsampleIndex = Just 3, _caseDistances = Just [2,2,2,2,2]},
-    (intTrainData !! 1){_downsampleIndex = Just 4, _caseDistances = Just [2,2,2,2,2]}
-  ]
-
--- This is the map-indexed call in the update-case-distances function.
-tempFunc :: [PushData]
-tempFunc = mapIndexed (\idx dCase -> dCase{_caseDistances = Just (updateAtIndices (extractDistance dCase) (map (\other -> getDistanceBetweenCases [[0,0],[0,0]] idx other) [0..(length [3,4] - 1)]) [3,4])}) testIntDsData
 
 -- | The target function for this run. The function the gp
 -- is trying to evolve.
