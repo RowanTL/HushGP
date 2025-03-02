@@ -5,6 +5,7 @@ import System.Random
 import System.Random.Shuffle
 import HushGP.GP.PushArgs
 import HushGP.GP.Individual
+import HushGP.Utility
 
 -- | Tournament selection based off tournament size from PushArgs and a population.
 -- Takes the individual with the lowest total error in the tournament.
@@ -21,7 +22,8 @@ tournamentSelection PushArgs{tournamentSize = tSize} pop = do
 lexicaseSelection :: PushArgs -> [Individual] -> IO Individual
 lexicaseSelection PushArgs{initialCases = iCases} pop = do
   startCases <- maybe (shuffle' [0..lehp] lehp <$> initStdGen) (pure @IO) iCases
-  undefined
+  survivors <- mapM randElem (groupBy (\x y -> fitnessCases x == fitnessCases y) pop)
+  lexicaseSelection' survivors startCases startCases
   where
     lehp :: Int -- length of the extracted fitness cases of the head of the passed population.
     lehp = length $ extractFitnessCases $
@@ -29,4 +31,11 @@ lexicaseSelection PushArgs{initialCases = iCases} pop = do
         Just (x, _) -> x
         _ -> error "Error: Population in lexicaseSelection cannot be empty!"
 
--- lexicaseSelection' :: 
+lexicaseSelection' :: [Individual] -> [Int] -> [Int] -> IO Individual
+lexicaseSelection' survivors cases initialCases =
+  if null cases || null (drop 1 survivors)
+  then (\ind -> ind{selectionCases = Just initialCases}) <$> randElem survivors
+  else lexicaseSelection' ()
+  where
+    minErrorForCase :: Double
+    minErrorForCase = minimum $ map ((\x -> x !! case uncons cases of Just (y, _) -> y; _ -> error "Error: cases is empty!") . extractFitnessCases) survivors

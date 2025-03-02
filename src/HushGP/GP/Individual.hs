@@ -7,7 +7,8 @@ import HushGP.State
 data Individual = Individual
   { plushy :: [Gene],
     totalFitness :: Maybe Double,
-    fitnessCases :: Maybe [Double]
+    fitnessCases :: Maybe [Double],
+    selectionCases :: Maybe [Int]
   }
   deriving (Show, Eq)
 

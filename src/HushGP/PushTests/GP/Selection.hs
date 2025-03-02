@@ -16,7 +16,7 @@ survivors = mapM randElem tempFunc0
 -- | A list of individuals used for testing.
 testInds :: [Individual]
 testInds =
-  [ Individual{plushy = [Close], totalFitness = Just 1000, fitnessCases = Just [500,500]}
-  , Individual{plushy = [Close], totalFitness = Just 1000, fitnessCases = Just [400,600]}
-  , Individual{plushy = [Close], totalFitness = Just 900, fitnessCases = Just [500,400]}
+  [ Individual{plushy = [Close], totalFitness = Just 1000, fitnessCases = Just [500,500], selectionCases = Nothing}
+  , Individual{plushy = [Close], totalFitness = Just 1000, fitnessCases = Just [400,600], selectionCases = Nothing}
+  , Individual{plushy = [Close], totalFitness = Just 900, fitnessCases = Just [500,400], selectionCases = Nothing}
   ]
