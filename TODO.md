@@ -6,6 +6,7 @@
 - [X] Implement all functions as seen in propeller
 - [X] Implement all functions as seen in the specification
 - [ ] Implement Linear Algebra functions as specified in the previous papers
+  - [ ] These are in a separate branch, just need merging now
 - [X] Add a function to sort a vector forward and backwards
 - [X] Disambiguate isEmpty and stackIsEmpty
 - [X] Rename Logical to Bool
@@ -18,6 +19,7 @@
 - [X] Move utility functions to their own file
 - [ ] Make add/sub/mult/div/mod instructions generic
 - [ ] Use template haskell to (mostly) generate functions from generic ones (Split files based on the arity of their functions)
+- [ ] Add more special functions like sqrt, pow
 
 ## PushGP TODO
 - [X] Implement a Plushy genome translator
@@ -31,10 +33,11 @@
 - [ ] Need to make genomes serializable (Check pysh json files)
 - [ ] Add Memory
 - [ ] Add history stack(s), like a call stack
-- [ ] Implement interpreter options (could probably just place this into a map)
+- [ ] Implement interpreter options (PushArgs would work well)
   - Should probably place this in a separate file
-- [ ] Implement different forms of downsampling
+- [X] Implement different forms of downsampling
 - [ ] Implement concurrent execution of creating random plushies and evaluating individuals
 - [X] Devise a good way to implement ERCs
 - [ ] Implement random simplification of genomes
   - [ ] Find a way to multi-thread this
+- [ ] Look at using `uniformShuffleList` over System.Random.Shuffle
