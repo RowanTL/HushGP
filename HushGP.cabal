@@ -60,11 +60,14 @@ library
                     , HushGP.PushTests.IntTests
                     , HushGP.PushTests.GenericTests
                     , HushGP.PushTests.UtilTests
+                    , HushGP.PushTests.GP.Selection
                     , HushGP.GP
                     , HushGP.GP.PushArgs
                     , HushGP.GP.Variation
                     , HushGP.GP.Downsample
                     , HushGP.GP.PushData
+                    , HushGP.GP.Selection
+                    , HushGP.GP.Individual
                     , HushGP.Problems.IntegerRegression
                     , HushGP.Tools.Metrics
 
