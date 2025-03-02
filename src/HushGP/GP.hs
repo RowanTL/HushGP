@@ -11,6 +11,7 @@ import HushGP.GP.PushArgs
 import HushGP.GP.PushData
 import HushGP.GP.Variation
 import HushGP.Genome
+import HushGP.GP.Individual
 
 -- import Debug.Trace (trace, traceStack)
 

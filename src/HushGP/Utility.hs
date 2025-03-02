@@ -23,3 +23,7 @@ mapIndexed = mapIndexed' 0
 mapIndexed' :: Int -> (Int -> a -> b) -> [a] -> [b]
 mapIndexed' _ _ [] = []
 mapIndexed' count f (x : xs) = f count x : mapIndexed' (count + 1) f xs
+
+-- | Returns a random element from a passed list. No generator required.
+randElem :: [a] -> IO a
+randElem xs = (xs !!) . fst . uniformR (0, length xs - 1) <$> initStdGen
