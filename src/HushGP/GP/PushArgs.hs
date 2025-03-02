@@ -3,6 +3,7 @@ module HushGP.GP.PushArgs where
 import HushGP.State
 import HushGP.Instructions
 import HushGP.GP.PushData
+import HushGP.GP.Individual
 import Data.Map qualified as Map
 
 -- | The structure holding the arguments for the various aspects
@@ -96,7 +97,11 @@ data PushArgs = PushArgs
     epsilons :: Maybe [Double],
     -- | Used with the CaseMaxminAuto downsampling strategy. Tells downsampling to stop when
     -- the maximum minimum distance is too far away.
-    caseDelta :: Double
+    caseDelta :: Double,
+    -- | Used in lexicase selection. If initialCases is present will use those before randomly
+    -- selecting from the population for initial cases. Can raise a value into the IO monad using
+    -- `pure @IO`
+    initialCases :: Maybe [Int]
   }
 
 -- | The default values for which all runs of Hush derive
@@ -143,5 +148,6 @@ defaultPushArgs = PushArgs {
     umadRate = 0.1,
     variation = Map.fromList [("umad", 1.0)],
     epsilons = Nothing,
-    caseDelta = 0
+    caseDelta = 0,
+    initialCases = Nothing
   }

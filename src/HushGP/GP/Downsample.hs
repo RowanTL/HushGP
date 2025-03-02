@@ -4,12 +4,12 @@ import System.Random.Shuffle
 import System.Random
 import Data.List
 import Data.Maybe
-import HushGP.Genome
 import HushGP.Utility
 import HushGP.GP.PushData
 import HushGP.GP.PushArgs
 import HushGP.Tools.Metrics
 import HushGP.Instructions.Utility
+import HushGP.GP.Individual
 
 -- |Sets the index of the passed training data.
 assignIndicesToData :: [PushData] -> [PushData]

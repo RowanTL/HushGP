@@ -1,7 +1,7 @@
 module HushGP.GP.Variation where
 
-import HushGP.Genome
 import HushGP.GP.PushArgs
+import HushGP.GP.Individual
 
 newIndividual :: PushArgs -> [Individual] -> Individual
 newIndividual = error "Implement this later"
