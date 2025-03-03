@@ -41,3 +41,4 @@
 - [ ] Implement random simplification of genomes
   - [ ] Find a way to multi-thread this
 - [ ] Look at using `uniformShuffleList` over System.Random.Shuffle
+- [ ] Impelment selectionCases for lexicase and tournament selection.
