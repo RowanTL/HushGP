@@ -38,6 +38,10 @@ data Gene
   | GeneVectorBoolERC ([Bool], StdGen)
   | GeneVectorStringERC ([String], StdGen)
   | GeneVectorCharERC ([Char], StdGen)
+  | -- | This is only used in the crossover function in GP/Variation. Should not be in genome besides there.
+    CrossoverPadding
+  | -- | This is used in best match crossover (bmx in PushArgs).
+    Gap
 
 instance Eq Gene where
   GeneInt x == GeneInt y = x == y
@@ -76,6 +80,8 @@ instance Eq Gene where
   GeneVectorBoolERC (x, _) == GeneVectorBool y = x == y
   GeneVectorStringERC (x, _) == GeneVectorString y = x == y
   GeneVectorCharERC (x, _) == GeneVectorChar y = x == y
+  CrossoverPadding == CrossoverPadding = True
+  Gap == Gap = True
   _ == _ = False
 
 instance Ord Gene where
@@ -115,6 +121,8 @@ instance Ord Gene where
   GeneVectorBoolERC (x, _) <= GeneVectorBool y = x <= y
   GeneVectorStringERC (x, _) <= GeneVectorString y = x <= y
   GeneVectorCharERC (x, _) <= GeneVectorChar y = x <= y
+  CrossoverPadding <= CrossoverPadding = True
+  Gap <= Gap = True
   _ <= _ = False
 
 instance Show Gene where
@@ -144,6 +152,8 @@ instance Show Gene where
   show (GeneVectorBoolERC x) = "Bool Vec ERC: " <> show x
   show (GeneVectorStringERC x) = "String Vec ERC: " <> show x
   show (GeneVectorCharERC x) = "Char Vec ERC: " <> show x
+  show CrossoverPadding = "Crossover Padding"
+  show Gap = "Gap"
 
 -- | The structure that holds all of the values.
 data State = State

@@ -3,24 +3,21 @@ module HushGP.Genome where
 import Data.List
 import Data.List.Split
 import Data.Map qualified as Map
+import HushGP.GP.Individual
 import HushGP.GP.PushArgs
 import HushGP.Instructions.Opens
 import HushGP.State
 import HushGP.Utility
-import HushGP.GP.Individual
-
--- import HushGP.Instructions
--- import Debug.Trace
 
 -- | Makes a random individual based on the variables in a passed PushArgs.
 makeRandomIndividual :: PushArgs -> IO Individual
 makeRandomIndividual pushArgs = do
   randomPlushy <- makeRandomPlushy pushArgs
-  return Individual {plushy = randomPlushy, totalFitness = Nothing, fitnessCases = Nothing}
+  return Individual {plushy = randomPlushy, totalFitness = Nothing, fitnessCases = Nothing, selectionCases = Nothing}
 
 -- | Makes a random plushy from variables in a passed PushArgs.
 makeRandomPlushy :: PushArgs -> IO [Gene]
-makeRandomPlushy pushArgs = randomInstructions (maxInitialPlushySize pushArgs) (instructionList pushArgs)
+makeRandomPlushy PushArgs {maxInitialPlushySize = maxInitPSize, instructionList = iList} = randomInstructions maxInitPSize iList
 
 -- | A utility function to generate an amount based on an int rather than
 --  from an argmap.

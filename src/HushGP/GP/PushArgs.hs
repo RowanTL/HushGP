@@ -9,10 +9,10 @@ import Data.Map qualified as Map
 -- of the evolutionary run in Hush.
 data PushArgs = PushArgs
   {
-    -- | For alternation, std deviation fo index when alternating.
-    alignmentDeviation :: Int,
-    -- | For alternation, probability of switching parents at each location.
-    alternationRate :: Float,
+    -- | For alternation, std deviation for index when alternating.
+    alignmentDeviation :: Double,
+    -- | For alternation, probability of switching parents at each location. Should be a value in the range [1,100]
+    alternationRate :: Int,
     -- | For bmx, rate genes are exchanged.
     bmxExchangeRate :: Float,
     -- | For bmx, max length of a gene.
@@ -107,8 +107,8 @@ data PushArgs = PushArgs
 -- their args from.
 defaultPushArgs :: PushArgs
 defaultPushArgs = PushArgs {
-    alignmentDeviation = 2,
-    alternationRate = 0.1,
+    alignmentDeviation = 2.0,
+    alternationRate = 10,
     bmxExchangeRate = 0.5,
     bmxGeneLengthLimit = 10,
     bmxGapChangeProbability = 0.001,

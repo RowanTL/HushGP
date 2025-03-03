@@ -72,7 +72,9 @@ interpretExec state@(State {_exec = e : es}) =
     (GeneVectorBoolERC (val, _)) -> interpretExec (state & exec .~ es & vectorBool .~ val : view vectorBool state)
     (GeneVectorStringERC (val, _)) -> interpretExec (state & exec .~ es & vectorString .~ val : view vectorString state)
     (GeneVectorCharERC (val, _)) -> interpretExec (state & exec .~ es & vectorChar .~ val : view vectorChar state)
-    Close -> undefined -- This should never happen. Will be converted to Blocks in the Plushy -> Exec stack process
-    (Open _) -> undefined -- This should also never happen. Should be converted in Plushy -> Exec stack process
-    Skip -> undefined -- This should double also never happen.
+    Close -> error "Error: Close found in exec stack!" -- This should never happen. Will be converted to Blocks in the Plushy -> Exec stack process
+    (Open _) -> error "Error: Open found in exec stack!" -- This should also never happen. Should be converted in Plushy -> Exec stack process
+    Skip -> error "Error: Skip found in exec stack!" -- This should double also never happen.
+    CrossoverPadding -> error "Error: CrossoverPadding found in exec stack!"
+    Gap -> error "Error: Gap found in exec stack!"
 interpretExec state = state

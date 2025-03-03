@@ -16,10 +16,13 @@ instance Ord Individual where
   ind0 <= ind1 = totalFitness ind0 <= totalFitness ind1
 
 -- | Extracts the fitnessCases from an Individual. Errors if the field is empty.
+-- Known as :errors in propeller.
 extractFitnessCases :: Individual -> [Double]
 extractFitnessCases Individual {fitnessCases = Nothing} = error "Error: fitnessCases is empty!"
 extractFitnessCases Individual {fitnessCases = Just xs} = xs
 
+-- | Extracts the total fitness from and Individual. Errors if the field is empty.
+-- Known as :total-error in propeller.
 extractTotalFitness :: Individual -> Double
 extractTotalFitness Individual {totalFitness = Nothing} = error "Error: totalFitness is empty!"
 extractTotalFitness Individual {totalFitness = Just x} = x

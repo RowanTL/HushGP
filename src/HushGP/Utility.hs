@@ -1,9 +1,9 @@
 module HushGP.Utility where
 
-import Data.List
 import Control.Monad
-import System.Random
+import Data.List
 import HushGP.State
+import System.Random
 
 -- | Generates a single random instruction from a list of instructions.
 randomInstruction :: [Gene] -> IO Gene
@@ -29,5 +29,18 @@ mapIndexed' count f (x : xs) = f count x : mapIndexed' (count + 1) f xs
 randElem :: [a] -> IO a
 randElem xs = (xs !!) . fst . uniformR (0, length xs - 1) <$> initStdGen
 
+-- | Used in some of the selection operations. Returns an error saying cases is empty.
 headCases :: [Int] -> Int
 headCases xs = case uncons xs of Just (y, _) -> y; _ -> error "Error: cases is empty!"
+
+-- | Almost a constant but has some randomness inside. Double for more decimal precision.
+--  Noise of mean of 0 and std dev of 1. This is a neat function to visualize on desmos!
+gaussianNoiseFactor :: IO Double
+gaussianNoiseFactor = do
+  randDecimal0 <- fst . uniformR (0.0 :: Double, 1.0 :: Double) <$> initStdGen
+  randDecimal1 <- fst . uniformR (0.0 :: Double, 1.0 :: Double) <$> initStdGen
+  pure (sqrt ((-2.0) * log randDecimal0) * cos (2.0 * pi * randDecimal1))
+
+-- | A random number between 1 and 100.
+randOneToOneHundred :: IO Int
+randOneToOneHundred = fst . uniformR (1 :: Int, 100 :: Int) <$> initStdGen
