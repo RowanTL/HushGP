@@ -3,7 +3,6 @@ module HushGP.GP.PushArgs where
 import HushGP.State
 import HushGP.Instructions
 import HushGP.GP.PushData
-import HushGP.GP.Individual
 import Data.Map qualified as Map
 
 -- | The structure holding the arguments for the various aspects
@@ -62,7 +61,7 @@ data PushArgs = PushArgs
     maxInitialPlushySize :: Int,
     -- | Maximum amount of generations allowed in an evolutionary run.
     maxGenerations :: Int,
-    -- | Type of parent selection to use. Think "lexicase" and "tournament" for now.
+    -- | Type of parent selection to use. Options are: "tournament","lexicase","epsilonLexicase".
     parentSelectionAlgo :: String,
     -- |Size of the population in the evolutionary run.
     populationSize :: Int,

@@ -1,8 +1,9 @@
 module HushGP.Utility where
 
+import Data.List
 import Control.Monad
-import HushGP.State
 import System.Random
+import HushGP.State
 
 -- | Generates a single random instruction from a list of instructions.
 randomInstruction :: [Gene] -> IO Gene
@@ -27,3 +28,6 @@ mapIndexed' count f (x : xs) = f count x : mapIndexed' (count + 1) f xs
 -- | Returns a random element from a passed list. No generator required.
 randElem :: [a] -> IO a
 randElem xs = (xs !!) . fst . uniformR (0, length xs - 1) <$> initStdGen
+
+headCases :: [Int] -> Int
+headCases xs = case uncons xs of Just (y, _) -> y; _ -> error "Error: cases is empty!"
