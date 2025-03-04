@@ -43,3 +43,4 @@
   - [ ] Find a way to multi-thread this
 - [ ] Look at using `uniformShuffleList` over System.Random.Shuffle
 - [ ] Impelment selectionCases for lexicase and tournament selection.
+- [X] Make all randomness a float and not an int in Variation
