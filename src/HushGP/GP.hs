@@ -46,7 +46,7 @@ gpLoop pushArgs@(PushArgs {trainingData = tData}) = do
 -- the training data (possibly downsampled).
 gpLoop' :: PushArgs -> Int -> Int -> [Individual] -> [PushData] -> IO ()
 gpLoop'
-  pushArgs@(PushArgs {enableDownsampling = enableDS, solutionErrorThreshold = seThresh, downsampleParentsGens = dsParentGens, downsampleParentRate = dsParentRate, trainingData = tData})
+  pushArgs@(PushArgs {enableDownsampling = enableDS, solutionErrorThreshold = seThresh, downsampleParentsGens = dsParentGens, downsampleParentRate = dsParentRate, trainingData = tData, elitism = isElite, populationSize = popSize})
   generation
   evaluations
   population
@@ -78,7 +78,8 @@ gpLoop'
           | (not (enableDownsampling epsilonPushArgs) && (generation >= maxGenerations epsilonPushArgs))
               || (enableDownsampling epsilonPushArgs && (evaluations >= (maxGenerations epsilonPushArgs * length population * length indexedTrainingData))) =
               print $ "Best individual: " <> show (plushy bestInd)
-          | otherwise =
+          | otherwise = do
+              newPop <- if isElite then replicateM (popSize - 1) (newIndividual epsilonPushArgs evaledPop) else replicateM popSize (newIndividual epsilonPushArgs evaledPop)
               gpLoop'
                 pushArgs
                 (succ generation)
@@ -87,9 +88,9 @@ gpLoop'
                     + (if generation `mod` downsampleParentsGens pushArgs == 0 then length parentReps * (length indexedTrainingData - length (trainingData pushArgs)) else 0)
                     + (if bestIndPassesDownsample then length indexedTrainingData - length tData else 0)
                 )
-                ( if elitism pushArgs
-                    then bestInd : replicate (populationSize epsilonPushArgs - 1) (newIndividual epsilonPushArgs evaledPop)
-                    else replicate (populationSize epsilonPushArgs) (newIndividual epsilonPushArgs evaledPop)
+                ( if isElite
+                    then bestInd : newPop
+                    else newPop
                 )
                 ( if enableDS && ((generation `mod` dsParentGens) == 0)
                     then updateCaseDistances repEvaluatedPop indexedTrainingData indexedTrainingData (informedDownsamplingType pushArgs) (solutionErrorThreshold pushArgs / fromIntegral @Int @Double (length indexedTrainingData))

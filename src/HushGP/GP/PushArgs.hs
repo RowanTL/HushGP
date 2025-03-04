@@ -3,7 +3,6 @@ module HushGP.GP.PushArgs where
 import HushGP.State
 import HushGP.Instructions
 import HushGP.GP.PushData
-import Data.Map qualified as Map
 
 -- | The structure holding the arguments for the various aspects
 -- of the evolutionary run in Hush.

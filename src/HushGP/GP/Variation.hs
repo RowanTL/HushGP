@@ -2,6 +2,7 @@ module HushGP.GP.Variation where
 
 import Data.List
 import Control.Monad
+import System.Random
 import HushGP.State
 import HushGP.GP.PushArgs
 import HushGP.GP.Individual
@@ -119,7 +120,7 @@ uniformDeletion' (old:oldList) !newList adjustRate = do
 -- |Creates a new individual based on the probabilities of the desired
 -- crossover methods.
 newIndividual :: PushArgs -> [Individual] -> IO Individual
-newIndividual pushArgs@PushArgs{variation = var} population = do
+newIndividual pushArgs@PushArgs{variation = var, umadRate = uRate} population = do
   randOp <- randomOperation var 0.0
   case randOp of
     "reproduction" -> selectParent pushArgs population
@@ -135,9 +136,37 @@ newIndividual pushArgs@PushArgs{variation = var} population = do
       pure $ postVariationInd childPlushy
     "umad" -> do
       parent <- selectParent pushArgs population
-      child <- uniformAddition pushArgs (plushy parent) >>= uniformDeletion pushArgs
-      pure $ postVariationInd child
-    "rumad" -> undefined -- TODO: this tomorrow!
+      childPlushy <- uniformAddition pushArgs (plushy parent) >>= uniformDeletion pushArgs
+      pure $ postVariationInd childPlushy
+    "alternation" -> do
+      parent0 <- selectParent pushArgs population
+      parent1 <- selectParent pushArgs population
+      childPlushy <- alternation pushArgs (plushy parent0) (plushy parent1)
+      pure $ postVariationInd childPlushy
+    "rumad" -> do -- Responsive umad, deletion rate from computed amount of additions.
+      parent <- selectParent pushArgs population
+      addedChildPlushy <- uniformAddition pushArgs (plushy parent)
+      let effectiveAdditionRate = fromIntegral @Int @Double (length addedChildPlushy - length (plushy parent)) / fromIntegral @Int @Double (length (plushy parent))
+      finalChild <- uniformDeletion pushArgs{umadRate = effectiveAdditionRate} addedChildPlushy
+      pure $ postVariationInd finalChild
+    "vumad" -> do -- variable umad, umad rate chosen randomly from [0, umadRate]
+      rate <- fst . uniformR (0.0 :: Double, uRate) <$> initStdGen
+      parent <- selectParent pushArgs population
+      addedChildPlushy <- uniformAddition pushArgs{umadRate = rate} (plushy parent)
+      deletedChildPlushy <- uniformDeletion pushArgs{umadRate = rate} addedChildPlushy
+      pure $ postVariationInd deletedChildPlushy
+    "uniformAddition" -> do
+      parent <- selectParent pushArgs population
+      childPlushy <- uniformAddition pushArgs (plushy parent)
+      pure $ postVariationInd childPlushy
+    "uniformReplacement" -> do
+      parent <- selectParent pushArgs population
+      childPlushy <- uniformReplacement pushArgs (plushy parent)
+      pure $ postVariationInd childPlushy
+    "uniformDeletion" -> do
+      parent <- selectParent pushArgs population
+      childPlushy <- uniformDeletion pushArgs (plushy parent)
+      pure $ postVariationInd childPlushy
     _ -> error ("Error: No match for selection operation: " <> randOp)
   where
   randDecimal :: IO Double
