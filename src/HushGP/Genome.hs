@@ -43,6 +43,11 @@ isOpenerList [instruction] =
     _ -> False
 isOpenerList _ = False
 
+-- | Checks if the Gene is a Gap, returns True if it is.
+isGap :: Gene -> Bool
+isGap Gap = True
+isGap _ = False
+
 -- | Gets the amount of blocks to open from a list of genes with a single element.
 getOpenAmountList :: [Gene] -> Int
 getOpenAmountList [instruction] =
@@ -52,8 +57,14 @@ getOpenAmountList [instruction] =
 getOpenAmountList _ = 0
 
 -- | Converts a plushy genome into a push genome.
-plushyToPush :: [Gene] -> [Gene]
-plushyToPush plushy = plushyToPush' (concatMap (\x -> if isOpenerList x then x <> [Open (getOpenAmountList x)] else x) (chunksOf 1 plushy)) []
+plushyToPush :: PushArgs -> [Gene] -> [Gene]
+plushyToPush PushArgs {useBMX = bmx} plushy = plushyToPush' modPlushy []
+  where
+    modPlushy :: [Gene]
+    modPlushy =
+      if bmx
+        then concatMap (filter (not . isGap) . (\x -> if isOpenerList x then x <> [Open (getOpenAmountList x)] else x)) (chunksOf 1 plushy)
+        else concatMap (\x -> if isOpenerList x then x <> [Open (getOpenAmountList x)] else x) (chunksOf 1 plushy)
 
 -- | Internal function used to convert a plushy genome with opens in it into its push phenotype.
 plushyToPush' :: [Gene] -> [Gene] -> [Gene]

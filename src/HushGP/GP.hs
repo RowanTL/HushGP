@@ -68,7 +68,7 @@ gpLoop'
               do
                 print $ "Successful generation: " <> show generation
                 print $ "Successful plushy: " <> show (plushy bestInd)
-                print $ "Successful program: " <> show (plushyToPush $ plushy bestInd)
+                print $ "Successful program: " <> show (plushyToPush pushArgs (plushy bestInd))
                 when (useSimplification epsilonPushArgs) $
                   do
                     let simplifiedPlushy = undefined -- TODO: simplification later

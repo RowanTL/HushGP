@@ -15,6 +15,11 @@ data Individual = Individual
 instance Ord Individual where
   ind0 <= ind1 = totalFitness ind0 <= totalFitness ind1
 
+-- |Creates a new individual with all fields set to Nothing besides plushy which gets set to the
+-- passed [Gene].
+postVariationInd :: [Gene] -> Individual
+postVariationInd newPlushy = Individual{plushy = newPlushy, totalFitness = Nothing, fitnessCases = Nothing, selectionCases = Nothing}
+
 -- | Extracts the fitnessCases from an Individual. Errors if the field is empty.
 -- Known as :errors in propeller.
 extractFitnessCases :: Individual -> [Double]

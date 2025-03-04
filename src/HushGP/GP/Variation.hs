@@ -1,16 +1,19 @@
 module HushGP.GP.Variation where
 
+import Data.List
 import Control.Monad
 import HushGP.State
 import HushGP.GP.PushArgs
 import HushGP.GP.Individual
 import HushGP.Utility
+import HushGP.Genome
+import HushGP.GP.Selection
 
 -- |Performs a uniform crossover on two parents and returns the child.
 -- Padding is placed to left of the shorter genome.
 crossover :: [Gene] -> [Gene] -> IO [Gene]
 crossover plushyA plushyB = do
-  filter (CrossoverPadding /=) <$> zipWithM (\short long -> randOneToOneHundred >>= (\num -> if num < 50 then pure short else pure long)) shorterPadded longer
+  filter (CrossoverPadding /=) <$> zipWithM (\short long -> randZeroToOne >>= (\num -> if num < 0.5 then pure short else pure long)) shorterPadded longer
   where
     shorter :: [Gene]
     shorter = if length plushyA <= length plushyB then plushyA else plushyB
@@ -37,7 +40,7 @@ alternation pushArgs plushyA plushyB = do
 -- This returns the first [Gene] when the loop is complete.
 alternation' :: PushArgs -> Int -> Bool -> [Gene] -> Int -> [Gene] -> [Gene] -> IO [Gene]
 alternation' pushArgs@PushArgs{alternationRate = altRate, alignmentDeviation = alignDeviation} n usePlushyA !resultPlushy iterationBudget plushyA plushyB = do
-  randNum <- randOneToOneHundred
+  randNum <- randZeroToOne
   let nextAction
         | n >= length (if usePlushyA then plushyA else plushyB) || iterationBudget <= 0 = pure resultPlushy
         | randNum < altRate = do
@@ -50,7 +53,7 @@ alternation' pushArgs@PushArgs{alternationRate = altRate, alignmentDeviation = a
 -- Padding is placed to left of the shorter genome.
 tailAlignedCrossover :: [Gene] -> [Gene] -> IO [Gene]
 tailAlignedCrossover plushyA plushyB = do
-  filter (CrossoverPadding /=) <$> zipWithM (\short long -> randOneToOneHundred >>= (\num -> if num < 50 then pure short else pure long)) shorterPadded longer
+  filter (CrossoverPadding /=) <$> zipWithM (\short long -> randZeroToOne >>= (\num -> if num < 0.5 then pure short else pure long)) shorterPadded longer
   where
     shorter :: [Gene]
     shorter = if length plushyA <= length plushyB then plushyA else plushyB
@@ -64,8 +67,90 @@ tailAlignedCrossover plushyA plushyB = do
 -- |Takes the PushArgs for the evolutionary run and a singular plushy.
 -- Returns the added onto plushy. Returns the the passed plushy with
 -- new instructions possibly added before or after each existing instruction.
-uniformAddition :: PushArgs -> [Gene] -> [Gene]
-uniformAddition pushArgs plushy = undefined
+uniformAddition :: PushArgs -> [Gene] -> IO [Gene]
+uniformAddition pushArgs plushy = uniformAddition' pushArgs plushy []
 
-newIndividual :: PushArgs -> [Individual] -> Individual
-newIndividual = error "Implement this later"
+-- |Guts of uniform addition. Appends to the second [Gene] recursively until the first [Gene]
+-- is empty. Ignores Gaps used for bmx if applicable.
+uniformAddition' :: PushArgs -> [Gene] -> [Gene] -> IO [Gene]
+uniformAddition' _ [] newPlushy = pure newPlushy
+uniformAddition' pushArgs@PushArgs{instructionList = iList, umadRate = uRate} (old:oldList) !newList = do
+  frontInstruction <- randomInstruction iList
+  backInstruction <- randomInstruction iList
+  frontZeroToOne <- randZeroToOne
+  backZeroToOne <- randZeroToOne
+  uniformAddition' pushArgs oldList (newList <> [frontInstruction | frontZeroToOne < uRate && not (isGap old)] <> [old] <> [backInstruction | backZeroToOne < uRate && not (isGap old)])
+
+-- |Takes the PushArgs for the evolutionary run and a singular plushy.
+-- Returns the replacement plushy. Returns the the passed plushy with
+-- new instructions possibly replacing each existing instruction.
+uniformReplacement :: PushArgs -> [Gene] -> IO [Gene]
+uniformReplacement pushArgs plushy = uniformAddition' pushArgs plushy []
+
+-- |Guts of uniform replacement. Appends to the second [Gene] recursively until the first [Gene]
+-- is empty.
+uniformReplacement' :: PushArgs -> [Gene] -> [Gene] -> IO [Gene]
+uniformReplacement' _ [] newPlushy = pure newPlushy
+uniformReplacement' pushArgs@PushArgs{instructionList = iList, replacementRate = rRate} (old:oldList) !newList = do
+  randInstruction <- randomInstruction iList
+  randDecimal <- randZeroToOne
+  uniformReplacement' pushArgs oldList (newList <> if randDecimal < rRate then [randInstruction] else [old])
+
+-- |Takes the PushArgs for the evolutionary run and a singular plushy.
+-- Returns the deleted plushy. Returns the passed plushy with
+-- instructions that were there possibly deleted. Ignores Gaps used for bmx if applicable.
+uniformDeletion :: PushArgs -> [Gene] -> IO [Gene]
+uniformDeletion PushArgs{umadRate = uRate} plushy =
+  if uRate == 0
+  then pure plushy
+  else uniformDeletion' plushy [] adjustedRate
+  where
+    adjustedRate :: Double
+    adjustedRate = 1 / (1 + (1 / uRate))
+
+-- |Internals for uniform deletion. The Double is the adjusted rate
+-- calculated based on the original umad rate.
+uniformDeletion' :: [Gene] -> [Gene] -> Double -> IO [Gene]
+uniformDeletion' [] newPlushy _ = pure newPlushy
+uniformDeletion' (old:oldList) !newList adjustRate = do
+  randDecimal <- randZeroToOne
+  uniformDeletion' oldList (newList <> [old | randDecimal < adjustRate]) adjustRate
+
+-- |Creates a new individual based on the probabilities of the desired
+-- crossover methods.
+newIndividual :: PushArgs -> [Individual] -> IO Individual
+newIndividual pushArgs@PushArgs{variation = var} population = do
+  randOp <- randomOperation var 0.0
+  case randOp of
+    "reproduction" -> selectParent pushArgs population
+    "crossover" -> do
+      parent0 <- selectParent pushArgs population
+      parent1 <- selectParent pushArgs population
+      childPlushy <- crossover (plushy parent0) (plushy parent1)
+      pure $ postVariationInd childPlushy
+    "tailAlignedCrossover" -> do
+      parent0 <- selectParent pushArgs population
+      parent1 <- selectParent pushArgs population
+      childPlushy <- tailAlignedCrossover (plushy parent0) (plushy parent1)
+      pure $ postVariationInd childPlushy
+    "umad" -> do
+      parent <- selectParent pushArgs population
+      child <- uniformAddition pushArgs (plushy parent) >>= uniformDeletion pushArgs
+      pure $ postVariationInd child
+    "rumad" -> undefined -- TODO: this tomorrow!
+    _ -> error ("Error: No match for selection operation: " <> randOp)
+  where
+  randDecimal :: IO Double
+  randDecimal = randZeroToOne
+  randomOperation :: [(String, Double)] -> Double -> IO String
+  randomOperation operations acc = do
+    randD <- randDecimal
+    let nextAction
+          | null operations = pure "reproduction"
+          | acc + tempProb >= randD = pure tempOp
+          | otherwise = randomOperation (drop 1 operations) (tempProb + acc)
+    nextAction
+    where
+    (tempOp,tempProb) = case uncons operations of Just (x, _) -> x; _ -> error "Error: operations cannot be empty!"
+      
+

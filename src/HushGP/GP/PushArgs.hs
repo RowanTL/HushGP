@@ -12,7 +12,7 @@ data PushArgs = PushArgs
     -- | For alternation, std deviation for index when alternating.
     alignmentDeviation :: Double,
     -- | For alternation, probability of switching parents at each location. Should be a value in the range [1,100]
-    alternationRate :: Int,
+    alternationRate :: Double,
     -- | For bmx, rate genes are exchanged.
     bmxExchangeRate :: Float,
     -- | For bmx, max length of a gene.
@@ -29,6 +29,8 @@ data PushArgs = PushArgs
     ssxNotBmx :: Bool,
     -- | Ways to construct a phenotype from a plushy genome, so far only "specified" is implemented. Unused (for now).
     closes :: String,
+    -- | Whether or not to use best match crossover
+    useBMX :: Bool,
     -- | Custom report for each generation if provided.
     customReport :: Maybe (PushArgs -> IO ()),
     -- | If True, keeps running regardless of success.
@@ -65,8 +67,8 @@ data PushArgs = PushArgs
     parentSelectionAlgo :: String,
     -- |Size of the population in the evolutionary run.
     populationSize :: Int,
-    -- | For uniform replacement, rate of item replacement.
-    replacementRate :: Float,
+    -- | For uniform replacement, rate of item replacement. A number in the bounds of [1,100].
+    replacementRate :: Double,
     -- | Whether or not to auto simplify solutions.
     useSimplification :: Bool,
     -- | When auto simplifying, max amt items deleted in a single step.
@@ -87,11 +89,11 @@ data PushArgs = PushArgs
     trainingData :: [PushData],
     -- | Testing data for the gp, must be provided if there is any.
     testingData :: [PushData],
-    -- | Addition rate for UMAD (deletion rate derived from this).
-    umadRate :: Float,
+    -- | Addition rate for UMAD (deletion rate derived from this). Should be an Int [0-100].
+    umadRate :: Double,
     -- | Genetic operators and probabilities for their use, should sum to one
     -- Takes a Map of String -> Float where the string is the genetic operator
-    variation :: Map.Map String Float,
+    variation :: [(String,Double)],
     -- | The epsilons calculated for epsilon lexicase selection. Only used for epsilon lexicase selection.
     epsilons :: Maybe [Double],
     -- | Used with the CaseMaxminAuto downsampling strategy. Tells downsampling to stop when
@@ -108,7 +110,7 @@ data PushArgs = PushArgs
 defaultPushArgs :: PushArgs
 defaultPushArgs = PushArgs {
     alignmentDeviation = 2.0,
-    alternationRate = 10,
+    alternationRate = 0.1,
     bmxExchangeRate = 0.5,
     bmxGeneLengthLimit = 10,
     bmxGapChangeProbability = 0.001,
@@ -116,6 +118,7 @@ defaultPushArgs = PushArgs {
     bmxMaxDistance = 1000000,
     bmxSameGeneCount = False,
     closes = "specified",
+    useBMX = False,
     customReport = Nothing,
     dontEnd = False,
     enableDownsampling = True,
@@ -145,7 +148,7 @@ defaultPushArgs = PushArgs {
     testingData = error "Must supply the testingData yourself",
     trainingData = error "Must supply the trainingData yourself",
     umadRate = 0.1,
-    variation = Map.fromList [("umad", 1.0)],
+    variation = [("umad", 1.0)],
     epsilons = Nothing,
     caseDelta = 0,
     initialCases = Nothing

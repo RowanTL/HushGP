@@ -41,6 +41,10 @@ gaussianNoiseFactor = do
   randDecimal1 <- fst . uniformR (0.0 :: Double, 1.0 :: Double) <$> initStdGen
   pure (sqrt ((-2.0) * log randDecimal0) * cos (2.0 * pi * randDecimal1))
 
--- | A random number between 1 and 100.
+-- | A random Int between 1 and 100 inclusive.
 randOneToOneHundred :: IO Int
 randOneToOneHundred = fst . uniformR (1 :: Int, 100 :: Int) <$> initStdGen
+
+-- | A random Double between 0.1 and 1.0 inclusive.
+randZeroToOne :: IO Double
+randZeroToOne = fst . uniformR (0.1 :: Double, 1.0 :: Double) <$> initStdGen

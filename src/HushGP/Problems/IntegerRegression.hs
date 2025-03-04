@@ -62,16 +62,16 @@ errorHead xs =
     _ -> 100000000 -- Make this a variable for later?
 
 -- | Loads a plushy and a list of genes into the input state.
-loadState :: [Gene] -> [Gene] -> State
-loadState plushy vals = 
-  (loadProgram (plushyToPush plushy) emptyState){_input = Map.fromList (zip [0..] vals)}
+loadState :: PushArgs -> [Gene] -> [Gene] -> State
+loadState pushArgs plushy vals = 
+  (loadProgram (plushyToPush pushArgs plushy) emptyState){_input = Map.fromList (zip [0..] vals)}
 
 -- | The error function for a single set of inputs and outputs.
 intErrorFunction :: PushArgs -> [PushData] -> [Gene] -> [Double]
-intErrorFunction _args pushData plushy =
+intErrorFunction pushArgs pushData plushy =
   map abs $
     zipWith (-)
-      (map ((fromIntegral @Integer @Double . (errorHead . _int) . interpretExec) . loadState plushy)
+      (map ((fromIntegral @Integer @Double . (errorHead . _int) . interpretExec) . loadState pushArgs plushy)
       (extractField inputData pushData)) (map (fromIntegral @Integer @Double . extractGeneInt) (extractField outputData pushData))
 
 intPushArgs :: PushArgs
@@ -87,8 +87,8 @@ intPushArgs = defaultPushArgs
     stepLimit = 200,
     parentSelectionAlgo = "lexicase",
     tournamentSize = 5,
-    umadRate = 0.1,
-    variation = Map.fromList [("umad", 1.0), ("crossover", 0.0)],
+    umadRate = 0.6,
+    variation = [("umad", 1.0), ("crossover", 0.0)],
     elitism = False,
     enableDownsampling = False,
     downsampleRate = 0.5
