@@ -68,6 +68,7 @@ library
                     , HushGP.GP.PushData
                     , HushGP.GP.Selection
                     , HushGP.GP.Individual
+                    , HushGP.GP.Simplification
                     , HushGP.Problems.IntegerRegression
                     , HushGP.Tools.Metrics
 
