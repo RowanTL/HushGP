@@ -19,10 +19,30 @@ testPlushy = [
     -- GeneFloat 3.2
   ]
 
+intSolutionPlushy :: [Gene]
+intSolutionPlushy =
+  [ PlaceInput 0
+  , PlaceInput 0
+  , PlaceInput 0
+  , StateFunc (instructionIntMul, "instructionIntMul")
+  , StateFunc (instructionIntMul, "instructionIntMul")
+  -- , GeneInt 2
+  -- , PlaceInput 0
+  , GeneBool True -- A useless gene
+  -- , StateFunc (instructionIntMul, "instructionIntMul")
+  -- , GeneInt 6
+  -- , StateFunc (instructionIntAdd, "instructionIntAdd")
+  -- , StateFunc (instructionIntAdd, "instructionIntAdd")
+  -- , GeneInt 5 -- Also a useless gene
+  , GeneFloat 4.3
+  , GeneString "hello"
+  ]
+
 -- | The target function for this run. The function the gp
 -- is trying to evolve.
 targetFunction :: Integer -> Integer
-targetFunction x = (x * x * x) + (2 * x)
+-- targetFunction x = (x * x * x) + (2 * x) + 6
+targetFunction x = x * x * x
 
 -- | The training data for the model.
 intTrainData :: [PushData]
@@ -91,7 +111,10 @@ intPushArgs = defaultPushArgs
     variation = [("umad", 1.0), ("crossover", 0.0)],
     elitism = False,
     enableDownsampling = False,
-    downsampleRate = 0.5
+    downsampleRate = 0.5,
+    simplificationVerbose = True,
+    simplificationMaxAmt = 4,
+    simplificationSteps = 200
   }
 
 main :: IO ()
