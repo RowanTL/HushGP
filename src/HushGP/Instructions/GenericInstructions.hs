@@ -1,13 +1,13 @@
 module HushGP.Instructions.GenericInstructions where
 
 import Control.Lens
-import HushGP.State
-import HushGP.Instructions.Utility
 import Data.List (sort, sortBy)
 import Data.Ord
 import Data.List.Split
-
--- import Debug.Trace 
+import Numeric.LinearAlgebra (vector, norm_2)
+import Numeric.Statistics.Moment
+import HushGP.State
+import HushGP.Instructions.Utility-- import Debug.Trace 
 
 -- |Does No Operation. Useful for genome stuff :)
 instructionNoOpBlock :: State -> State
@@ -564,3 +564,11 @@ instructionVectorInsertVector accessor state@(State {_int = i1 : is}) =
       state{_int = is} & accessor .~ (combineTupleList v2 (splitAt (fromIntegral i1) v1) : vs)
     _ -> state
 instructionVectorInsertVector _ state = state
+
+-- |Takes a numeric vector lens and a primitive lens. Pushes the mean of the top
+-- vector to the primitive stack.
+instructionVectorMean :: Fractional a => Lens' State [a] -> Lens' State [[a]] -> (b -> a) -> State -> State
+instructionVectorMean primAccessor vectorAccessor wrangleFunc state =
+  case uncons (view vectorAccessor state) of
+    Just (v1, vs) -> state & vectorAccessor .~ vs & primAccessor .~ (mean v1 : view primAccessor state)
+    _ -> state
