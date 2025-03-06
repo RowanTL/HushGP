@@ -43,14 +43,6 @@ autoSimplifyPlushy' pushArgs@PushArgs{simplificationVerbose = simpVerbose, simpl
       newPlushy <- deleteRandomAmt randAmt plushy
       let newPlushyErrors = eFunc pushArgs tData newPlushy
       let isBetter = newPlushyErrors <= initialErrors
-      print "-----------------------------------------"
-      print $ "k: " <> show randAmt
-      print $ "step: " <> show step
-      print $ "newPlushy: " <> show newPlushy
-      print $ "plushy: " <> show plushy
-      print $ "isBetter: " <> show isBetter
-      print $ "initialErrors: " <> show initialErrors
-      print $ "newErrors: " <> show newPlushyErrors
       autoSimplifyPlushy' pushArgs initialErrors (succ step) (if isBetter then newPlushy else plushy)
   | otherwise = do
       when simpVerbose (print ("simplification end plushy length: " <> show (length plushy)))

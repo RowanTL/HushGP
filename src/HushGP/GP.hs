@@ -8,9 +8,9 @@ import HushGP.GP.Downsample
 import HushGP.GP.Individual
 import HushGP.GP.PushArgs
 import HushGP.GP.PushData
-import HushGP.GP.Variation
 import HushGP.GP.Selection
 import HushGP.GP.Simplification
+import HushGP.GP.Variation
 import HushGP.Genome
 import System.Random
 import System.Random.Shuffle
