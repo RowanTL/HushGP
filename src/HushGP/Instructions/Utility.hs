@@ -283,7 +283,7 @@ mode xs =
 
 -- |Utility Function: Calculates the 2-norm of a list and returns it.
 twoNorm :: (Floating a) => [a] -> a
-twoNorm xs = sqrt $ sum $ map (^ 2) xs
+twoNorm xs = sqrt $ sum $ map (^ (2 :: Int)) xs
 
 -- |Utility Function: Takes in any value and returns 0. Used primarily to return 0
 -- when a function such as maximum is operating on an empty list.
