@@ -40,7 +40,7 @@
 - [X] Implement different forms of downsampling
 - [ ] Implement concurrent execution of creating random plushies and evaluating individuals
 - [X] Devise a good way to implement ERCs
-- [ ] Implement random simplification of genomes
+- [X] Implement random simplification of genomes
   - [ ] Find a way to multi-thread this
 - [ ] Look at using `uniformShuffleList` over System.Random.Shuffle
 - [X] Impelment selectionCases for lexicase and tournament selection.
