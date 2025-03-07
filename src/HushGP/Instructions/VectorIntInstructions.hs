@@ -331,5 +331,10 @@ instructionVectorIntInsert = instructionVectorInsert int vectorInt
 instructionVectorIntInsertVectorInt :: State -> State
 instructionVectorIntInsertVectorInt = instructionVectorInsertVector vectorInt
 
+-- |Takes the mean of the top int vector and pushes the rounded int value
+-- to the int stack.
+instructionVectorIntMean :: State -> State
+instructionVectorIntMean = instructionVectorMean int vectorInt id
+
 allVectorIntInstructions :: [Gene]
 allVectorIntInstructions = map StateFunc ($(functionExtractor "instruction"))
