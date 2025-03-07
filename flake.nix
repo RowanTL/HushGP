@@ -47,8 +47,11 @@
           };
 
           devShell = {
-            # Enabled by default
-            # enable = true;
+            mkShellArgs = {
+              shellHook = ''
+                export SHELL=${pkgs.lib.getExe pkgs.bashInteractive}
+              '';
+            };
 
             # Programs you want to make available in the shell.
             # Default programs can be disabled by setting to 'null'
