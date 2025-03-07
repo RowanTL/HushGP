@@ -335,7 +335,7 @@ instructionVectorFloatInsertVectorFloat = instructionVectorInsertVector vectorFl
 -- |Takes the mean of the top float vector and pushes the rounded float value
 -- to the float stack.
 instructionVectorFloatMean :: State -> State
-instructionVectorFloatMean state@(State {_vectorFloat = [] : vs}) = instructionVectorFuncVectorToPrim float vectorFloat retZero state
+instructionVectorFloatMean state@(State {_vectorFloat = [] : _}) = instructionVectorFuncVectorToPrim float vectorFloat retZero state
 instructionVectorFloatMean state = instructionVectorFuncVectorToPrim float vectorFloat (\xs -> sum xs / fromIntegral @Int @Double (length xs)) state
 
 -- |Takes the maximum of the top float vector and pushes the float value
@@ -413,11 +413,11 @@ instructionVectorFloatAbs = instructionVectorFuncVectorToVector vectorFloat (map
 
 -- |Applies the square function to all indices in an float vector, rounds the result as it moves along.
 instructionVectorFloatSquare :: State -> State
-instructionVectorFloatSquare = instructionVectorFuncVectorToVector vectorFloat (map (^ 2))
+instructionVectorFloatSquare = instructionVectorFuncVectorToVector vectorFloat (map (^ (2 :: Int)))
 
 -- |Applies the cube function to all indices in an float vector, rounds the result as it moves along.
 instructionVectorFloatCube :: State -> State
-instructionVectorFloatCube = instructionVectorFuncVectorToVector vectorFloat (map (^ 3))
+instructionVectorFloatCube = instructionVectorFuncVectorToVector vectorFloat (map (^ (3 :: Int)))
 
 -- |Applies the sqrt function to all indices in an float vector, rounds the result as it moves along.
 instructionVectorFloatSqrt :: State -> State

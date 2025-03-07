@@ -335,7 +335,7 @@ instructionVectorIntInsertVectorInt = instructionVectorInsertVector vectorInt
 -- |Takes the mean of the top int vector and pushes the rounded int value
 -- to the int stack.
 instructionVectorIntMean :: State -> State
-instructionVectorIntMean state@(State {_vectorInt = [] : vs}) = instructionVectorFuncVectorToPrim int vectorInt retZero state
+instructionVectorIntMean state@(State {_vectorInt = [] : _}) = instructionVectorFuncVectorToPrim int vectorInt retZero state
 instructionVectorIntMean state = instructionVectorFuncVectorToPrim int vectorInt (\xs -> round $ sum (map (fromIntegral @Integer @Double) xs) / fromIntegral @Int @Double (length xs)) state
 
 -- |Takes the maximum of the top int vector and pushes the int value
@@ -413,11 +413,11 @@ instructionVectorIntAbs = instructionVectorFuncVectorToVector vectorInt (map (ro
 
 -- |Applies the square function to all indices in an int vector, rounds the result as it moves along.
 instructionVectorIntSquare :: State -> State
-instructionVectorIntSquare = instructionVectorFuncVectorToVector vectorInt (map (round . (^ 2) . fromIntegral @Integer @Double))
+instructionVectorIntSquare = instructionVectorFuncVectorToVector vectorInt (map (round . (^ (2 :: Int)) . fromIntegral @Integer @Double))
 
 -- |Applies the cube function to all indices in an int vector, rounds the result as it moves along.
 instructionVectorIntCube :: State -> State
-instructionVectorIntCube = instructionVectorFuncVectorToVector vectorInt (map (round . (^ 3) . fromIntegral @Integer @Double))
+instructionVectorIntCube = instructionVectorFuncVectorToVector vectorInt (map (round . (^ (3 :: Int)) . fromIntegral @Integer @Double))
 
 -- |Applies the sqrt function to all indices in an int vector, rounds the result as it moves along.
 instructionVectorIntSqrt :: State -> State
