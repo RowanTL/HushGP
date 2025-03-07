@@ -1,7 +1,6 @@
 {-# LANGUAGE TemplateHaskell #-}
 module HushGP.Instructions.VectorIntInstructions where
 
-import Numeric.LinearAlgebra
 import HushGP.Instructions.GenericInstructions
 import HushGP.State
 import HushGP.TH
@@ -334,14 +333,10 @@ instructionVectorIntInsertVectorInt :: State -> State
 instructionVectorIntInsertVectorInt = instructionVectorInsertVector vectorInt
 
 -- |Takes the mean of the top int vector and pushes the rounded int value
--- to the int stack. No way to easily make this generic.
+-- to the int stack.
 instructionVectorIntMean :: State -> State
-instructionVectorIntMean state@(State {_int = is, _vectorInt = v1 : vs}) = state{_int = mean v1 : is, _vectorInt = vs}
-  where
-    mean :: [Integer] -> Integer
-    mean [] = 0
-    mean xs = round $ sum (map (fromIntegral @Integer @Double) xs) / fromIntegral @Int @Double (length xs)
-instructionVectorIntMean state = state
+instructionVectorIntMean state@(State {_vectorInt = [] : vs}) = instructionVectorFuncVectorToPrim int vectorInt retZero state
+instructionVectorIntMean state = instructionVectorFuncVectorToPrim int vectorInt (\xs -> round $ sum (map (fromIntegral @Integer @Double) xs) / fromIntegral @Int @Double (length xs)) state
 
 -- |Takes the maximum of the top int vector and pushes the int value
 -- to the int stack.
