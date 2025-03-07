@@ -33,3 +33,7 @@ Nix doesn't have this problem.
 ## Nix Users
 
 This took my machine about 2 hours to build the environment after running `nix develop`.
+
+## Credits
+
+Thanks to @mdominicis for the linear algebra functions!
