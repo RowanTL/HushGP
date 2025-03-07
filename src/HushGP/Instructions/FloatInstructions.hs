@@ -164,6 +164,10 @@ instructionFloatShove = instructionShove float
 instructionFloatIsStackEmpty :: State -> State
 instructionFloatIsStackEmpty = instructionIsStackEmpty float
 
+-- |Duplicate the top N items from the float stack based on the top int from the int stack.
+instructionFloatDupItems :: State -> State
+instructionFloatDupItems = instructionDupItems float
+
 -- |Pushes the sin of the top float to the float stack.
 instructionFloatSin :: State -> State
 instructionFloatSin state@(State {_float = f1 : fs}) = state {_float = sin f1 : fs}
@@ -179,9 +183,40 @@ instructionFloatTan :: State -> State
 instructionFloatTan state@(State {_float = f1 : fs}) = state {_float = tan f1 : fs}
 instructionFloatTan state = state
 
--- |Duplicate the top N items from the float stack based on the top int from the int stack.
-instructionFloatDupItems :: State -> State
-instructionFloatDupItems = instructionDupItems float
+-- |Pushes the absolute value of the top float to the float stack.
+instructionFloatAbs :: State -> State
+instructionFloatAbs state@(State {_float = f1 : fs}) = state {_float = abs f1 : fs}
+instructionFloatAbs state = state
+
+-- |Pushes the exponential of the top float to the float stack.
+instructionFloatExp :: State -> State
+instructionFloatExp state@(State {_float = f1 : fs}) = state {_float = exp f1 : fs}
+instructionFloatExp state = state
+
+-- |Pushes the log of the top float to the float stack.
+instructionFloatLog :: State -> State
+instructionFloatLog state@(State {_float = f1 : fs}) = state {_float = log f1 : fs}
+instructionFloatLog state = state
+
+-- |Pushes the squared value of the top float to the float stack.
+instructionFloatSquare :: State -> State
+instructionFloatSquare state@(State {_float = f1 : fs}) = state {_float = f1 ^ (2 :: Int) : fs}
+instructionFloatSquare state = state
+
+-- |Pushes the cubed value of the top float to the float stack.
+instructionFloatCube :: State -> State
+instructionFloatCube state@(State {_float = f1 : fs}) = state {_float = f1 ^ (3 :: Int) : fs}
+instructionFloatCube state = state
+
+-- |Pushes the square rooted value of the top float to the float stack.
+instructionFloatSqrt :: State -> State
+instructionFloatSqrt state@(State {_float = f1 : fs}) = state {_float = sqrt f1 : fs}
+instructionFloatSqrt state = state
+
+-- |Pushes the top float with its sign reversed to the top of the float stack.
+instructionFloatReverseSign :: State -> State
+instructionFloatReverseSign state@(State {_float = f1 : fs}) = state {_float = (-1) * f1 : fs}
+instructionFloatReverseSign state = state
 
 allFloatInstructions :: [Gene]
 allFloatInstructions = map StateFunc ($(functionExtractor "instruction"))

@@ -168,5 +168,55 @@ instructionIntIsStackEmpty = instructionIsStackEmpty int
 instructionIntDupItems :: State -> State
 instructionIntDupItems = instructionDupItems int
 
+-- |Pushes the sin of the top int to the int stack. Rounding if needed.
+instructionIntSin :: State -> State
+instructionIntSin state@(State {_int = i1 : is}) = state {_int = round (sin (fromIntegral @Integer @Double i1)) : is}
+instructionIntSin state = state
+
+-- |Pushes the cos of the top int to the int stack. Rounding if needed.
+instructionIntCos :: State -> State
+instructionIntCos state@(State {_int = i1 : is}) = state {_int = round (cos (fromIntegral @Integer @Double i1)) : is}
+instructionIntCos state = state
+
+-- |Pushes the tan of the top int to the int stack. Rounding if needed.
+instructionIntTan :: State -> State
+instructionIntTan state@(State {_int = i1 : is}) = state {_int = round (tan (fromIntegral @Integer @Double i1)) : is}
+instructionIntTan state = state
+
+-- |Pushes the absolute value of the top int to the int stack.
+instructionIntAbs :: State -> State
+instructionIntAbs state@(State {_int = i1 : is}) = state {_int = abs i1 : is}
+instructionIntAbs state = state
+
+-- |Pushes the exponential of the top int to the int stack. Rounding if needed.
+instructionIntExp :: State -> State
+instructionIntExp state@(State {_int = i1 : is}) = state {_int = round (exp (fromIntegral @Integer @Double i1)) : is}
+instructionIntExp state = state
+
+-- |Pushes the log of the top int to the int stack. Rounding if needed.
+instructionIntLog :: State -> State
+instructionIntLog state@(State {_int = i1 : is}) = state {_int = round (log (fromIntegral @Integer @Double i1)) : is}
+instructionIntLog state = state
+
+-- |Pushes the squared value of the top int to the int stack.
+instructionIntSquare :: State -> State
+instructionIntSquare state@(State {_int = i1 : is}) = state {_int = i1 ^ (2 :: Int) : is}
+instructionIntSquare state = state
+
+-- |Pushes the cubed value of the top int to the int stack.
+instructionIntCube :: State -> State
+instructionIntCube state@(State {_int = i1 : is}) = state {_int = i1 ^ (3 :: Int) : is}
+instructionIntCube state = state
+
+-- |Pushes the square rooted value of the top int to the int stack. Rounding if needed.
+instructionIntSqrt :: State -> State
+instructionIntSqrt state@(State {_int = i1 : is}) = state {_int = round (sqrt (fromIntegral @Integer @Double i1)) : is}
+instructionIntSqrt state = state
+
+-- |Pushes the top int with its sign reversed to the top of the int stack.
+instructionIntReverseSign :: State -> State
+instructionIntReverseSign state@(State {_int = i1 : is}) = state {_int = (-1) * i1 : is}
+instructionIntReverseSign state = state
+
 allIntInstructions :: [Gene]
 allIntInstructions = map StateFunc ($(functionExtractor "instruction"))
