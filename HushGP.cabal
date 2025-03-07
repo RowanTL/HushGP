@@ -81,7 +81,7 @@ library
 
     -- Other library packages from which modules are imported.
     build-depends:
-        base, containers, lens, split, QuickCheck, regex-tdfa, template-haskell, random, parallel, random-shuffle, dsp, hmatrix, tasty
+        base, containers, lens, split, regex-tdfa, template-haskell, random, parallel, random-shuffle, dsp, hmatrix, tasty, tasty-hunit, tasty-quickcheck
 
     -- Directories containing source files.
     hs-source-dirs:   src
