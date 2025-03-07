@@ -1,10 +1,10 @@
 module HushGP.PushTests.IntTests where
 
--- import HushGP.State
--- import HushGP.Instructions.IntInstructions
+import HushGP.State
+import HushGP.Instructions.IntInstructions
 -- import HushGP.PushTests.GenericTests
 -- -- import Control.Lens hiding (uncons)
--- import Test.QuickCheck
+import Test.Tasty
 
 -- prop_IntAdd :: State -> Property
 -- prop_IntAdd = aaa1Test int instructionIntAdd (+)

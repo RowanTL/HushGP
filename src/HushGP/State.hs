@@ -1,10 +1,12 @@
-{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TemplateHaskell, DeriveGeneric #-}
 
 module HushGP.State where
 
 import Control.Lens hiding (elements)
 import Data.Map qualified as Map
 import System.Random
+import Test.QuickCheck
+import GHC.Generics
 
 -- | The exec stack must store heterogenous types,
 --   and we must be able to detect that type at runtime.
@@ -42,6 +44,7 @@ data Gene
     CrossoverPadding
   | -- | This is used in best match crossover (bmx in PushArgs).
     Gap
+  deriving Generic
 
 instance Eq Gene where
   GeneInt x == GeneInt y = x == y
@@ -155,6 +158,29 @@ instance Show Gene where
   show CrossoverPadding = "Crossover Padding"
   show Gap = "Gap"
 
+instance CoArbitrary StdGen where
+  coarbitrary _ gen = gen
+
+instance CoArbitrary Gene
+
+instance Arbitrary Gene where
+  arbitrary =
+    oneof
+      [ GeneInt <$> arbitrary,
+        GeneFloat <$> arbitrary,
+        GeneBool <$> arbitrary,
+        GeneString <$> arbitrary,
+        GeneChar <$> arbitrary,
+        StateFunc <$> arbitrary,
+        -- PlaceInput <$> arbitrary,
+        GeneVectorInt <$> arbitrary,
+        GeneVectorFloat <$> arbitrary,
+        GeneVectorBool <$> arbitrary,
+        GeneVectorString <$> arbitrary,
+        GeneVectorChar <$> arbitrary,
+        Block <$> arbitrary
+      ]
+
 -- | The structure that holds all of the values.
 data State = State
   { _exec :: [Gene],
@@ -172,7 +198,28 @@ data State = State
     _parameter :: [Gene],
     _input :: Map.Map Int Gene
   }
-  deriving (Show, Eq, Ord)
+  deriving (Show, Eq, Ord, Generic)
+
+instance CoArbitrary State
+
+instance Arbitrary State where
+  arbitrary = do
+    arbExec <- arbitrary
+    arbCode <- arbitrary
+    arbInt <- arbitrary
+    arbFloat <- arbitrary
+    arbBool <- arbitrary
+    arbString <- arbitrary
+    arbChar <- arbitrary
+    arbVectorInt <- arbitrary
+    arbVectorFloat <- arbitrary
+    arbVectorBool <- arbitrary
+    arbVectorString <- arbitrary
+    arbVectorChar <- arbitrary
+    arbParameter <- arbitrary
+    -- arbInput <- arbitrary
+    State arbExec arbCode arbInt arbFloat arbBool arbString arbChar arbVectorInt arbVectorFloat arbVectorBool arbVectorString arbVectorChar arbParameter <$> arbitrary
+-- Thanks hlint lol
 
 emptyState :: State
 emptyState =
