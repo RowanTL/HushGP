@@ -4,6 +4,7 @@ module HushGP.Instructions.VectorFloatInstructions where
 import HushGP.State
 import HushGP.Instructions.GenericInstructions
 import HushGP.TH
+import HushGP.Instructions.Utility
 
 -- |Pops the top float vector from the float vector stack.
 instructionVectorFloatPop :: State -> State
@@ -330,6 +331,97 @@ instructionVectorFloatInsert = instructionVectorInsert float vectorFloat
 -- pulled from the top of the int stack.
 instructionVectorFloatInsertVectorFloat :: State -> State
 instructionVectorFloatInsertVectorFloat = instructionVectorInsertVector vectorFloat
+
+-- |Takes the mean of the top float vector and pushes the rounded float value
+-- to the float stack.
+instructionVectorFloatMean :: State -> State
+instructionVectorFloatMean state@(State {_vectorFloat = [] : vs}) = instructionVectorFuncVectorToPrim float vectorFloat retZero state
+instructionVectorFloatMean state = instructionVectorFuncVectorToPrim float vectorFloat (\xs -> sum xs / fromIntegral @Int @Double (length xs)) state
+
+-- |Takes the maximum of the top float vector and pushes the float value
+-- to the float stack.
+instructionVectorFloatMaximum :: State -> State
+instructionVectorFloatMaximum state@(State {_vectorFloat = [] : _}) = instructionVectorFuncVectorToPrim float vectorFloat retZero state
+instructionVectorFloatMaximum state = instructionVectorFuncVectorToPrim float vectorFloat maximum state
+
+-- |Takes the minimum of the top float vector and pushes the float value
+-- to the float stack.
+instructionVectorFloatMinimum :: State -> State
+instructionVectorFloatMinimum state@(State {_vectorFloat = [] : _ }) = instructionVectorFuncVectorToPrim float vectorFloat retZero state
+instructionVectorFloatMinimum state = instructionVectorFuncVectorToPrim float vectorFloat minimum state
+
+-- |Takes the sum of the top float vector and pushes the float value
+-- to the float stack.
+instructionVectorFloatSum :: State -> State
+instructionVectorFloatSum state@(State {_vectorFloat = [] : _}) = instructionVectorFuncVectorToPrim float vectorFloat retZero state
+instructionVectorFloatSum state = instructionVectorFuncVectorToPrim float vectorFloat sum state
+
+-- |Takes the mode of the top float vector and pushes the float value
+-- to the float stack.
+instructionVectorFloatMode :: State -> State
+instructionVectorFloatMode state@(State {_vectorFloat = [] : _}) = instructionVectorFuncVectorToPrim float vectorFloat retZero state
+instructionVectorFloatMode state = instructionVectorFuncVectorToPrim float vectorFloat mode state
+
+-- |Takes the 2-norm of the top float vector and pushes the rounded result to
+-- the float stack.
+instructionVectorFloatNorm :: State -> State -- Ends up replacing with 0 so it's good.
+instructionVectorFloatNorm = instructionVectorFuncVectorToPrim float vectorFloat twoNorm
+
+-- |Takes the cummulative mean of the float vector, rounds the results and places them floato a vector as the caluculations happen and pushes it back to the top of
+-- the float vector stack.
+instructionVectorFloatCummulativeMean :: State -> State
+instructionVectorFloatCummulativeMean = instructionVectorFuncVectorToVector vectorFloat (\xs -> zipWith (/) (scanl1 (+) xs) [1..])
+
+-- |Takes the cummulative sum of the float vector, places the results in a vector as the caluculations happen and pushes it back to the top of
+-- the float vector stack.
+instructionVectorFloatCummulativeSum :: State -> State
+instructionVectorFloatCummulativeSum = instructionVectorFuncVectorToVector vectorFloat (scanl1 (+))
+
+-- |Takes the cummulative max of the float vector, places the results in a vector as the caluculations happen and pushes it back to the top of
+-- the float vector stack.
+instructionVectorFloatCummulativeMax :: State -> State
+instructionVectorFloatCummulativeMax = instructionVectorFuncVectorToVector vectorFloat (scanl1 max)
+
+-- |Takes the cummulative min of the float vector, places the results in a vector as the caluculations happen and pushes it back to the top of
+-- the float vector stack.
+instructionVectorFloatCummulativeMin :: State -> State
+instructionVectorFloatCummulativeMin = instructionVectorFuncVectorToVector vectorFloat (scanl1 min)
+
+-- |Applies the exponential function to all indices in an float vector, rounds the result as it moves along.
+instructionVectorFloatExp :: State -> State
+instructionVectorFloatExp = instructionVectorFuncVectorToVector vectorFloat (map exp)
+
+-- |Applies the log function to all indices in an float vector, rounds the result as it moves along.
+instructionVectorFloatLog :: State -> State
+instructionVectorFloatLog = instructionVectorFuncVectorToVector vectorFloat (map log)
+
+-- |Applies the sin function to all indices in an float vector, rounds the result as it moves along.
+instructionVectorFloatSin :: State -> State
+instructionVectorFloatSin = instructionVectorFuncVectorToVector vectorFloat (map sin)
+
+-- |Applies the cos function to all indices in an float vector, rounds the result as it moves along.
+instructionVectorFloatCos :: State -> State
+instructionVectorFloatCos = instructionVectorFuncVectorToVector vectorFloat (map cos)
+
+-- |Applies the tan function to all indices in an float vector, rounds the result as it moves along.
+instructionVectorFloatTan :: State -> State
+instructionVectorFloatTan = instructionVectorFuncVectorToVector vectorFloat (map tan)
+
+-- |Applies the abs function to all indices in an float vector, rounds the result as it moves along.
+instructionVectorFloatAbs :: State -> State
+instructionVectorFloatAbs = instructionVectorFuncVectorToVector vectorFloat (map abs)
+
+-- |Applies the square function to all indices in an float vector, rounds the result as it moves along.
+instructionVectorFloatSquare :: State -> State
+instructionVectorFloatSquare = instructionVectorFuncVectorToVector vectorFloat (map (^ 2))
+
+-- |Applies the cube function to all indices in an float vector, rounds the result as it moves along.
+instructionVectorFloatCube :: State -> State
+instructionVectorFloatCube = instructionVectorFuncVectorToVector vectorFloat (map (^ 3))
+
+-- |Applies the sqrt function to all indices in an float vector, rounds the result as it moves along.
+instructionVectorFloatSqrt :: State -> State
+instructionVectorFloatSqrt = instructionVectorFuncVectorToVector vectorFloat (map sqrt)
 
 allVectorFloatInstructions :: [Gene]
 allVectorFloatInstructions = map StateFunc ($(functionExtractor "instruction"))
