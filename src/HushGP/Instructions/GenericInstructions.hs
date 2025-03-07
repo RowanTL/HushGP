@@ -4,8 +4,6 @@ import Control.Lens
 import Data.List (sort, sortBy)
 import Data.Ord
 import Data.List.Split
-import Numeric.LinearAlgebra (vector, norm_2)
-import Numeric.Statistics.Moment
 import HushGP.State
 import HushGP.Instructions.Utility-- import Debug.Trace 
 
@@ -567,8 +565,24 @@ instructionVectorInsertVector _ state = state
 
 -- |Takes a numeric vector lens and a primitive lens. Pushes the mean of the top
 -- vector to the primitive stack.
-instructionVectorMean :: Fractional a => Lens' State [a] -> Lens' State [[a]] -> (b -> a) -> State -> State
-instructionVectorMean primAccessor vectorAccessor wrangleFunc state =
+-- instructionVectorMean :: Fractional a => Lens' State [a] -> Lens' State [[a]] -> (b -> a) -> State -> State
+-- instructionVectorMean primAccessor vectorAccessor wrangleFunc state =
+--   case uncons (view vectorAccessor state) of
+--     Just (v1, vs) -> state & vectorAccessor .~ vs & primAccessor .~ (mean v1 : view primAccessor state)
+--     _ -> state
+
+-- |Takes a vector lens, a primitive lens, and an arbitrary function. Pushes the result
+-- of applying the arbitrary function to the top vector lens item to the top of the primitive lens stack.
+instructionVectorFuncVectorToPrim :: Ord a => Lens' State [a] -> Lens' State [[a]] -> ([a] -> a) -> State -> State
+instructionVectorFuncVectorToPrim primAccessor vectorAccessor func state =
   case uncons (view vectorAccessor state) of
-    Just (v1, vs) -> state & vectorAccessor .~ vs & primAccessor .~ (mean v1 : view primAccessor state)
+    Just (v1, vs) -> state & vectorAccessor .~ vs & primAccessor .~ func v1 : view primAccessor state
+    _ -> state
+
+-- |Takes a vector lens and an arbitrary function. Applies the arbitrary function to the top
+-- item of the vector lens stack and returns it to said stack.
+instructionVectorFuncVectorToVector :: Ord a => Lens' State [[a]] -> ([a] -> [a]) -> State -> State
+instructionVectorFuncVectorToVector accessor func state =
+  case uncons (view accessor state) of
+    Just (v1, vs) -> state & accessor .~ func v1 : vs
     _ -> state

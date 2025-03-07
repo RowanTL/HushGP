@@ -1,8 +1,10 @@
 module HushGP.Instructions.Utility where
 
-import Control.Lens hiding (index)
-import HushGP.State
 import Data.Char
+import Data.List
+import Data.Ord
+import Control.Lens hiding (index, uncons)
+import HushGP.State
 
 -- generic utility
 
@@ -262,8 +264,6 @@ lstrip s = case s of
 rstrip :: String -> String
 rstrip = reverse . lstrip . reverse
 
--- string utility
-
 -- |Utility Function: Casts a type based on a lens to a string. Pushes the result
 -- to the string stack.
 instructionStringFromLens :: Show a => Lens' State [a] -> State -> State
@@ -271,3 +271,21 @@ instructionStringFromLens accessor state@(State {_string = ss}) =
   case uncons (view accessor state) of
     Nothing -> state
     Just (x1,_) -> state{_string = show x1 : ss}
+
+-- vector utilty
+
+-- |Utility Function: Takes a list of numbers and returns the mode of said list.
+mode :: (Num a, Ord a) => [a] -> a
+mode xs =
+  case uncons (maximumBy (comparing length) (group (sort xs))) of
+    Just (x, _) -> x
+    _ -> error "Error: list is empty when determining mode!"
+
+-- |Utility Function: Calculates the 2-norm of a list and returns it.
+twoNorm :: (Floating a) => [a] -> a
+twoNorm xs = sqrt $ sum $ map (^ 2) xs
+
+-- |Utility Function: Takes in any value and returns 0. Used primarily to return 0
+-- when a function such as maximum is operating on an empty list.
+retZero :: (Num b) => a -> b
+retZero _ = 0

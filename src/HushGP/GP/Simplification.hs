@@ -7,8 +7,6 @@ import Data.List
 import HushGP.State
 import HushGP.GP.PushArgs
 
-import Debug.Trace
-
 -- | Takes a list of Genes (a plushy), chunks it up into sizes of 1 (type is [[Gene]]).
 -- and a list of indices for replacement (gets sorted before replacement).
 deleteAtMultiple :: [Int] -> [Gene] -> [Gene]

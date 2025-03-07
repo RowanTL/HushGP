@@ -1,9 +1,11 @@
 {-# LANGUAGE TemplateHaskell #-}
 module HushGP.Instructions.VectorIntInstructions where
 
+import Numeric.LinearAlgebra
 import HushGP.Instructions.GenericInstructions
 import HushGP.State
 import HushGP.TH
+import HushGP.Instructions.Utility
 
 -- |Pops the top int vector from the int vector stack.
 instructionVectorIntPop :: State -> State
@@ -332,9 +334,99 @@ instructionVectorIntInsertVectorInt :: State -> State
 instructionVectorIntInsertVectorInt = instructionVectorInsertVector vectorInt
 
 -- |Takes the mean of the top int vector and pushes the rounded int value
--- to the int stack.
+-- to the int stack. No way to easily make this generic.
 instructionVectorIntMean :: State -> State
-instructionVectorIntMean = instructionVectorMean int vectorInt id
+instructionVectorIntMean state@(State {_int = is, _vectorInt = v1 : vs}) = state{_int = mean v1 : is, _vectorInt = vs}
+  where
+    mean :: [Integer] -> Integer
+    mean [] = 0
+    mean xs = round $ sum (map (fromIntegral @Integer @Double) xs) / fromIntegral @Int @Double (length xs)
+instructionVectorIntMean state = state
+
+-- |Takes the maximum of the top int vector and pushes the int value
+-- to the int stack.
+instructionVectorIntMaximum :: State -> State
+instructionVectorIntMaximum state@(State {_vectorInt = [] : _}) = instructionVectorFuncVectorToPrim int vectorInt retZero state
+instructionVectorIntMaximum state = instructionVectorFuncVectorToPrim int vectorInt maximum state
+
+-- |Takes the minimum of the top int vector and pushes the int value
+-- to the int stack.
+instructionVectorIntMinimum :: State -> State
+instructionVectorIntMinimum state@(State {_vectorInt = [] : _ }) = instructionVectorFuncVectorToPrim int vectorInt retZero state
+instructionVectorIntMinimum state = instructionVectorFuncVectorToPrim int vectorInt minimum state
+
+-- |Takes the sum of the top int vector and pushes the int value
+-- to the int stack.
+instructionVectorIntSum :: State -> State
+instructionVectorIntSum state@(State {_vectorInt = [] : _}) = instructionVectorFuncVectorToPrim int vectorInt retZero state
+instructionVectorIntSum state = instructionVectorFuncVectorToPrim int vectorInt sum state
+
+-- |Takes the mode of the top int vector and pushes the int value
+-- to the int stack.
+instructionVectorIntMode :: State -> State
+instructionVectorIntMode state@(State {_vectorInt = [] : _}) = instructionVectorFuncVectorToPrim int vectorInt retZero state
+instructionVectorIntMode state = instructionVectorFuncVectorToPrim int vectorInt mode state
+
+-- |Takes the 2-norm of the top int vector and pushes the rounded result to
+-- the int stack.
+instructionVectorIntNorm :: State -> State -- Ends up replacing with 0 so it's good.
+instructionVectorIntNorm = instructionVectorFuncVectorToPrim int vectorInt (round . twoNorm . map (fromIntegral @Integer @Double))
+
+-- |Takes the cummulative mean of the int vector, rounds the results and places them into a vector as the caluculations happen and pushes it back to the top of
+-- the int vector stack.
+instructionVectorIntCummulativeMean :: State -> State
+instructionVectorIntCummulativeMean = instructionVectorFuncVectorToVector vectorInt (\xs -> zipWith div (scanl1 (+) xs) [1..])
+
+-- |Takes the cummulative sum of the int vector, places the results in a vector as the caluculations happen and pushes it back to the top of
+-- the int vector stack.
+instructionVectorIntCummulativeSum :: State -> State
+instructionVectorIntCummulativeSum = instructionVectorFuncVectorToVector vectorInt (scanl1 (+))
+
+-- |Takes the cummulative max of the int vector, places the results in a vector as the caluculations happen and pushes it back to the top of
+-- the int vector stack.
+instructionVectorIntCummulativeMax :: State -> State
+instructionVectorIntCummulativeMax = instructionVectorFuncVectorToVector vectorInt (scanl1 max)
+
+-- |Takes the cummulative min of the int vector, places the results in a vector as the caluculations happen and pushes it back to the top of
+-- the int vector stack.
+instructionVectorIntCummulativeMin :: State -> State
+instructionVectorIntCummulativeMin = instructionVectorFuncVectorToVector vectorInt (scanl1 min)
+
+-- |Applies the exponential function to all indices in an int vector, rounds the result as it moves along.
+instructionVectorIntExp :: State -> State
+instructionVectorIntExp = instructionVectorFuncVectorToVector vectorInt (map (round . exp . fromIntegral @Integer @Double))
+
+-- |Applies the log function to all indices in an int vector, rounds the result as it moves along.
+instructionVectorIntLog :: State -> State
+instructionVectorIntLog = instructionVectorFuncVectorToVector vectorInt (map (round . log . fromIntegral @Integer @Double))
+
+-- |Applies the sin function to all indices in an int vector, rounds the result as it moves along.
+instructionVectorIntSin :: State -> State
+instructionVectorIntSin = instructionVectorFuncVectorToVector vectorInt (map (round . sin . fromIntegral @Integer @Double))
+
+-- |Applies the cos function to all indices in an int vector, rounds the result as it moves along.
+instructionVectorIntCos :: State -> State
+instructionVectorIntCos = instructionVectorFuncVectorToVector vectorInt (map (round . cos . fromIntegral @Integer @Double))
+
+-- |Applies the tan function to all indices in an int vector, rounds the result as it moves along.
+instructionVectorIntTan :: State -> State
+instructionVectorIntTan = instructionVectorFuncVectorToVector vectorInt (map (round . tan . fromIntegral @Integer @Double))
+
+-- |Applies the abs function to all indices in an int vector, rounds the result as it moves along.
+instructionVectorIntAbs :: State -> State
+instructionVectorIntAbs = instructionVectorFuncVectorToVector vectorInt (map (round . abs . fromIntegral @Integer @Double))
+
+-- |Applies the square function to all indices in an int vector, rounds the result as it moves along.
+instructionVectorIntSquare :: State -> State
+instructionVectorIntSquare = instructionVectorFuncVectorToVector vectorInt (map (round . (^ 2) . fromIntegral @Integer @Double))
+
+-- |Applies the cube function to all indices in an int vector, rounds the result as it moves along.
+instructionVectorIntCube :: State -> State
+instructionVectorIntCube = instructionVectorFuncVectorToVector vectorInt (map (round . (^ 3) . fromIntegral @Integer @Double))
+
+-- |Applies the sqrt function to all indices in an int vector, rounds the result as it moves along.
+instructionVectorIntSqrt :: State -> State
+instructionVectorIntSqrt = instructionVectorFuncVectorToVector vectorInt (map (round . sqrt . fromIntegral @Integer @Double))
 
 allVectorIntInstructions :: [Gene]
 allVectorIntInstructions = map StateFunc ($(functionExtractor "instruction"))
