@@ -5,7 +5,7 @@ module HushGP.State where
 import Control.Lens hiding (elements)
 import Data.Map qualified as Map
 import System.Random
-import Test.QuickCheck
+import Test.Tasty.QuickCheck
 import GHC.Generics
 
 -- | The exec stack must store heterogenous types,

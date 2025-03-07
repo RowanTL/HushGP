@@ -3,11 +3,26 @@ module HushGP.PushTests.IntTests where
 import HushGP.State
 import HushGP.Instructions.IntInstructions
 -- import HushGP.PushTests.GenericTests
--- -- import Control.Lens hiding (uncons)
+import Control.Lens hiding (uncons)
 import Test.Tasty
+import Test.Tasty.QuickCheck as QC
 
--- prop_IntAdd :: State -> Property
--- prop_IntAdd = aaa1Test int instructionIntAdd (+)
+main :: IO ()
+main = defaultMain intTests
+
+-- |Holds the tree for property and unit tests.
+intTests :: TestTree
+intTests = testGroup "All Int Tests" [propIntTests]
+
+-- |Property int tests.
+propIntTests :: TestTree
+propIntTests = testGroup "Property Int Tests"
+  [ 
+    QC.testProperty "Property Int Add test" prop_IntAdd
+  ]
+
+prop_IntAdd :: State -> Property
+prop_IntAdd state@(State {_int = is}) = if length is < 2 then length (view int (instructionIntAdd state)) === length (view int state) else length (view int (instructionIntAdd state)) === length (view int state) - 1
 
 -- prop_IntSub :: State -> Property
 -- prop_IntSub = aaa1Test int instructionIntSub (-)
