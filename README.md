@@ -9,12 +9,17 @@ I am developing this library using:
 - GHC 9.8.2
 - Cabal 3.12.1.0
 
+## How to run
+
 In order to run this library. There is some manual configuration needed. For an example, check
 out `src/HushGP/Problems/IntegerRegression.hs`. This contains the parts needed for a full evolutionary run.
 
 The user is expected to provide their own data, their own fitness function, and the set of instructions
 they would like to use. This set can be found in the files of `src/HushGP/Instructions`. You can also
 check the haddock documentation for lists of these as well.
+
+The best way to run this library is to use cabal. `cabal repl` for development. TODO: Command for
+fully compiling and building an executable to run.
 
 # Building Instructions
 
