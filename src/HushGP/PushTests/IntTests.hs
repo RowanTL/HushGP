@@ -2,7 +2,6 @@ module HushGP.PushTests.IntTests where
 
 import HushGP.State
 import HushGP.Instructions.IntInstructions
--- import HushGP.PushTests.GenericTests
 import Control.Lens hiding (uncons)
 import System.Environment
 import Test.Tasty
@@ -10,7 +9,8 @@ import Test.Tasty.QuickCheck as QC
 
 main :: IO ()
 main = do
-  setEnv "TASTY_QUICKCHECK_VERBOSE" "False"
+  setEnv "TASTY_QUICKCHECK_MAX_SIZE" "10"
+  setEnv "TASTY_QUICKCHECK_VERBOSE" "True"
   defaultMain intTests
 
 -- |Holds the tree for property and unit tests.
