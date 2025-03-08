@@ -61,11 +61,17 @@ instructionIntDivOpp :: State -> State
 instructionIntDivOpp state@(State {_int = i1 : i2 : is}) = state {_int = if i2 /= 0 then (i1 `div` i2) : is else i1 : i2 : is}
 instructionIntDivOpp state = state
 
--- |Mods the first float from the second float and pushes the result to the int stack.
+-- |Mods the first int from the second int and pushes the result to the int stack.
 -- This does truncate.
 instructionIntMod :: State -> State
 instructionIntMod state@(State {_int = i1 : i2 : is}) = state {_int = if i1 /= 0 then (i2 `mod` i1) : is else i1 : i2 : is}
 instructionIntMod state = state
+
+-- |Mods the second int from the first int and pushes the result to the int stack.
+-- This does truncate.
+instructionIntModOpp :: State -> State
+instructionIntModOpp state@(State {_int = i1 : i2 : is}) = state {_int = if i2 /= 0 then (i1 `mod` i2) : is else i1 : i2 : is}
+instructionIntModOpp state = state
 
 -- |Takes the top two ints from the int stack and pushes the minimum of the two back on top.
 instructionIntMin :: State -> State

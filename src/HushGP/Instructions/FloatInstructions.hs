@@ -67,6 +67,12 @@ instructionFloatMod :: State -> State
 instructionFloatMod state@(State {_float = f1 : f2 : fs}) = state {_float = if f1 /= 0 then f2 `mod'` f1 : fs else f1 : f2 : fs}
 instructionFloatMod state = state
 
+-- |Mods the second float from the first float and pushes the result to the float stack.
+-- This does truncate.
+instructionFloatModOpp :: State -> State
+instructionFloatModOpp state@(State {_float = f1 : f2 : fs}) = state {_float = if f2 /= 0 then (f1 `mod'` f2) : fs else f1 : f2 : fs}
+instructionFloatModOpp state = state
+
 -- |Takes the top two floats from the float stack and pushes the minimum of the two back on top.
 instructionFloatMin :: State -> State
 instructionFloatMin state@(State {_float = f1 : f2 : fs}) = state {_float = min f1 f2 : fs}

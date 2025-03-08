@@ -1,9 +1,8 @@
 module HushGP.PushTests.GenericTests where
 
--- import HushGP.State
--- import Control.Lens
--- -- import Debug.Trace
--- import Test.QuickCheck
+import HushGP.State
+import Control.Lens
+import Test.Tasty.QuickCheck
 -- -- import HushGP.Instructions.GenericInstructions
 
 -- -- The naming scheme:
@@ -15,11 +14,14 @@ module HushGP.PushTests.GenericTests where
 -- -- We may be able to get rid of Lens entirely and use haskell's integrated accessors of type State -> [a]
 -- -- You can see what I'm talking about if you go into ghci and type: `:info _int` for example
 
--- aaa1Test :: (Show a, Eq a) => Lens' State [a] -> (State -> State) -> (a -> a -> a) -> State -> Property
--- aaa1Test accessor instruction transformation state =
---   case (uncons (view accessor state), uncons (view accessor $ instruction state)) of
---     (Just (origx1, origx2 : _), Just (modx1, _)) -> transformation origx2 origx1 === modx1 .&&. length (view accessor state) === length (view accessor $ instruction state) + 1
---     _ -> state === instruction state
+-- | Test to see if the length difference between the two stacks post execution is off by one.
+-- Based on a primitive lens. Should only be used with functions that modify the length of one stack
+-- by one. The first Int specifies what size the stacks should differ by. The second Int
+-- specifies how many intial items should be in the stack to not be considered a no-op.
+diff1Test :: (Show a, Eq a) => Lens' State [a] -> (State -> State) -> Int -> Int -> State -> Property
+diff1Test accessor instruction stackAmt ltAmt state
+  | length (view accessor state) < ltAmt = state === instruction state
+  | otherwise = length (view accessor state) === length (view accessor $ instruction state) + stackAmt
 
 -- aa1Test :: (Show a, Eq a) => Lens' State [a] -> (State -> State) -> (a -> a) -> State -> Property
 -- aa1Test accessor instruction transformation state =
@@ -27,23 +29,26 @@ module HushGP.PushTests.GenericTests where
 --     (Just (origx1, _), Just (modx1, _)) -> transformation origx1 === modx1 .&&. length (view accessor state) === length (view accessor $ instruction state)
 --     _ -> state === instruction state
 
--- ab1Test :: (Show b, Eq b) => Lens' State [a] -> Lens' State [b] -> (State -> State) -> (a -> b) -> State -> Property
--- ab1Test accessorFrom accessorTo instruction transformation state =
---   case (uncons (view accessorTo $ instruction state), uncons (view accessorFrom state)) of
---     (Just (t1, _), Just (f1, _)) -> 
---       t1 === transformation f1 .&&. 
---       length (view accessorTo $ instruction state) === length (view accessorTo state) + 1 .&&.
---       length (view accessorFrom $ instruction state) === length (view accessorFrom state) - 1 
---     _ -> state === instruction state
+-- | Test to see if the length difference between 2 separate stacks post execution if
+-- the up/down by a passed amt for the respective stats. Is used to test functions like instructionIntFromFloat.
+diff2Test :: (Show b, Eq b) => Lens' State [a] -> Lens' State [b] -> (State -> State) -> Int -> Int -> Int -> State -> Property
+diff2Test accessorFrom accessorTo instruction ltAmt toAmt fromAmt state
+  | length (view accessorFrom state) < ltAmt = state === instruction state
+  | otherwise = length (view accessorTo $ instruction state) === length (view accessorTo state) + toAmt .&&.
+      length (view accessorFrom $ instruction state) === length (view accessorFrom state) - fromAmt
+  -- case (uncons (view accessorTo $ instruction state), uncons (view accessorFrom state)) of
+    -- (Just (_, _), Just (_, _)) -> 
+    --   length (view accessorTo $ instruction state) === length (view accessorTo state) + 1 .&&.
+    --   length (view accessorFrom $ instruction state) === length (view accessorFrom state) - 1 
+    -- _ -> state === instruction state
 
--- aab2Test :: (Show b, Eq b) => Lens' State [a] -> Lens' State [b] -> (State -> State) -> (a -> a -> b) -> State -> Property
--- aab2Test accessorFrom accessorTo instruction transformation state =
---   case (uncons (view accessorTo $ instruction state), uncons (view accessorFrom state)) of
---     (Just (t1, _), Just (f1, f2 : _)) ->
---       t1 === transformation f1 f2 .&&. 
---       length (view accessorTo $ instruction state) == length (view accessorTo state) + 1 .&&.
---       length (view accessorFrom $ instruction state) == length (view accessorFrom state) - 2       
---     _ -> state === instruction state
+aab2Test :: (Show b, Eq b) => Lens' State [a] -> Lens' State [b] -> (State -> State) -> State -> Property
+aab2Test accessorFrom accessorTo instruction state =
+  case (uncons (view accessorTo $ instruction state), uncons (view accessorFrom state)) of
+    (Just (_, _), Just (_, _ : _)) ->
+      length (view accessorTo $ instruction state) == length (view accessorTo state) + 1 .&&.
+      length (view accessorFrom $ instruction state) == length (view accessorFrom state) - 2       
+    _ -> state === instruction state
 
 -- popTest :: (Show a) => Lens' State [a] -> (State -> State) -> State -> Property
 -- popTest accessor instruction state = 

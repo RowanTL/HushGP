@@ -135,7 +135,7 @@ instructionShoveDup _ state = state
 -- |Moves an item from the top of a lens' stack to deep within the lens' stack based on
 -- the top int from the int stack.
 instructionShove :: Lens' State [a] -> State -> State
-instructionShove accessor state = instructionShoveDup accessor state & accessor .~ drop 1 (view accessor (instructionShoveDup accessor state ))
+instructionShove accessor state = state & accessor .~ drop 1 (view accessor (instructionShoveDup accessor state ))
 
 -- |Concats two semigroupable items together based on a lens. Not char generic.
 instructionVectorConcat :: Semigroup a => Lens' State [a] -> State -> State
