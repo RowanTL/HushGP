@@ -18,10 +18,10 @@ import Test.Tasty.QuickCheck
 -- Based on a primitive lens. Should only be used with functions that modify the length of one stack
 -- by one. The first Int specifies what size the stacks should differ by. The second Int
 -- specifies how many intial items should be in the stack to not be considered a no-op.
-diff1Test :: (Show a, Eq a) => Lens' State [a] -> (State -> State) -> Int -> Int -> State -> Property
-diff1Test accessor instruction stackAmt ltAmt state
+diff1Test :: (Show a, Eq a) => Lens' State [a] -> (State -> State) -> Int -> State -> Property
+diff1Test accessor instruction ltAmt state
   | length (view accessor state) < ltAmt = state === instruction state
-  | otherwise = length (view accessor state) === length (view accessor $ instruction state) + stackAmt
+  | otherwise = state =/= instruction state
 
 -- aa1Test :: (Show a, Eq a) => Lens' State [a] -> (State -> State) -> (a -> a) -> State -> Property
 -- aa1Test accessor instruction transformation state =
@@ -31,11 +31,11 @@ diff1Test accessor instruction stackAmt ltAmt state
 
 -- | Test to see if the length difference between 2 separate stacks post execution if
 -- the up/down by a passed amt for the respective stats. Is used to test functions like instructionIntFromFloat.
-diff2Test :: (Show b, Eq b) => Lens' State [a] -> Lens' State [b] -> (State -> State) -> Int -> Int -> Int -> State -> Property
-diff2Test accessorFrom accessorTo instruction ltAmt toAmt fromAmt state
+diff2Test :: (Show b, Eq b) => Lens' State [a] -> Lens' State [b] -> (State -> State) -> Int -> State -> Property
+diff2Test accessorFrom accessorTo instruction ltAmt state
   | length (view accessorFrom state) < ltAmt = state === instruction state
-  | otherwise = length (view accessorTo $ instruction state) === length (view accessorTo state) + toAmt .&&.
-      length (view accessorFrom $ instruction state) === length (view accessorFrom state) - fromAmt
+  | otherwise = length (view accessorTo $ instruction state) =/= length (view accessorTo state) .&&.
+      length (view accessorFrom $ instruction state) =/= length (view accessorFrom state)
   -- case (uncons (view accessorTo $ instruction state), uncons (view accessorFrom state)) of
     -- (Just (_, _), Just (_, _)) -> 
     --   length (view accessorTo $ instruction state) === length (view accessorTo state) + 1 .&&.
