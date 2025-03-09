@@ -1,6 +1,5 @@
 module HushGP.GP.Simplification where
 
-import System.Random.Shuffle
 import System.Random
 import Control.Monad
 import Data.List
@@ -23,7 +22,7 @@ deleteAtMultiple' curr (idx:idxs) (plushyPiece:plushy) =
 -- | Deletes a random amount of genes from the passed plushy based on ant int.
 deleteRandomAmt :: Int -> [Gene] -> IO [Gene]
 deleteRandomAmt k plushy = do
-  randomIndicies <- take k . shuffle' [0..(length plushy - 1)] (length plushy) <$> initStdGen
+  randomIndicies <- take k . fst . uniformShuffleList [0..(length plushy - 1)] <$> initStdGen
   pure $ deleteAtMultiple randomIndicies plushy
 
 -- | Simplifies a Plushy by randomly deleting instructions and seeing how it impacts

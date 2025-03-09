@@ -42,7 +42,8 @@ intSolutionPlushy =
 -- is trying to evolve.
 targetFunction :: Integer -> Integer
 -- targetFunction x = (x * x * x) + (2 * x) + 6
-targetFunction x = x * x * x
+targetFunction x = (x * x * x) + (2 * x)
+-- targetFunction x = x * x * x
 
 -- | The training data for the model.
 intTrainData :: [PushData]
@@ -101,8 +102,8 @@ intPushArgs = defaultPushArgs
     errorFunction = intErrorFunction,
     trainingData = intTrainData,
     testingData = intTestData,
-    maxGenerations = 300,
-    populationSize = 1000,
+    maxGenerations = 200,
+    populationSize = 100,
     maxInitialPlushySize = 100,
     stepLimit = 200,
     parentSelectionAlgo = "lexicase",

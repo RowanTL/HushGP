@@ -5,7 +5,6 @@ module HushGP.State where
 import Control.Lens hiding (elements)
 import Data.Map qualified as Map
 import System.Random
-import Test.Tasty.QuickCheck
 import GHC.Generics
 
 -- | The exec stack must store heterogenous types,
@@ -158,28 +157,28 @@ instance Show Gene where
   show CrossoverPadding = "Crossover Padding"
   show Gap = "Gap"
 
-instance CoArbitrary StdGen where
-  coarbitrary _ gen = gen
+-- instance CoArbitrary StdGen where
+--   coarbitrary _ gen = gen
 
-instance CoArbitrary Gene
+-- instance CoArbitrary Gene
 
-instance Arbitrary Gene where
-  arbitrary =
-    oneof
-      [ GeneInt <$> arbitrary,
-        GeneFloat <$> arbitrary,
-        GeneBool <$> arbitrary,
-        GeneString <$> arbitrary,
-        GeneChar <$> arbitrary,
-        StateFunc <$> arbitrary,
-        -- PlaceInput <$> arbitrary,
-        GeneVectorInt <$> arbitrary,
-        GeneVectorFloat <$> arbitrary,
-        GeneVectorBool <$> arbitrary,
-        GeneVectorString <$> arbitrary,
-        GeneVectorChar <$> arbitrary,
-        Block <$> arbitrary
-      ]
+-- instance Arbitrary Gene where
+--   arbitrary =
+--     oneof
+--       [ GeneInt <$> arbitrary,
+--         GeneFloat <$> arbitrary,
+--         GeneBool <$> arbitrary,
+--         GeneString <$> arbitrary,
+--         GeneChar <$> arbitrary,
+--         StateFunc <$> arbitrary,
+--         -- PlaceInput <$> arbitrary,
+--         GeneVectorInt <$> arbitrary,
+--         GeneVectorFloat <$> arbitrary,
+--         GeneVectorBool <$> arbitrary,
+--         GeneVectorString <$> arbitrary,
+--         GeneVectorChar <$> arbitrary,
+--         Block <$> arbitrary
+--       ]
 
 -- | The structure that holds all of the values.
 data State = State
@@ -200,26 +199,26 @@ data State = State
   }
   deriving (Show, Eq, Ord, Generic)
 
-instance CoArbitrary State
+-- instance CoArbitrary State
 
-instance Arbitrary State where
-  arbitrary = do
-    arbExec <- arbitrary
-    arbCode <- arbitrary
-    arbInt <- arbitrary
-    arbFloat <- arbitrary
-    arbBool <- arbitrary
-    arbString <- arbitrary
-    arbChar <- arbitrary
-    arbVectorInt <- arbitrary
-    arbVectorFloat <- arbitrary
-    arbVectorBool <- arbitrary
-    arbVectorString <- arbitrary
-    arbVectorChar <- arbitrary
-    arbParameter <- arbitrary
-    -- arbInput <- arbitrary
-    State arbExec arbCode arbInt arbFloat arbBool arbString arbChar arbVectorInt arbVectorFloat arbVectorBool arbVectorString arbVectorChar arbParameter <$> arbitrary
--- Thanks hlint lol
+-- instance Arbitrary State where
+--   arbitrary = do
+--     arbExec <- arbitrary
+--     arbCode <- arbitrary
+--     arbInt <- arbitrary
+--     arbFloat <- arbitrary
+--     arbBool <- arbitrary
+--     arbString <- arbitrary
+--     arbChar <- arbitrary
+--     arbVectorInt <- arbitrary
+--     arbVectorFloat <- arbitrary
+--     arbVectorBool <- arbitrary
+--     arbVectorString <- arbitrary
+--     arbVectorChar <- arbitrary
+--     arbParameter <- arbitrary
+--     -- arbInput <- arbitrary
+--     State arbExec arbCode arbInt arbFloat arbBool arbString arbChar arbVectorInt arbVectorFloat arbVectorBool arbVectorString arbVectorChar arbParameter <$> arbitrary
+-- -- Thanks hlint lol
 
 emptyState :: State
 emptyState =
@@ -237,25 +236,6 @@ emptyState =
       _vectorBool = [],
       _vectorString = [],
       _vectorChar = [],
-      _input = Map.empty
-    }
-
-exampleState :: State
-exampleState =
-  State
-    { _exec = [],
-      _code = [],
-      _int = [32, 56, 88, 91],
-      _float = [3.23, 9.235, 5.3211, 8.0],
-      _bool = [True, False],
-      _string = ["abc", "123"],
-      _char = ['d', 'e', 'f'],
-      _parameter = [],
-      _vectorInt = [[1, 2], [5, 6, 8]],
-      _vectorFloat = [[1.234, 9.21], [5.42, 6.221, 8.5493]],
-      _vectorBool = [[True, False], [False, False, True]],
-      _vectorString = [["this is a sentence", "this is also a sentence"], ["s0", "s1", "s2"]],
-      _vectorChar = [['z', 'x'], ['r', 'a', 't', 'l']],
       _input = Map.empty
     }
 

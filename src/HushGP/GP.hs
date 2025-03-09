@@ -13,7 +13,6 @@ import HushGP.GP.Simplification
 import HushGP.GP.Variation
 import HushGP.Genome
 import System.Random
-import System.Random.Shuffle
 
 -- import Debug.Trace (trace, traceStack)
 
@@ -53,10 +52,9 @@ gpLoop'
   evaluations
   population
   indexedTrainingData = do
-    print "Put information about each generation here."
     when bestIndPassesDownsample $ print $ "Semi Success Generation: " <> show generation
     parentReps <- do
-      shuffledParents <- shuffle' population (length population) <$> initStdGen
+      shuffledParents <- fst . uniformShuffleList population <$> initStdGen
       if enableDS && (generation `mod` dsParentGens == 0)
         then pure $ take (floor @Float (dsParentRate * (fromIntegral @Int @Float $ length population))) shuffledParents
         else pure []
@@ -79,7 +77,8 @@ gpLoop'
                     print $ "Simplified program: " <> show (plushyToPush pushArgs simplifiedPlushy)
                     print $ "Total simplified test error: " <> show (errorFunc epsilonPushArgs teData simplifiedPlushy)
           | (not enableDS && (generation >= maxGens))
-              || (enableDS && (evaluations >= (maxGens * length population * length indexedTrainingData))) =
+              || (enableDS && (evaluations >= (maxGens * length population * length indexedTrainingData))) = do
+              print $ "Max gens: " <> show maxGens
               print $ "Best individual: " <> show (plushy bestInd)
           | otherwise = do
               newPop <- if isElite then replicateM (popSize - 1) (newIndividual epsilonPushArgs evaledPop) else replicateM popSize (newIndividual epsilonPushArgs evaledPop)
@@ -99,6 +98,10 @@ gpLoop'
                     then updateCaseDistances repEvaluatedPop indexedTrainingData indexedTrainingData (informedDownsamplingType pushArgs) (seThresh / fromIntegral @Int @Double (length indexedTrainingData))
                     else indexedTrainingData
                 )
+    print ("Generation: " <> show generation)
+    print ("Len Population: " <> show (length population))
+    print ("Best Ind: " <> show (plushy bestInd) <> " : " <> show (totalFitness bestInd))
+    print "----------------------------------------------"
     nextAction
     where
       -- \| This will have downsampling functionality added later.

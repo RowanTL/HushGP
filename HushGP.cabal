@@ -58,8 +58,10 @@ library
                     , HushGP.Instructions.Opens
                     , HushGP.PushTests
                     , HushGP.PushTests.IntTests
+                    , HushGP.PushTests.VectorIntTests
                     , HushGP.PushTests.GenericTests
                     , HushGP.PushTests.UtilTests
+                    , HushGP.PushTests.TestStates
                     , HushGP.PushTests.GP.Selection
                     , HushGP.GP
                     , HushGP.GP.PushArgs
@@ -81,7 +83,7 @@ library
 
     -- Other library packages from which modules are imported.
     build-depends:
-        base, containers, lens, split, regex-tdfa, template-haskell, random, parallel, random-shuffle, dsp, hmatrix, tasty, tasty-hunit, tasty-quickcheck
+        base, containers, lens, split, regex-tdfa, template-haskell, random >= 1.3.0, parallel, dsp, hmatrix, tasty, tasty-hunit
 
     -- Directories containing source files.
     hs-source-dirs:   src

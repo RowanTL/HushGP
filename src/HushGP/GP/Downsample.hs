@@ -1,6 +1,5 @@
 module HushGP.GP.Downsample where
 
-import System.Random.Shuffle
 import System.Random
 import Data.List
 import Data.Maybe
@@ -21,13 +20,13 @@ initializeCaseDistances (PushArgs {trainingData = tData, populationSize = popSiz
 
 -- |Draws a random amount of data points from a passed list of data points.
 selectDownsampleRandom :: PushArgs -> [PushData] -> IO [PushData]
-selectDownsampleRandom (PushArgs {downsampleRate = dsRate}) pushData = take (floor (dsRate * fromIntegral @Int @Float (length pushData))) . shuffle' pushData (length pushData) <$> initStdGen
+selectDownsampleRandom (PushArgs {downsampleRate = dsRate}) pushData = take (floor (dsRate * fromIntegral @Int @Float (length pushData))) . fst . uniformShuffleList pushData <$> initStdGen
 
 -- |Selects a downsample that has it's cases maximally far away by sequentially
 -- adding cases to the downsample that have their closest case maximally far away.
 selectDownsampleMaxmin :: PushArgs -> [PushData] -> IO [PushData]
 selectDownsampleMaxmin (PushArgs {downsampleRate = dsRate}) pushData = do
-  shuffledCases <- shuffle' pushData (length pushData) <$> initStdGen
+  shuffledCases <- fst . uniformShuffleList pushData <$> initStdGen
   let goalSize = floor @Float @Int (dsRate * (fromIntegral @Int @Float $ length pushData))
   selectDownsampleMaxmin'
     (case uncons shuffledCases of (Just (x, _)) -> [x]; _ -> error "error: shuffledCases empty!")
@@ -49,7 +48,7 @@ selectDownsampleMaxmin' newDownsample casesToPickFrom goalSize
       stdGen <- initStdGen
       selectDownsampleMaxmin'
         ((casesToPickFrom !! selectedCaseIndex) : newDownsample)
-        (shuffle' (deleteAt selectedCaseIndex casesToPickFrom) (length casesToPickFrom - 1) stdGen)
+        (fst $ uniformShuffleList (deleteAt selectedCaseIndex casesToPickFrom) stdGen)
         goalSize
 
 -- |selects a downsample that has it's cases maximally far away by sequentially 
@@ -57,7 +56,7 @@ selectDownsampleMaxmin' newDownsample casesToPickFrom goalSize
 -- automatically stops when the maximum minimum distance is below delta
 selectDownsampleMaxminAdaptive :: PushArgs -> [PushData] -> IO [PushData]
 selectDownsampleMaxminAdaptive (PushArgs {caseDelta = cDelta}) pushData = do
-  shuffledCases <- shuffle' pushData (length pushData) <$> initStdGen
+  shuffledCases <- fst . uniformShuffleList pushData <$> initStdGen
   selectDownsampleMaxminAdaptive'
     (case uncons shuffledCases of (Just (x, _)) -> [x]; _ -> error "error: shuffledCases empty!")
     (drop 1 shuffledCases)
@@ -78,7 +77,7 @@ selectDownsampleMaxminAdaptive' newDownsample casesToPickFrom cDelta = do
       then pure newDownsample
       else selectDownsampleMaxminAdaptive'
             ((casesToPickFrom !! selectedCaseIndex) : newDownsample)
-            (shuffle' (deleteAt selectedCaseIndex casesToPickFrom) (length casesToPickFrom - 1) stdGen)
+            (fst $ uniformShuffleList (deleteAt selectedCaseIndex casesToPickFrom) stdGen)
             cDelta
 
 -- |Returns the distance between two cases given a list of individual error vectors, and the index these

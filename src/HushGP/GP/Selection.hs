@@ -4,7 +4,6 @@ import Numeric.Statistics.Median (medianFast)
 import Data.List
 import Data.Maybe
 import System.Random
-import System.Random.Shuffle
 import HushGP.GP.PushArgs
 import HushGP.GP.Individual
 import HushGP.Utility
@@ -13,7 +12,7 @@ import HushGP.Utility
 -- Takes the individual with the lowest total error in the tournament.
 tournamentSelection :: PushArgs -> [Individual] -> IO Individual
 tournamentSelection PushArgs{tournamentSize = tSize} pop = do
-  shuffledPop <- shuffle' pop (length pop) <$> initStdGen
+  shuffledPop <- fst. uniformShuffleList pop <$> initStdGen
   let tournSet = take tSize shuffledPop
   pure $ minimum tournSet
 
@@ -23,7 +22,7 @@ tournamentSelection PushArgs{tournamentSize = tSize} pop = do
 -- until a single individual remains. This is the top level function.
 lexicaseSelection :: PushArgs -> [Individual] -> IO Individual
 lexicaseSelection PushArgs{initialCases = iCases} pop = do
-  startCases <- maybe (shuffle' [0..lehp] lehp <$> initStdGen) (pure @IO) iCases
+  startCases <- maybe (fst . uniformShuffleList [0..lehp] <$> initStdGen) (pure @IO) iCases
   survivors <- mapM randElem (groupBy (\x y -> fitnessCases x == fitnessCases y) pop)
   lexicaseSelection' survivors startCases startCases
   where
@@ -74,7 +73,7 @@ epsilonList' epsilons index errorList errorLength =
 -- for a test case, only individuals with an error outside of a predefined epsilon are filtered.
 epsilonLexicaseSelection :: PushArgs -> [Individual] -> IO Individual
 epsilonLexicaseSelection PushArgs{epsilons = eps} pop = do
-  startCases <- shuffle' [0..lehp] lehp <$> initStdGen
+  startCases <- fst . uniformShuffleList [0..lehp] <$> initStdGen
   epsilonLexicaseSelection' (fromMaybe (error "Error: epsilons list is empty!") eps) pop startCases
   where
     lehp :: Int -- length of the extracted fitness cases of the head of the passed population.
